@@ -12,6 +12,7 @@ import LevelProgressBar from "@/components/LevelProgressBar";
 import StreakBadge from "@/components/StreakBadge";
 import { useLevels, getLevelFromList } from "@/hooks/useLevels";
 import { motion } from "framer-motion";
+import SoundToggle from "@/components/SoundToggle";
 
 interface ProfileData {
   display_name: string;
