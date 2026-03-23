@@ -32,7 +32,7 @@ const MissionsSections = () => {
 
       const { data: allQuestions } = await supabase
         .from("questions")
-        .select("id, question, xp_reward, mission_type, available_from, available_until");
+        .select("id, question, xp_reward, mission_type, available_from, available_until, is_active");
 
       const now = new Date().toISOString();
       const unanswered = (allQuestions ?? []).filter((q: any) => !answeredSet.has(q.id) && q.is_active !== false);
