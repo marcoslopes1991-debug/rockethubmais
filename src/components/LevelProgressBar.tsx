@@ -1,4 +1,4 @@
-import { getLevelInfo, getLevelProgress, getNextLevel } from "@/lib/levels";
+import { useLevels, getLevelFromList, getLevelProgressFromList, getNextLevelFromList } from "@/hooks/useLevels";
 import { cn } from "@/lib/utils";
 import { Zap } from "lucide-react";
 
@@ -8,9 +8,13 @@ interface LevelProgressBarProps {
 }
 
 const LevelProgressBar = ({ xp, className }: LevelProgressBarProps) => {
-  const current = getLevelInfo(xp);
-  const next = getNextLevel(xp);
-  const progress = getLevelProgress(xp);
+  const { levels } = useLevels();
+
+  if (levels.length === 0) return null;
+
+  const current = getLevelFromList(levels, xp);
+  const next = getNextLevelFromList(levels, xp);
+  const progress = getLevelProgressFromList(levels, xp);
 
   return (
     <div className={cn("space-y-2", className)}>
@@ -18,7 +22,7 @@ const LevelProgressBar = ({ xp, className }: LevelProgressBarProps) => {
         <span className="font-display font-bold text-foreground">{current.name}</span>
         {next && (
           <span className="text-muted-foreground">
-            Próximo: {next.name} ({next.minXp} XP)
+            Próximo: {next.name} ({next.min_xp} XP)
           </span>
         )}
       </div>
@@ -33,7 +37,7 @@ const LevelProgressBar = ({ xp, className }: LevelProgressBarProps) => {
           <Zap className="h-3 w-3 text-xp" /> {xp} XP
         </span>
         {next ? (
-          <span>{next.minXp - xp} XP para o próximo nível</span>
+          <span>{next.min_xp - xp} XP para o próximo nível</span>
         ) : (
           <span className="text-primary font-bold">Nível máximo! 🏆</span>
         )}
