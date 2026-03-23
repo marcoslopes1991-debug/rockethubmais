@@ -358,7 +358,7 @@ const Quiz = () => {
                       >
                         <p className="font-display font-bold mb-1 text-lg">
                           {selected === currentQuestion.correct_option
-                            ? `✅ Correto! +${currentQuestion.xp_reward} XP`
+                            ? `✅ Correto! +${Math.round(currentQuestion.xp_reward * xpMultiplier)} XP`
                             : "❌ Errado!"}
                         </p>
                         <p className="text-sm text-muted-foreground">{currentQuestion.explanation}</p>
