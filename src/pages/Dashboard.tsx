@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
+import { useAchievements } from "@/hooks/useAchievements";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon, Award } from "lucide-react";
@@ -34,6 +35,8 @@ const Dashboard = () => {
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
   const { levels } = useLevels();
+  const { achievements, userAchievements, isUnlocked } = useAchievements();
+  const unlockedAchievements = achievements.filter((a) => isUnlocked(a.id));
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [answeredCount, setAnsweredCount] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
@@ -212,6 +215,41 @@ const Dashboard = () => {
             </motion.div>
           ))}
         </motion.div>
+
+        {/* Achievements showcase */}
+        {unlockedAchievements.length > 0 && (
+          <motion.div variants={item}>
+            <Card className="glass-card">
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Award className="h-4 w-4 text-primary" />
+                    <span className="font-display font-bold text-sm">Conquistas</span>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => navigate("/achievements")} className="text-xs text-muted-foreground">
+                    Ver todas →
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {unlockedAchievements.map((ach, i) => (
+                    <motion.div
+                      key={ach.id}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: i * 0.05 }}
+                      whileHover={{ scale: 1.08 }}
+                      title={ach.description}
+                    >
+                      <span className="text-base">{ach.icon_emoji}</span>
+                      <span className="text-xs font-bold text-foreground">{ach.name}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
 
         {/* Mission button */}
         <motion.div variants={item}>
