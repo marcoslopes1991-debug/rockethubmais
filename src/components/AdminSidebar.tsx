@@ -18,6 +18,7 @@ const items = [
   { title: "Perguntas", url: "/admin/questions", icon: HelpCircle },
   { title: "Itens", url: "/admin/items", icon: Package },
   { title: "Usuários", url: "/admin/users", icon: Users },
+  { title: "Importar", url: "/admin/import", icon: Upload },
 ];
 
 export function AdminSidebar() {
