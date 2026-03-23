@@ -75,12 +75,19 @@ export function useAchievements() {
           .eq("user_id", user.id);
         if (data) setUserAchievements(data as UserAchievement[]);
 
-        // Play sound + show toast for each
+        // Play sound + show toast + create notification for each
         playAchievementSound();
         for (const ach of newlyUnlocked) {
           toast.success(`${ach.icon_emoji} Conquista desbloqueada!`, {
             description: `${ach.name} — ${ach.description}`,
             duration: 5000,
+          });
+
+          supabase.from("notifications").insert({
+            user_id: user.id,
+            type: "achievement",
+            title: `${ach.icon_emoji} Conquista desbloqueada!`,
+            message: `Você conquistou "${ach.name}"! ${ach.description}`,
           });
         }
       }
