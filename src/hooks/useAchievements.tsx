@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { playAchievementSound } from "@/lib/sounds";
 
 export interface Achievement {
   id: string;
@@ -74,7 +75,8 @@ export function useAchievements() {
           .eq("user_id", user.id);
         if (data) setUserAchievements(data as UserAchievement[]);
 
-        // Show toast for each
+        // Play sound + show toast for each
+        playAchievementSound();
         for (const ach of newlyUnlocked) {
           toast.success(`${ach.icon_emoji} Conquista desbloqueada!`, {
             description: `${ach.name} — ${ach.description}`,

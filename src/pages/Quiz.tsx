@@ -9,6 +9,7 @@ import { ArrowLeft, Check, X, Zap, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
+import { playCorrectSound, playWrongSound } from "@/lib/sounds";
 
 interface Question {
   id: string;
@@ -110,6 +111,7 @@ const Quiz = () => {
       setShowXpBurst(true);
       setTimeout(() => setShowXpBurst(false), 1200);
       fireConfetti();
+      playCorrectSound();
 
       const { data: profile } = await supabase
         .from("profiles")
@@ -144,6 +146,7 @@ const Quiz = () => {
       }
     } else {
       setStreak(0);
+      playWrongSound();
     }
   };
 

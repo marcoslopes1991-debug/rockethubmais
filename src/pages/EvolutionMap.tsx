@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import confetti from "canvas-confetti";
+import { playLevelUpSound } from "@/lib/sounds";
 import OfficeBackground from "@/components/evolution-map/OfficeBackground";
 import MapNode from "@/components/evolution-map/MapNode";
 import LevelDetailDialog from "@/components/evolution-map/LevelDetailDialog";
@@ -60,7 +61,8 @@ const EvolutionMap = () => {
     const current = getLevelFromList(levels, xp);
     if (prevLevelRef.current !== null && current.level_number > prevLevelRef.current) {
       setCelebratingLevel(current);
-      // Fire confetti
+      // Fire confetti + sound
+      playLevelUpSound();
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
       setTimeout(() => confetti({ particleCount: 60, spread: 100, origin: { y: 0.5 } }), 300);
     }
