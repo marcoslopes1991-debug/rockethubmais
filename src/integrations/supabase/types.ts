@@ -245,6 +245,7 @@ export type Database = {
           difficulty: string
           explanation: string
           id: string
+          is_active: boolean
           mission_type: string
           nivel: string
           option_a: string
@@ -263,6 +264,7 @@ export type Database = {
           difficulty?: string
           explanation?: string
           id?: string
+          is_active?: boolean
           mission_type?: string
           nivel?: string
           option_a: string
@@ -281,6 +283,7 @@ export type Database = {
           difficulty?: string
           explanation?: string
           id?: string
+          is_active?: boolean
           mission_type?: string
           nivel?: string
           option_a?: string
