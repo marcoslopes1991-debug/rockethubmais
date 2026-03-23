@@ -41,9 +41,7 @@ const Quiz = () => {
         .eq("user_id", user.id);
 
       const answeredSet = new Set(answeredIds?.map((a) => a.question_id) ?? []);
-
       const { data: allQuestions } = await supabase.from("questions").select("*");
-
       const unanswered = (allQuestions ?? []).filter((q) => !answeredSet.has(q.id));
       setQuestions(unanswered);
       setLoading(false);
@@ -53,6 +51,33 @@ const Quiz = () => {
   }, [user]);
 
   const currentQuestion = questions[currentIndex];
+
+  const updateStreak = async () => {
+    if (!user) return;
+    const today = new Date().toISOString().split("T")[0];
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("streak_count, last_activity_date")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!profile) return;
+
+    const lastDate = profile.last_activity_date;
+    if (lastDate === today) return; // Already counted today
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split("T")[0];
+
+    const newStreak = lastDate === yesterdayStr ? profile.streak_count + 1 : 1;
+
+    await supabase
+      .from("profiles")
+      .update({ streak_count: newStreak, last_activity_date: today })
+      .eq("user_id", user.id);
+  };
 
   const handleSelect = async (option: OptionKey) => {
     if (answered || !user || !currentQuestion) return;
@@ -68,9 +93,11 @@ const Quiz = () => {
       is_correct: isCorrect,
     });
 
+    // Update streak on first answer of the day
+    await updateStreak();
+
     if (isCorrect) {
       setXpGained((prev) => prev + currentQuestion.xp_reward);
-      // Update XP
       const { data: profile } = await supabase
         .from("profiles")
         .select("xp")
@@ -155,10 +182,9 @@ const Quiz = () => {
         </div>
       </header>
 
-      {/* Progress bar */}
       <div className="h-1 bg-muted">
         <div
-          className="h-full bg-primary transition-all duration-500"
+          className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
           style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
         />
       </div>
