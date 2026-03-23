@@ -20,6 +20,7 @@ import AdminImportQuestions from "./pages/admin/AdminImportQuestions";
 import AdminLevels from "./pages/admin/AdminLevels";
 import Journey from "./pages/Journey";
 import EvolutionMap from "./pages/EvolutionMap";
+import Achievements from "./pages/Achievements";
 
 const queryClient = new QueryClient();
 
