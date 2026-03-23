@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import confetti from "canvas-confetti";
+import { playLevelUpSound } from "@/lib/sounds";
 import OfficeBackground from "@/components/evolution-map/OfficeBackground";
 import MapNode from "@/components/evolution-map/MapNode";
 import LevelDetailDialog from "@/components/evolution-map/LevelDetailDialog";
