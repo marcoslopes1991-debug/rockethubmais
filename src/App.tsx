@@ -22,6 +22,7 @@ import AdminLevels from "./pages/admin/AdminLevels";
 import Journey from "./pages/Journey";
 import EvolutionMap from "./pages/EvolutionMap";
 import Achievements from "./pages/Achievements";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
