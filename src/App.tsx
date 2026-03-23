@@ -10,6 +10,11 @@ import Quiz from "./pages/Quiz";
 import Ranking from "./pages/Ranking";
 import Items from "./pages/Items";
 import NotFound from "./pages/NotFound";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminQuestions from "./pages/admin/AdminQuestions";
+import AdminItems from "./pages/admin/AdminItems";
+import AdminUsers from "./pages/admin/AdminUsers";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +31,12 @@ const App = () => (
             <Route path="/quiz" element={<Quiz />} />
             <Route path="/ranking" element={<Ranking />} />
             <Route path="/items" element={<Items />} />
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="questions" element={<AdminQuestions />} />
+              <Route path="items" element={<AdminItems />} />
+              <Route path="users" element={<AdminUsers />} />
+            </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
