@@ -4,7 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ShieldCheck, ShieldOff } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { ShieldCheck, ShieldOff, Pencil, Zap, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLevels, getLevelFromList } from "@/hooks/useLevels";
 
@@ -22,6 +25,8 @@ const AdminUsers = () => {
   const { toast } = useToast();
   const { levels: dbLevels } = useLevels();
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [editProfile, setEditProfile] = useState<Profile | null>(null);
+  const [editXp, setEditXp] = useState("");
 
   const fetchProfiles = async () => {
     const { data } = await supabase
@@ -45,6 +50,57 @@ const AdminUsers = () => {
     }
   };
 
+  const openEdit = (p: Profile) => {
+    setEditProfile(p);
+    setEditXp(String(p.xp));
+  };
+
+  const saveXp = async () => {
+    if (!editProfile) return;
+    const newXp = Math.max(0, parseInt(editXp) || 0);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ xp: newXp })
+      .eq("id", editProfile.id);
+
+    if (!error) {
+      toast({ title: `XP de ${editProfile.display_name} atualizado para ${newXp}` });
+      setEditProfile(null);
+      fetchProfiles();
+    } else {
+      toast({ title: "Erro ao atualizar XP", variant: "destructive" });
+    }
+  };
+
+  const setMaxLevel = async (profile: Profile) => {
+    if (dbLevels.length === 0) return;
+    const maxXp = dbLevels[dbLevels.length - 1].min_xp + 100;
+    const { error } = await supabase
+      .from("profiles")
+      .update({ xp: maxXp })
+      .eq("id", profile.id);
+
+    if (!error) {
+      toast({ title: `${profile.display_name} → nível máximo (${maxXp} XP)` });
+      fetchProfiles();
+    }
+  };
+
+  const resetProgress = async (profile: Profile) => {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ xp: 0, streak_count: 0 })
+      .eq("id", profile.id);
+
+    if (!error) {
+      toast({ title: `Progresso de ${profile.display_name} resetado` });
+      fetchProfiles();
+    }
+  };
+
+  const currentLevelForXp = (xp: number) =>
+    dbLevels.length > 0 ? getLevelFromList(dbLevels, xp) : { name: "..." };
+
   return (
     <div className="space-y-6 max-w-5xl">
       <h1 className="text-2xl font-display font-bold">Usuários</h1>
@@ -60,12 +116,12 @@ const AdminUsers = () => {
                 <TableHead>Streak</TableHead>
                 <TableHead>Última Atividade</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="w-24">Ações</TableHead>
+                <TableHead className="w-40">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {profiles.map((p) => {
-                const level = dbLevels.length > 0 ? getLevelFromList(dbLevels, p.xp) : { name: "..." };
+                const level = currentLevelForXp(p.xp);
                 return (
                   <TableRow key={p.id}>
                     <TableCell className="font-medium">{p.display_name}</TableCell>
@@ -81,18 +137,29 @@ const AdminUsers = () => {
                       )}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => toggleBlock(p)}
-                        title={p.blocked ? "Desbloquear" : "Bloquear"}
-                      >
-                        {p.blocked ? (
-                          <ShieldCheck className="h-4 w-4 text-success" />
-                        ) : (
-                          <ShieldOff className="h-4 w-4 text-destructive" />
-                        )}
-                      </Button>
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="icon" onClick={() => openEdit(p)} title="Editar XP">
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => setMaxLevel(p)} title="Simular nível máximo">
+                          <Zap className="h-4 w-4 text-amber-500" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => resetProgress(p)} title="Resetar progresso">
+                          <RotateCcw className="h-4 w-4 text-destructive" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => toggleBlock(p)}
+                          title={p.blocked ? "Desbloquear" : "Bloquear"}
+                        >
+                          {p.blocked ? (
+                            <ShieldCheck className="h-4 w-4 text-success" />
+                          ) : (
+                            <ShieldOff className="h-4 w-4 text-destructive" />
+                          )}
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
@@ -108,6 +175,55 @@ const AdminUsers = () => {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Edit XP Dialog */}
+      <Dialog open={!!editProfile} onOpenChange={(open) => !open && setEditProfile(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar XP — {editProfile?.display_name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div>
+              <Label>Nível atual</Label>
+              <p className="text-sm text-muted-foreground">
+                {editProfile ? currentLevelForXp(parseInt(editXp) || 0).name : ""}
+              </p>
+            </div>
+            <div>
+              <Label htmlFor="xp-input">XP</Label>
+              <Input
+                id="xp-input"
+                type="number"
+                min={0}
+                value={editXp}
+                onChange={(e) => setEditXp(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                O nível é calculado automaticamente com base no XP.
+              </p>
+            </div>
+            {dbLevels.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {dbLevels.map((l) => (
+                  <Button
+                    key={l.id}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs"
+                    onClick={() => setEditXp(String(l.min_xp))}
+                  >
+                    Nv{l.level_number} ({l.min_xp})
+                  </Button>
+                ))}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditProfile(null)}>Cancelar</Button>
+            <Button onClick={saveXp}>Salvar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
