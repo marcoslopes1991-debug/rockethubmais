@@ -5,11 +5,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield } from "lucide-react";
+import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star } from "lucide-react";
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import StreakBadge from "@/components/StreakBadge";
 import { getLevelInfo } from "@/lib/levels";
+import { motion } from "framer-motion";
 
 interface ProfileData {
   display_name: string;
@@ -17,6 +18,16 @@ interface ProfileData {
   streak_count: number;
   last_activity_date: string | null;
 }
+
+const container = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.1 } },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
+};
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
@@ -64,29 +75,45 @@ const Dashboard = () => {
   const hasUnanswered = answeredCount < totalQuestions;
   const xp = profile?.xp ?? 0;
   const level = getLevelInfo(xp);
+  const progressPercent = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container flex items-center justify-between h-16 px-4">
-          <div className="flex items-center gap-2">
+          <motion.div 
+            className="flex items-center gap-2"
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+          >
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
               <Zap className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="font-display font-bold text-lg">QuizLearn</span>
-          </div>
-          <div className="flex items-center gap-2">
+          </motion.div>
+          <div className="flex items-center gap-1 sm:gap-2">
             <StreakBadge streak={profile?.streak_count ?? 0} />
-            <Button variant="ghost" size="sm" onClick={() => navigate("/ranking")}>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/ranking")} className="hidden sm:flex">
               <Trophy className="h-4 w-4 mr-1" /> Ranking
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/items")}>
+            <Button variant="ghost" size="icon" onClick={() => navigate("/ranking")} className="sm:hidden">
+              <Trophy className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/items")} className="hidden sm:flex">
               <Backpack className="h-4 w-4 mr-1" /> Itens
             </Button>
+            <Button variant="ghost" size="icon" onClick={() => navigate("/items")} className="sm:hidden">
+              <Backpack className="h-4 w-4" />
+            </Button>
             {isAdmin && (
-              <Button variant="ghost" size="sm" onClick={() => navigate("/admin")}>
+              <Button variant="ghost" size="sm" onClick={() => navigate("/admin")} className="hidden sm:flex">
                 <Shield className="h-4 w-4 mr-1" /> Admin
+              </Button>
+            )}
+            {isAdmin && (
+              <Button variant="ghost" size="icon" onClick={() => navigate("/admin")} className="sm:hidden">
+                <Shield className="h-4 w-4" />
               </Button>
             )}
             <Button variant="ghost" size="icon" onClick={signOut}>
@@ -96,75 +123,103 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <main className="container px-4 py-8 max-w-2xl mx-auto space-y-6">
+      <motion.main 
+        className="container px-4 py-8 max-w-2xl mx-auto space-y-6"
+        variants={container}
+        initial="hidden"
+        animate="show"
+      >
         {/* Hero card with avatar */}
-        <Card className="glass-card overflow-hidden animate-slide-up">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-5">
-              <AvatarDisplay xp={xp} size="lg" />
-              <div className="flex-1 min-w-0 space-y-1">
-                <h1 className="text-2xl font-display font-bold truncate">
-                  {profile?.display_name || "Estudante"}
-                </h1>
-                <p className="text-sm text-muted-foreground">{level.name}</p>
-                {equippedItems.length > 0 && (
-                  <div className="flex gap-1 flex-wrap">
-                    {equippedItems.map((item, i) => (
-                      <span key={i} className="text-lg" title={item.name}>
-                        {item.icon_emoji}
-                      </span>
-                    ))}
+        <motion.div variants={item}>
+          <Card className="glass-card overflow-hidden">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-5">
+                <motion.div
+                  whileHover={{ scale: 1.05, rotate: 3 }}
+                  transition={{ type: "spring", stiffness: 400 }}
+                >
+                  <AvatarDisplay xp={xp} size="lg" />
+                </motion.div>
+                <div className="flex-1 min-w-0 space-y-1">
+                  <h1 className="text-2xl font-display font-bold truncate">
+                    {profile?.display_name || "Estudante"}
+                  </h1>
+                  <div className="flex items-center gap-1.5">
+                    <Star className="h-4 w-4 text-accent" />
+                    <p className="text-sm text-muted-foreground">{level.name}</p>
                   </div>
-                )}
+                  {equippedItems.length > 0 && (
+                    <div className="flex gap-1 flex-wrap">
+                      {equippedItems.map((eqItem, i) => (
+                        <motion.span 
+                          key={i} 
+                          className="text-lg" 
+                          title={eqItem.name}
+                          whileHover={{ scale: 1.3, rotate: 10 }}
+                        >
+                          {eqItem.icon_emoji}
+                        </motion.span>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="mt-5">
-              <LevelProgressBar xp={xp} />
-            </div>
-          </CardContent>
-        </Card>
+              <div className="mt-5">
+                <LevelProgressBar xp={xp} />
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-3 animate-slide-up" style={{ animationDelay: "0.1s" }}>
-          <Card className="glass-card">
-            <CardContent className="pt-5 pb-4 text-center">
-              <Zap className="h-6 w-6 text-xp mx-auto mb-1" />
-              <p className="text-2xl font-display font-bold">{xp}</p>
-              <p className="text-xs text-muted-foreground">XP Total</p>
-            </CardContent>
-          </Card>
-          <Card className="glass-card">
-            <CardContent className="pt-5 pb-4 text-center">
-              <Flame className="h-6 w-6 text-accent mx-auto mb-1" />
-              <p className="text-2xl font-display font-bold">{profile?.streak_count ?? 0}</p>
-              <p className="text-xs text-muted-foreground">Streak</p>
-            </CardContent>
-          </Card>
-          <Card className="glass-card">
-            <CardContent className="pt-5 pb-4 text-center">
-              <Target className="h-6 w-6 text-primary mx-auto mb-1" />
-              <p className="text-2xl font-display font-bold">{answeredCount}/{totalQuestions}</p>
-              <p className="text-xs text-muted-foreground">Missões</p>
-            </CardContent>
-          </Card>
-        </div>
+        <motion.div className="grid grid-cols-3 gap-3" variants={item}>
+          {[
+            { icon: Zap, value: xp, label: "XP Total", color: "text-xp" },
+            { icon: Flame, value: profile?.streak_count ?? 0, label: "Streak", color: "text-accent" },
+            { icon: Target, value: `${progressPercent}%`, label: "Progresso", color: "text-primary" },
+          ].map((stat, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.05, y: -4 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              <Card className="glass-card cursor-default">
+                <CardContent className="pt-5 pb-4 text-center">
+                  <stat.icon className={`h-6 w-6 ${stat.color} mx-auto mb-1`} />
+                  <p className="text-2xl font-display font-bold">{stat.value}</p>
+                  <p className="text-xs text-muted-foreground">{stat.label}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
 
         {/* Mission button */}
-        <div className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
+        <motion.div variants={item}>
           {hasUnanswered ? (
-            <Button onClick={() => navigate("/quiz")} size="lg" className="w-full text-lg h-14 font-display">
-              <Target className="h-5 w-5 mr-2" />
-              Responder missão do dia
-            </Button>
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Button onClick={() => navigate("/quiz")} size="lg" className="w-full text-lg h-14 font-display">
+                <Target className="h-5 w-5 mr-2" />
+                Responder missão do dia
+              </Button>
+            </motion.div>
           ) : (
             <Card className="glass-card text-center p-8">
-              <Trophy className="h-12 w-12 text-xp mx-auto mb-3" />
+              <motion.div
+                animate={{ rotate: [0, -10, 10, -10, 0] }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              >
+                <Trophy className="h-12 w-12 text-xp mx-auto mb-3" />
+              </motion.div>
               <h2 className="text-xl font-display font-bold">Parabéns!</h2>
               <p className="text-muted-foreground">Você respondeu todas as perguntas disponíveis 🎉</p>
             </Card>
           )}
-        </div>
-      </main>
+        </motion.div>
+      </motion.main>
     </div>
   );
 };
