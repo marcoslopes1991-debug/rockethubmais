@@ -56,6 +56,7 @@ const App = () => (
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <RockZAssistant />
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>
