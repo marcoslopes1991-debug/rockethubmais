@@ -33,6 +33,7 @@ const EvolutionMap = () => {
   const { user } = useAuth();
   const { levels, loading } = useLevels();
   const [xp, setXp] = useState(0);
+  const [streak, setStreak] = useState(0);
   const [selectedLevel, setSelectedLevel] = useState<DbLevel | null>(null);
   const [selectedReached, setSelectedReached] = useState(false);
 
@@ -40,10 +41,13 @@ const EvolutionMap = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("xp")
+      .select("xp, streak_count")
       .eq("user_id", user.id)
       .single()
-      .then(({ data }) => setXp(data?.xp ?? 0));
+      .then(({ data }) => {
+        setXp(data?.xp ?? 0);
+        setStreak(data?.streak_count ?? 0);
+      });
   }, [user]);
 
   if (loading) {
