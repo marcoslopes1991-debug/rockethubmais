@@ -114,6 +114,44 @@ const parseCSV = (text: string): RawQuestion[] => {
   });
 };
 
+const parseBulkText = (text: string): RawQuestion[] => {
+  const blocks = text.split(/\n{2,}/).filter((b) => b.trim());
+  const questions: RawQuestion[] = [];
+
+  for (const block of blocks) {
+    const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
+    const q: Record<string, string> = {};
+
+    for (const line of lines) {
+      const match = line.match(/^(.+?):\s*(.+)$/);
+      if (!match) {
+        if (!q.pergunta) q.pergunta = line;
+        continue;
+      }
+      const [, key, value] = match;
+      const k = key.toLowerCase().trim();
+      const map: Record<string, string> = {
+        pergunta: "pergunta", questão: "pergunta", questao: "pergunta", question: "pergunta",
+        alternativa_a: "alternativa_a", "alternativa a": "alternativa_a", a: "alternativa_a", "opção a": "alternativa_a", "opcao a": "alternativa_a",
+        alternativa_b: "alternativa_b", "alternativa b": "alternativa_b", b: "alternativa_b", "opção b": "alternativa_b", "opcao b": "alternativa_b",
+        alternativa_c: "alternativa_c", "alternativa c": "alternativa_c", c: "alternativa_c", "opção c": "alternativa_c", "opcao c": "alternativa_c",
+        alternativa_d: "alternativa_d", "alternativa d": "alternativa_d", d: "alternativa_d", "opção d": "alternativa_d", "opcao d": "alternativa_d",
+        resposta_correta: "resposta_correta", resposta: "resposta_correta", correta: "resposta_correta", correct: "resposta_correta",
+        explicacao: "explicacao", explicação: "explicacao", explanation: "explicacao",
+        nivel: "nivel", nível: "nivel", level: "nivel",
+        categoria: "categoria", category: "categoria",
+        dificuldade: "dificuldade", difficulty: "dificuldade",
+        xp: "xp", pontos: "xp",
+      };
+      const mapped = map[k];
+      if (mapped) q[mapped] = value.trim();
+    }
+
+    if (q.pergunta) questions.push(q as unknown as RawQuestion);
+  }
+  return questions;
+};
+
 const AdminImportQuestions = () => {
   const { toast } = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
