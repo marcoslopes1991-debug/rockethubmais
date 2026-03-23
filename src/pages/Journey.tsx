@@ -74,7 +74,7 @@ const Journey = () => {
                 />
               </div>
               <p className="text-xs text-muted-foreground mt-2 text-center">
-                {nextLevel.min_xp - xp} XP para o próximo nível
+                Continue evoluindo para desbloquear o próximo nível
               </p>
             </CardContent>
           </Card>

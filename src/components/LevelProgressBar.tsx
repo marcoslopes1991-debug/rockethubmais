@@ -37,7 +37,7 @@ const LevelProgressBar = ({ xp, className }: LevelProgressBarProps) => {
           <Zap className="h-3 w-3 text-xp" /> {xp} XP
         </span>
         {next ? (
-          <span>{next.min_xp - xp} XP para o próximo nível</span>
+          <span>Continue evoluindo para desbloquear o próximo nível</span>
         ) : (
           <span className="text-primary font-bold">Nível máximo! 🏆</span>
         )}
