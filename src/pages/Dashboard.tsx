@@ -75,7 +75,7 @@ const Dashboard = () => {
 
   const hasUnanswered = answeredCount < totalQuestions;
   const xp = profile?.xp ?? 0;
-  const level = getLevelInfo(xp);
+  const level = levels.length > 0 ? getLevelFromList(levels, xp) : { name: "Carregando..." };
   const progressPercent = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
 
   return (
