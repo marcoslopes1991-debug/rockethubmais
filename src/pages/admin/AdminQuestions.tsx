@@ -8,7 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Pencil, Trash2, Clock, CalendarClock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Question {
@@ -26,9 +28,27 @@ interface Question {
   mission_type: string;
   available_from: string | null;
   available_until: string | null;
+  is_active: boolean;
 }
 
-const emptyForm: Omit<Question, "id"> = {
+interface QuestionForm {
+  question: string;
+  option_a: string;
+  option_b: string;
+  option_c: string;
+  option_d: string;
+  correct_option: string;
+  explanation: string;
+  xp_reward: number;
+  category: string;
+  difficulty: string;
+  mission_type: string;
+  available_from: string | null;
+  available_until: string | null;
+  is_active: boolean;
+}
+
+const emptyForm: QuestionForm = {
   question: "",
   option_a: "",
   option_b: "",
@@ -42,12 +62,25 @@ const emptyForm: Omit<Question, "id"> = {
   mission_type: "daily",
   available_from: null,
   available_until: null,
+  is_active: true,
+};
+
+const difficultyLabels: Record<string, string> = {
+  easy: "Fácil",
+  medium: "Médio",
+  hard: "Difícil",
+};
+
+const missionTypeLabels: Record<string, { label: string; icon: string }> = {
+  daily: { label: "Diária", icon: "📋" },
+  extra: { label: "Extra", icon: "📝" },
+  special: { label: "Especial", icon: "⭐" },
 };
 
 const AdminQuestions = () => {
   const { toast } = useToast();
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState<QuestionForm>(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -92,6 +125,7 @@ const AdminQuestions = () => {
       mission_type: q.mission_type,
       available_from: q.available_from,
       available_until: q.available_until,
+      is_active: q.is_active,
     });
     setEditingId(q.id);
     setOpen(true);
@@ -105,10 +139,23 @@ const AdminQuestions = () => {
     }
   };
 
-  const difficultyLabels: Record<string, string> = {
-    easy: "Fácil",
-    medium: "Médio",
-    hard: "Difícil",
+  const handleToggleActive = async (q: Question) => {
+    const { error } = await supabase
+      .from("questions")
+      .update({ is_active: !q.is_active })
+      .eq("id", q.id);
+    if (!error) {
+      fetchQuestions();
+      toast({ title: q.is_active ? "Missão desativada" : "Missão ativada" });
+    }
+  };
+
+  const getScheduleStatus = (q: Question) => {
+    if (!q.is_active) return { label: "Inativa", variant: "secondary" as const };
+    const now = new Date().toISOString();
+    if (q.available_from && q.available_from > now) return { label: "Agendada", variant: "outline" as const };
+    if (q.available_until && q.available_until < now) return { label: "Expirada", variant: "secondary" as const };
+    return { label: "Ativa", variant: "default" as const };
   };
 
   return (
@@ -161,7 +208,7 @@ const AdminQuestions = () => {
                       <SelectItem value="hard">Difícil</SelectItem>
                     </SelectContent>
                   </Select>
-               </div>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -169,9 +216,9 @@ const AdminQuestions = () => {
                   <Select value={form.mission_type} onValueChange={(v) => setForm({ ...form, mission_type: v })}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="daily">Diária</SelectItem>
-                      <SelectItem value="extra">Extra</SelectItem>
-                      <SelectItem value="special">Especial</SelectItem>
+                      <SelectItem value="daily">📋 Diária</SelectItem>
+                      <SelectItem value="extra">📝 Extra</SelectItem>
+                      <SelectItem value="special">⭐ Especial</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -180,18 +227,49 @@ const AdminQuestions = () => {
                   <Input type="number" value={form.xp_reward} onChange={(e) => setForm({ ...form, xp_reward: Number(e.target.value) })} />
                 </div>
               </div>
-              {form.mission_type === "special" && (
+
+              {/* Scheduling section */}
+              <div className="border border-border rounded-lg p-4 space-y-3">
+                <div className="flex items-center gap-2 text-sm font-semibold">
+                  <CalendarClock className="h-4 w-4 text-primary" />
+                  Agendamento
+                </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <Label>Disponível a partir de</Label>
-                    <Input type="datetime-local" value={form.available_from ?? ""} onChange={(e) => setForm({ ...form, available_from: e.target.value || null })} />
+                    <Label>Data de liberação</Label>
+                    <Input
+                      type="datetime-local"
+                      value={form.available_from ?? ""}
+                      onChange={(e) => setForm({ ...form, available_from: e.target.value || null })}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {form.mission_type === "extra" ? "Disponível permanentemente após esta data" : "Visível a partir desta data"}
+                    </p>
                   </div>
                   <div>
-                    <Label>Disponível até</Label>
-                    <Input type="datetime-local" value={form.available_until ?? ""} onChange={(e) => setForm({ ...form, available_until: e.target.value || null })} />
+                    <Label>Data de expiração {form.mission_type === "extra" && "(opcional)"}</Label>
+                    <Input
+                      type="datetime-local"
+                      value={form.available_until ?? ""}
+                      onChange={(e) => setForm({ ...form, available_until: e.target.value || null })}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {form.mission_type === "special" ? "Missão expira após esta data" : "Deixe vazio para sem expiração"}
+                    </p>
                   </div>
                 </div>
-              )}
+                <div className="flex items-center gap-3">
+                  <Switch
+                    checked={form.is_active}
+                    onCheckedChange={(v) => setForm({ ...form, is_active: v })}
+                  />
+                  <Label>Missão ativa</Label>
+                  <span className="text-xs text-muted-foreground">
+                    {form.is_active ? "Será liberada conforme agendamento" : "Não aparecerá para os usuários"}
+                  </span>
+                </div>
+              </div>
+
               <div>
                 <Label>Explicação</Label>
                 <Textarea value={form.explanation} onChange={(e) => setForm({ ...form, explanation: e.target.value })} />
@@ -207,39 +285,48 @@ const AdminQuestions = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                 <TableHead>Pergunta</TableHead>
+                <TableHead>Pergunta</TableHead>
                 <TableHead>Tipo</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Categoria</TableHead>
                 <TableHead>Dificuldade</TableHead>
                 <TableHead>XP</TableHead>
-                <TableHead className="w-24">Ações</TableHead>
+                <TableHead className="w-28">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {questions.map((q) => (
-                <TableRow key={q.id}>
-                   <TableCell className="max-w-xs truncate">{q.question}</TableCell>
-                  <TableCell>
-                    {q.mission_type === "special" ? "⭐ Especial" : q.mission_type === "extra" ? "📝 Extra" : "📋 Diária"}
-                  </TableCell>
-                  <TableCell>{q.category}</TableCell>
-                  <TableCell>{difficultyLabels[q.difficulty] ?? q.difficulty}</TableCell>
-                  <TableCell>{q.xp_reward}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(q)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(q.id)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {questions.map((q) => {
+                const status = getScheduleStatus(q);
+                const mt = missionTypeLabels[q.mission_type] ?? { label: q.mission_type, icon: "📋" };
+                return (
+                  <TableRow key={q.id} className={!q.is_active ? "opacity-50" : ""}>
+                    <TableCell className="max-w-xs truncate">{q.question}</TableCell>
+                    <TableCell>{mt.icon} {mt.label}</TableCell>
+                    <TableCell>
+                      <Badge variant={status.variant}>{status.label}</Badge>
+                    </TableCell>
+                    <TableCell>{q.category}</TableCell>
+                    <TableCell>{difficultyLabels[q.difficulty] ?? q.difficulty}</TableCell>
+                    <TableCell>{q.xp_reward}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="icon" onClick={() => handleToggleActive(q)} title={q.is_active ? "Desativar" : "Ativar"}>
+                          <Clock className={`h-4 w-4 ${q.is_active ? "text-primary" : "text-muted-foreground"}`} />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleEdit(q)}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(q.id)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
               {questions.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                     Nenhuma pergunta cadastrada
                   </TableCell>
                 </TableRow>

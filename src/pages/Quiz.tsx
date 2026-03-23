@@ -59,12 +59,11 @@ const Quiz = () => {
       const now = new Date().toISOString();
       const unanswered = (allQuestions ?? []).filter((q: any) => {
         if (answeredSet.has(q.id)) return false;
+        if (q.is_active === false) return false;
         const qType = q.mission_type || "daily";
         if (qType !== missionType) return false;
-        if (qType === "special") {
-          if (q.available_from && q.available_from > now) return false;
-          if (q.available_until && q.available_until < now) return false;
-        }
+        if (q.available_from && q.available_from > now) return false;
+        if (q.available_until && q.available_until < now) return false;
         return true;
       });
       
