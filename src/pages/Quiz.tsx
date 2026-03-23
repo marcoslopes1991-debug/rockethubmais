@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useAchievements } from "@/hooks/useAchievements";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Check, X, Zap, ArrowRight } from "lucide-react";
@@ -25,6 +26,7 @@ type OptionKey = "a" | "b" | "c" | "d";
 
 const Quiz = () => {
   const { user } = useAuth();
+  const { checkAndUnlock } = useAchievements();
   const navigate = useNavigate();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -116,10 +118,29 @@ const Quiz = () => {
         .single();
 
       if (profile) {
+        const newXp = profile.xp + currentQuestion.xp_reward;
         await supabase
           .from("profiles")
-          .update({ xp: profile.xp + currentQuestion.xp_reward })
+          .update({ xp: newXp })
           .eq("user_id", user.id);
+
+        // Check achievements after XP update
+        const { data: profileFull } = await supabase
+          .from("profiles")
+          .select("xp, streak_count")
+          .eq("user_id", user.id)
+          .single();
+        const { count: correctCount } = await supabase
+          .from("answers")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .eq("is_correct", true);
+        
+        checkAndUnlock({
+          xp: profileFull?.xp ?? newXp,
+          streak: profileFull?.streak_count ?? 0,
+          correctAnswers: correctCount ?? 0,
+        });
       }
     } else {
       setStreak(0);

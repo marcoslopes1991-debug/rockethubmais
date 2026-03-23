@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon } from "lucide-react";
+import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon, Award } from "lucide-react";
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import StreakBadge from "@/components/StreakBadge";
@@ -118,6 +118,12 @@ const Dashboard = () => {
             </Button>
             <Button variant="ghost" size="icon" onClick={() => navigate("/items")} className="sm:hidden">
               <Backpack className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/achievements")} className="hidden sm:flex">
+              <Award className="h-4 w-4 mr-1" /> Conquistas
+            </Button>
+            <Button variant="ghost" size="icon" onClick={() => navigate("/achievements")} className="sm:hidden">
+              <Award className="h-4 w-4" />
             </Button>
             {isAdmin && (
               <Button variant="ghost" size="sm" onClick={() => navigate("/admin")} className="hidden sm:flex">

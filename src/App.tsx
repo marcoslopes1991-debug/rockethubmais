@@ -20,6 +20,7 @@ import AdminImportQuestions from "./pages/admin/AdminImportQuestions";
 import AdminLevels from "./pages/admin/AdminLevels";
 import Journey from "./pages/Journey";
 import EvolutionMap from "./pages/EvolutionMap";
+import Achievements from "./pages/Achievements";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/evolution-map" element={<EvolutionMap />} />
             <Route path="/ranking" element={<Ranking />} />
             <Route path="/items" element={<Items />} />
+            <Route path="/achievements" element={<Achievements />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="questions" element={<AdminQuestions />} />

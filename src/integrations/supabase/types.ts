@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          category: string
+          condition_type: string
+          condition_value: number
+          created_at: string
+          description: string
+          icon_emoji: string
+          id: string
+          key: string
+          name: string
+        }
+        Insert: {
+          category?: string
+          condition_type: string
+          condition_value?: number
+          created_at?: string
+          description?: string
+          icon_emoji?: string
+          id?: string
+          key: string
+          name: string
+        }
+        Update: {
+          category?: string
+          condition_type?: string
+          condition_value?: number
+          created_at?: string
+          description?: string
+          icon_emoji?: string
+          id?: string
+          key?: string
+          name?: string
+        }
+        Relationships: []
+      }
       answers: {
         Row: {
           answered_at: string
@@ -192,6 +228,35 @@ export type Database = {
           xp_reward?: number
         }
         Relationships: []
+      }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          id?: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_items: {
         Row: {
