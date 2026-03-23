@@ -38,6 +38,8 @@ const EvolutionMap = () => {
   const [streak, setStreak] = useState(0);
   const [selectedLevel, setSelectedLevel] = useState<DbLevel | null>(null);
   const [selectedReached, setSelectedReached] = useState(false);
+  const [celebratingLevel, setCelebratingLevel] = useState<DbLevel | null>(null);
+  const prevLevelRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -51,6 +53,19 @@ const EvolutionMap = () => {
         setStreak(data?.streak_count ?? 0);
       });
   }, [user]);
+
+  // Detect level-up and trigger celebration
+  useEffect(() => {
+    if (loading || levels.length === 0) return;
+    const current = getLevelFromList(levels, xp);
+    if (prevLevelRef.current !== null && current.level_number > prevLevelRef.current) {
+      setCelebratingLevel(current);
+      // Fire confetti
+      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+      setTimeout(() => confetti({ particleCount: 60, spread: 100, origin: { y: 0.5 } }), 300);
+    }
+    prevLevelRef.current = current.level_number;
+  }, [xp, levels, loading]);
 
   if (loading) {
     return (
