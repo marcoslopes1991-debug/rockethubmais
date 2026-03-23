@@ -7,7 +7,7 @@ import { isSoundEnabled, setSoundEnabled } from "@/lib/sounds";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Volume2, Shield, Star, Zap } from "lucide-react";
+import { ArrowLeft, Volume2, Shield, Star, Zap, Bell } from "lucide-react";
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import { motion } from "framer-motion";
@@ -16,18 +16,22 @@ const Profile = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { levels } = useLevels();
-  const [profile, setProfile] = useState<{ display_name: string; xp: number } | null>(null);
+  const [profile, setProfile] = useState<{ display_name: string; xp: number; notifications_enabled: boolean } | null>(null);
   const [soundOn, setSoundOn] = useState(isSoundEnabled());
+  const [notificationsOn, setNotificationsOn] = useState(true);
 
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, xp")
+      .select("display_name, xp, notifications_enabled")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
-        if (data) setProfile(data);
+        if (data) {
+          setProfile(data as any);
+          setNotificationsOn((data as any).notifications_enabled ?? true);
+        }
       });
   }, [user]);
 
@@ -94,6 +98,36 @@ const Profile = () => {
                 <p className="text-xs text-muted-foreground">Acerto, erro, conquista e evolução de nível</p>
               </div>
               <Switch checked={soundOn} onCheckedChange={toggleSound} />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Notification settings */}
+        <Card className="glass-card">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Bell className="h-5 w-5 text-primary" />
+              Notificações
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium">Notificações do app</p>
+                <p className="text-xs text-muted-foreground">Missões especiais, streak em risco e lembretes</p>
+              </div>
+              <Switch
+                checked={notificationsOn}
+                onCheckedChange={async (checked) => {
+                  setNotificationsOn(checked);
+                  if (user) {
+                    await supabase
+                      .from("profiles")
+                      .update({ notifications_enabled: checked })
+                      .eq("user_id", user.id);
+                  }
+                }}
+              />
             </div>
           </CardContent>
         </Card>

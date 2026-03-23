@@ -166,6 +166,36 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          read?: boolean
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           blocked: boolean
@@ -173,6 +203,7 @@ export type Database = {
           display_name: string
           id: string
           last_activity_date: string | null
+          notifications_enabled: boolean
           streak_count: number
           updated_at: string
           user_id: string
@@ -184,6 +215,7 @@ export type Database = {
           display_name?: string
           id?: string
           last_activity_date?: string | null
+          notifications_enabled?: boolean
           streak_count?: number
           updated_at?: string
           user_id: string
@@ -195,6 +227,7 @@ export type Database = {
           display_name?: string
           id?: string
           last_activity_date?: string | null
+          notifications_enabled?: boolean
           streak_count?: number
           updated_at?: string
           user_id?: string

@@ -14,6 +14,7 @@ import { useLevels, getLevelFromList } from "@/hooks/useLevels";
 import { motion } from "framer-motion";
 import SoundToggle from "@/components/SoundToggle";
 import MissionsSections from "@/components/MissionsSections";
+import NotificationBell from "@/components/NotificationBell";
 
 interface ProfileData {
   display_name: string;
@@ -140,6 +141,7 @@ const Dashboard = () => {
                 <Shield className="h-4 w-4" />
               </Button>
             )}
+            <NotificationBell />
             <SoundToggle />
             <Button variant="ghost" size="icon" onClick={signOut}>
               <LogOut className="h-4 w-4" />
