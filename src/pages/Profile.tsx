@@ -7,7 +7,7 @@ import { isSoundEnabled, setSoundEnabled } from "@/lib/sounds";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Volume2, Shield, Star, Zap } from "lucide-react";
+import { ArrowLeft, Volume2, Shield, Star, Zap, Bell } from "lucide-react";
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import { motion } from "framer-motion";
