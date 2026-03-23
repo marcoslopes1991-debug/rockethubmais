@@ -9,6 +9,7 @@ import { ArrowLeft, Check, X, Zap, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
+import { playCorrectSound, playWrongSound } from "@/lib/sounds";
 
 interface Question {
   id: string;
