@@ -146,6 +146,7 @@ const Quiz = () => {
       }
     } else {
       setStreak(0);
+      playWrongSound();
     }
   };
 

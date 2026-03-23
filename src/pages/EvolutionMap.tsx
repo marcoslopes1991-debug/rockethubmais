@@ -61,7 +61,8 @@ const EvolutionMap = () => {
     const current = getLevelFromList(levels, xp);
     if (prevLevelRef.current !== null && current.level_number > prevLevelRef.current) {
       setCelebratingLevel(current);
-      // Fire confetti
+      // Fire confetti + sound
+      playLevelUpSound();
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
       setTimeout(() => confetti({ particleCount: 60, spread: 100, origin: { y: 0.5 } }), 300);
     }

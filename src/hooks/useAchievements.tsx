@@ -75,7 +75,8 @@ export function useAchievements() {
           .eq("user_id", user.id);
         if (data) setUserAchievements(data as UserAchievement[]);
 
-        // Show toast for each
+        // Play sound + show toast for each
+        playAchievementSound();
         for (const ach of newlyUnlocked) {
           toast.success(`${ach.icon_emoji} Conquista desbloqueada!`, {
             description: `${ach.name} — ${ach.description}`,
