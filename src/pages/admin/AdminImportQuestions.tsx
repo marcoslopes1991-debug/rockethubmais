@@ -229,27 +229,63 @@ const AdminImportQuestions = () => {
     <div className="space-y-6 max-w-5xl">
       <h1 className="text-2xl font-display font-bold">Importar Perguntas</h1>
 
-      <Card className="glass-card">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Upload className="h-5 w-5" /> Upload de Arquivo
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            Aceita arquivos <strong>.json</strong> ou <strong>.csv</strong> com os campos:
-            pergunta, alternativa_a, alternativa_b, alternativa_c, alternativa_d,
-            resposta_correta (a/b/c/d), explicacao, nivel, categoria, dificuldade, xp
-          </p>
-          <div className="flex gap-3 items-center">
-            <Button variant="outline" onClick={() => fileRef.current?.click()}>
-              <FileJson className="h-4 w-4 mr-1" /> Selecionar Arquivo
-            </Button>
-            <input ref={fileRef} type="file" accept=".json,.csv" className="hidden" onChange={handleFile} />
-            {fileName && <span className="text-sm text-muted-foreground">{fileName}</span>}
-          </div>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="file" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="file"><Upload className="h-4 w-4 mr-1" /> Upload de Arquivo</TabsTrigger>
+          <TabsTrigger value="paste"><ClipboardPaste className="h-4 w-4 mr-1" /> Colar Texto</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="file">
+          <Card className="glass-card">
+            <CardContent className="space-y-4 pt-6">
+              <p className="text-sm text-muted-foreground">
+                Aceita arquivos <strong>.json</strong> ou <strong>.csv</strong> com os campos:
+                pergunta, alternativa_a, alternativa_b, alternativa_c, alternativa_d,
+                resposta_correta (a/b/c/d), explicacao, nivel, categoria, dificuldade, xp
+              </p>
+              <div className="flex gap-3 items-center">
+                <Button variant="outline" onClick={() => fileRef.current?.click()}>
+                  <FileJson className="h-4 w-4 mr-1" /> Selecionar Arquivo
+                </Button>
+                <input ref={fileRef} type="file" accept=".json,.csv" className="hidden" onChange={handleFile} />
+                {fileName && <span className="text-sm text-muted-foreground">{fileName}</span>}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="paste">
+          <Card className="glass-card">
+            <CardContent className="space-y-4 pt-6">
+              <p className="text-sm text-muted-foreground">
+                Cole múltiplas perguntas separadas por <strong>linha em branco</strong>. Formato por pergunta:
+              </p>
+              <pre className="text-xs bg-muted/50 p-3 rounded-md text-muted-foreground whitespace-pre-wrap">
+{`Pergunta: Qual é a transação para criar ordem de venda?
+A: VA01
+B: VA02
+C: VA03
+D: MM01
+Resposta: a
+Explicação: VA01 é a transação padrão...
+Categoria: vendas
+Dificuldade: facil
+Nível: usuario
+XP: 10`}
+              </pre>
+              <Textarea
+                placeholder="Cole suas perguntas aqui..."
+                className="min-h-[200px] font-mono text-sm"
+                value={bulkText}
+                onChange={(e) => setBulkText(e.target.value)}
+              />
+              <Button onClick={handleParse} disabled={!bulkText.trim()}>
+                <ClipboardPaste className="h-4 w-4 mr-1" /> Processar Texto
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {result && (
         <Card className="border-primary/30 bg-primary/5">
