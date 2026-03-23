@@ -307,7 +307,7 @@ XP: 10`}
               {invalidCount > 0 && <Badge variant="destructive">{invalidCount} com erros</Badge>}
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => { setItems([]); setFileName(""); if (fileRef.current) fileRef.current.value = ""; }}>
+              <Button variant="outline" onClick={() => { setItems([]); setFileName(""); setBulkText(""); if (fileRef.current) fileRef.current.value = ""; }}>
                 Cancelar
               </Button>
               <Button onClick={handleImport} disabled={validCount === 0 || importing}>
