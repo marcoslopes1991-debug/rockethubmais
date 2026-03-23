@@ -228,47 +228,88 @@ const AdminQuestions = () => {
                 </div>
               </div>
 
-              {/* Scheduling section */}
-              <div className="border border-border rounded-lg p-4 space-y-3">
-                <div className="flex items-center gap-2 text-sm font-semibold">
-                  <CalendarClock className="h-4 w-4 text-primary" />
-                  Agendamento
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label>Data de liberação</Label>
-                    <Input
-                      type="datetime-local"
-                      value={form.available_from ?? ""}
-                      onChange={(e) => setForm({ ...form, available_from: e.target.value || null })}
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {form.mission_type === "extra" ? "Disponível permanentemente após esta data" : "Visível a partir desta data"}
-                    </p>
+              {/* Scheduling section - conditional per mission type */}
+              {form.mission_type === "daily" && (
+                <div className="border border-border rounded-lg p-4 space-y-2">
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    <CalendarClock className="h-4 w-4 text-primary" />
+                    Disponibilidade
                   </div>
-                  <div>
-                    <Label>Data de expiração {form.mission_type === "extra" && "(opcional)"}</Label>
-                    <Input
-                      type="datetime-local"
-                      value={form.available_until ?? ""}
-                      onChange={(e) => setForm({ ...form, available_until: e.target.value || null })}
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {form.mission_type === "special" ? "Missão expira após esta data" : "Deixe vazio para sem expiração"}
-                    </p>
+                  <p className="text-sm text-muted-foreground">
+                    Missões diárias ficam sempre disponíveis. Não é necessário definir datas.
+                  </p>
+                  <div className="flex items-center gap-3 pt-1">
+                    <Switch checked={form.is_active} onCheckedChange={(v) => setForm({ ...form, is_active: v })} />
+                    <Label>Missão ativa</Label>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Switch
-                    checked={form.is_active}
-                    onCheckedChange={(v) => setForm({ ...form, is_active: v })}
-                  />
-                  <Label>Missão ativa</Label>
-                  <span className="text-xs text-muted-foreground">
-                    {form.is_active ? "Será liberada conforme agendamento" : "Não aparecerá para os usuários"}
-                  </span>
+              )}
+
+              {form.mission_type === "extra" && (
+                <div className="border border-border rounded-lg p-4 space-y-3">
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    <CalendarClock className="h-4 w-4 text-primary" />
+                    Agendamento — Extra
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>Data de liberação *</Label>
+                      <Input
+                        type="datetime-local"
+                        value={form.available_from ?? ""}
+                        onChange={(e) => setForm({ ...form, available_from: e.target.value || null })}
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">Disponível permanentemente após esta data</p>
+                    </div>
+                    <div>
+                      <Label>Data de expiração (opcional)</Label>
+                      <Input
+                        type="datetime-local"
+                        value={form.available_until ?? ""}
+                        onChange={(e) => setForm({ ...form, available_until: e.target.value || null })}
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">Deixe vazio para sem expiração</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Switch checked={form.is_active} onCheckedChange={(v) => setForm({ ...form, is_active: v })} />
+                    <Label>Missão ativa</Label>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {form.mission_type === "special" && (
+                <div className="border border-accent/30 rounded-lg p-4 space-y-3 bg-accent/5">
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    <CalendarClock className="h-4 w-4 text-accent" />
+                    Agendamento — Especial
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>Data de liberação *</Label>
+                      <Input
+                        type="datetime-local"
+                        value={form.available_from ?? ""}
+                        onChange={(e) => setForm({ ...form, available_from: e.target.value || null })}
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">Visível a partir desta data</p>
+                    </div>
+                    <div>
+                      <Label>Data de expiração *</Label>
+                      <Input
+                        type="datetime-local"
+                        value={form.available_until ?? ""}
+                        onChange={(e) => setForm({ ...form, available_until: e.target.value || null })}
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">Missão expira após esta data</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Switch checked={form.is_active} onCheckedChange={(v) => setForm({ ...form, is_active: v })} />
+                    <Label>Missão ativa</Label>
+                  </div>
+                </div>
+              )}
 
               <div>
                 <Label>Explicação</Label>
