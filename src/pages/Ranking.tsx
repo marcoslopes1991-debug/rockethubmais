@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Crown, Medal, Zap, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getLevelInfo } from "@/lib/levels";
+import { useLevels, getLevelFromList } from "@/hooks/useLevels";
 import AvatarDisplay from "@/components/AvatarDisplay";
 
 interface RankProfile {
