@@ -111,6 +111,7 @@ const Quiz = () => {
       setShowXpBurst(true);
       setTimeout(() => setShowXpBurst(false), 1200);
       fireConfetti();
+      playCorrectSound();
 
       const { data: profile } = await supabase
         .from("profiles")
