@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, ShieldOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getLevelInfo } from "@/lib/levels";
+import { useLevels, getLevelFromList } from "@/hooks/useLevels";
 
 interface Profile {
   id: string;
