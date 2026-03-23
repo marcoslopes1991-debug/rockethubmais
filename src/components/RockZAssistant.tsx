@@ -143,9 +143,9 @@ export default function RockZAssistant() {
           >
             {/* Header */}
             <div className="flex items-center gap-3 px-4 py-3 bg-primary text-primary-foreground">
-              <img src={rockzMascot} alt="RockZ" width={36} height={36} className="rounded-full bg-white/20" />
+              <img src={aiImage} alt={aiName} width={36} height={36} className="rounded-full bg-white/20" />
               <div className="flex-1 min-w-0">
-                <h3 className="font-display font-bold text-sm">RockZ - Assistente IA</h3>
+                <h3 className="font-display font-bold text-sm">{aiName} - Assistente IA</h3>
                 <p className="text-xs opacity-80">Especialista em SAP SD</p>
               </div>
               <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-white/20 h-8 w-8" onClick={() => setOpen(false)}>
