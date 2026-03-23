@@ -19,6 +19,7 @@ const items = [
   { title: "Itens", url: "/admin/items", icon: Package },
   { title: "Usuários", url: "/admin/users", icon: Users },
   { title: "Importar", url: "/admin/import", icon: Upload },
+  { title: "Níveis", url: "/admin/levels", icon: TrendingUp },
 ];
 
 export function AdminSidebar() {
