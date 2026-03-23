@@ -102,3 +102,11 @@ export function playAchievementSound() {
     { freq: 1760, duration: 0.3, delay: 0.24, type: "sine", gain: 1 },
   ]);
 }
+
+/** Soft pop — new notification */
+export function playNotificationSound() {
+  playTone([
+    { freq: 740, duration: 0.08, delay: 0, type: "sine", gain: 0.5 },
+    { freq: 988, duration: 0.15, delay: 0.06, type: "sine", gain: 0.7 },
+  ]);
+}
