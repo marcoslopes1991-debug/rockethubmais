@@ -143,7 +143,7 @@ const Quiz = () => {
         .single();
 
       if (profile) {
-        const newXp = profile.xp + currentQuestion.xp_reward;
+        const newXp = profile.xp + effectiveXp;
         await supabase
           .from("profiles")
           .update({ xp: newXp })

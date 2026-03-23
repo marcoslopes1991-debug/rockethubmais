@@ -279,8 +279,11 @@ const Dashboard = () => {
               <h2 className="text-xl font-display font-bold">Parabéns!</h2>
               <p className="text-muted-foreground">Você respondeu todas as perguntas disponíveis 🎉</p>
             </Card>
-          )}
+           )}
         </motion.div>
+
+        {/* Extra & Special Missions */}
+        <MissionsSections />
       </motion.main>
     </div>
   );

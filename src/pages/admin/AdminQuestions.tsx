@@ -23,6 +23,9 @@ interface Question {
   xp_reward: number;
   category: string;
   difficulty: string;
+  mission_type: string;
+  available_from: string | null;
+  available_until: string | null;
 }
 
 const emptyForm: Omit<Question, "id"> = {
@@ -36,6 +39,9 @@ const emptyForm: Omit<Question, "id"> = {
   xp_reward: 10,
   category: "geral",
   difficulty: "medium",
+  mission_type: "daily",
+  available_from: null,
+  available_until: null,
 };
 
 const AdminQuestions = () => {
