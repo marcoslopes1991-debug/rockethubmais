@@ -20,6 +20,7 @@ interface Profile {
 
 const AdminUsers = () => {
   const { toast } = useToast();
+  const { levels: dbLevels } = useLevels();
   const [profiles, setProfiles] = useState<Profile[]>([]);
 
   const fetchProfiles = async () => {
