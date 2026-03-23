@@ -151,6 +151,10 @@ const EvolutionMap = () => {
                 isCurrent={isCurrent}
                 OfficeIcon={officeIcons[i % officeIcons.length]}
                 onClick={() => {
+                  if (isCurrent) {
+                    navigate("/quiz");
+                    return;
+                  }
                   setSelectedLevel(level);
                   setSelectedReached(isReached);
                 }}
