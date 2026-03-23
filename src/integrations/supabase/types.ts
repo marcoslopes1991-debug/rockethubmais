@@ -50,6 +50,27 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_config: {
+        Row: {
+          ai_name: string
+          button_image_url: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          ai_name?: string
+          button_image_url?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          ai_name?: string
+          button_image_url?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       answers: {
         Row: {
           answered_at: string
