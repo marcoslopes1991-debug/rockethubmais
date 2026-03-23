@@ -137,7 +137,7 @@ const EvolutionMap = () => {
         </motion.div>
 
         {/* Map trail */}
-        <div className="relative flex flex-col items-center">
+        <div className="relative flex flex-col gap-6 sm:gap-10">
           {levels.map((level, i) => {
             const isReached = xp >= level.min_xp;
             const isCurrent = level.level_number === currentLevel.level_number;
