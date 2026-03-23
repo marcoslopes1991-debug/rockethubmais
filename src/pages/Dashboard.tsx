@@ -139,6 +139,7 @@ const Dashboard = () => {
                 <Shield className="h-4 w-4" />
               </Button>
             )}
+            <SoundToggle />
             <Button variant="ghost" size="icon" onClick={signOut}>
               <LogOut className="h-4 w-4" />
             </Button>
