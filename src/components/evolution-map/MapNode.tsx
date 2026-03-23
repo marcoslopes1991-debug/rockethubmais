@@ -140,6 +140,15 @@ const MapNode = ({ level, index, isReached, isCurrent, OfficeIcon, onClick }: Ma
               {level.name}
             </motion.span>
           )}
+          {isCurrent && (
+            <motion.span
+              className="text-[10px] sm:text-xs font-bold text-primary mt-1 flex items-center gap-1"
+              animate={{ opacity: [0.7, 1, 0.7] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+            >
+              ▶ Continuar jornada
+            </motion.span>
+          )}
           {!isReached && (
             <span className="text-[10px] text-muted-foreground/40 italic">
               Bloqueado
