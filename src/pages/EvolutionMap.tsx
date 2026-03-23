@@ -187,6 +187,12 @@ const EvolutionMap = () => {
         reached={selectedReached}
         onClose={() => setSelectedLevel(null)}
       />
+
+      {/* Level-up celebration */}
+      <LevelUpCelebration
+        level={celebratingLevel}
+        onClose={() => setCelebratingLevel(null)}
+      />
     </div>
   );
 };
