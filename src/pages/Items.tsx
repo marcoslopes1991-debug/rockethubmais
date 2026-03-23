@@ -68,7 +68,7 @@ const Items = () => {
     userItems.some((ui) => ui.item_id === item.id && ui.equipped);
 
   const canUnlock = (item: Item) =>
-    xp >= item.required_xp && level.level >= item.required_level && !isUnlocked(item);
+    xp >= item.required_xp && level.level_number >= item.required_level && !isUnlocked(item);
 
   const handleUnlock = async (item: Item) => {
     if (!user || !canUnlock(item)) return;

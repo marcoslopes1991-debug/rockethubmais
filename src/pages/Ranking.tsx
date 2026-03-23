@@ -70,7 +70,7 @@ const Ranking = () => {
             ) : (
               <div className="space-y-2">
                 {profiles.map((p, i) => {
-                  const levelInfo = getLevelInfo(p.xp);
+                  const levelInfo = levels.length > 0 ? getLevelFromList(levels, p.xp) : { name: "..." };
                   return (
                     <div
                       key={p.user_id}
