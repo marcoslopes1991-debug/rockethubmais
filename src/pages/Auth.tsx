@@ -67,6 +67,49 @@ const Auth = () => {
     setLoading(false);
   };
 
+  if (isForgot) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <Card className="w-full max-w-md glass-card animate-slide-up">
+          <CardHeader className="text-center space-y-2">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary">
+              <Zap className="h-7 w-7 text-primary-foreground" />
+            </div>
+            <CardTitle className="text-2xl font-display">Esqueci minha senha</CardTitle>
+            <CardDescription>Digite seu e-mail para receber o link de redefinição</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">E-mail</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="seu@email.com"
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                {loading ? "Enviando..." : "Enviar link"}
+              </Button>
+            </form>
+            <div className="mt-4 text-center">
+              <button
+                type="button"
+                onClick={() => setIsForgot(false)}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                Voltar ao login
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md glass-card animate-slide-up">
@@ -117,6 +160,17 @@ const Auth = () => {
                 minLength={6}
               />
             </div>
+            {isLogin && (
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => setIsForgot(true)}
+                  className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Esqueci minha senha
+                </button>
+              </div>
+            )}
             <Button type="submit" className="w-full" size="lg" disabled={loading}>
               {loading ? "Carregando..." : isLogin ? "Entrar" : "Criar conta"}
             </Button>
