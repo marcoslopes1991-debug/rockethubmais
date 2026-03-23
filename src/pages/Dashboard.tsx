@@ -119,6 +119,12 @@ const Dashboard = () => {
             <Button variant="ghost" size="icon" onClick={() => navigate("/items")} className="sm:hidden">
               <Backpack className="h-4 w-4" />
             </Button>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/achievements")} className="hidden sm:flex">
+              <Award className="h-4 w-4 mr-1" /> Conquistas
+            </Button>
+            <Button variant="ghost" size="icon" onClick={() => navigate("/achievements")} className="sm:hidden">
+              <Award className="h-4 w-4" />
+            </Button>
             {isAdmin && (
               <Button variant="ghost" size="sm" onClick={() => navigate("/admin")} className="hidden sm:flex">
                 <Shield className="h-4 w-4 mr-1" /> Admin
