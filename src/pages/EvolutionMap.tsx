@@ -8,11 +8,13 @@ import {
   Armchair, Laptop, Presentation, BookOpen, Trophy, Rocket, Crown,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import confetti from "canvas-confetti";
 import OfficeBackground from "@/components/evolution-map/OfficeBackground";
 import MapNode from "@/components/evolution-map/MapNode";
 import LevelDetailDialog from "@/components/evolution-map/LevelDetailDialog";
+import LevelUpCelebration from "@/components/evolution-map/LevelUpCelebration";
 import type { DbLevel } from "@/hooks/useLevels";
 
 const officeIcons = [
