@@ -157,8 +157,8 @@ export default function RockZAssistant() {
             <ScrollArea className="flex-1 p-4">
               {messages.length === 0 && (
                 <div className="text-center py-8 space-y-3">
-                  <img src={rockzMascot} alt="RockZ" width={80} height={80} className="mx-auto" loading="lazy" />
-                  <p className="text-sm font-medium">Olá! Eu sou o RockZ 🤖</p>
+                  <img src={aiImage} alt={aiName} width={80} height={80} className="mx-auto" loading="lazy" />
+                  <p className="text-sm font-medium">Olá! Eu sou o {aiName} 🤖</p>
                   <p className="text-xs text-muted-foreground">Seu assistente de aprendizado SAP SD. Pergunte qualquer coisa!</p>
                   <div className="flex flex-wrap justify-center gap-2 mt-3">
                     {["O que é SAP SD?", "Dicas de estudo", "Explique pedido de venda"].map((q) => (
