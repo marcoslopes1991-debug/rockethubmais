@@ -19,6 +19,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminImportQuestions from "./pages/admin/AdminImportQuestions";
 import AdminLevels from "./pages/admin/AdminLevels";
 import Journey from "./pages/Journey";
+import EvolutionMap from "./pages/EvolutionMap";
 
 const queryClient = new QueryClient();
 
