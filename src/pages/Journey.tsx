@@ -63,7 +63,7 @@ const Journey = () => {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between text-sm mb-2">
                 <span className="font-display font-bold">{currentLevel.name}</span>
-                <span className="text-muted-foreground">→ {nextLevel.name}</span>
+                <span className="text-muted-foreground">Continue evoluindo para desbloquear o próximo nível</span>
               </div>
               <div className="h-3 bg-muted rounded-full overflow-hidden">
                 <motion.div
