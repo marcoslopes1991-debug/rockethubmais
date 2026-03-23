@@ -263,7 +263,7 @@ const Quiz = () => {
                   exit={{ opacity: 0, y: -30 }}
                   transition={{ type: "spring", stiffness: 500 }}
                 >
-                  +{currentQuestion.xp_reward} XP
+                  +{Math.round(currentQuestion.xp_reward * xpMultiplier)} XP
                 </motion.span>
               )}
             </AnimatePresence>
