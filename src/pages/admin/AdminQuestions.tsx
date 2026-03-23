@@ -89,6 +89,9 @@ const AdminQuestions = () => {
       xp_reward: q.xp_reward,
       category: q.category,
       difficulty: q.difficulty,
+      mission_type: q.mission_type,
+      available_from: q.available_from,
+      available_until: q.available_until,
     });
     setEditingId(q.id);
     setOpen(true);
