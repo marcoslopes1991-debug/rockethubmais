@@ -9,7 +9,7 @@ import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star } from "luci
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import StreakBadge from "@/components/StreakBadge";
-import { getLevelInfo } from "@/lib/levels";
+import { useLevels, getLevelFromList } from "@/hooks/useLevels";
 import { motion } from "framer-motion";
 
 interface ProfileData {
