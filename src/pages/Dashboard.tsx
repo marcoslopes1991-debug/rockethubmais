@@ -101,6 +101,12 @@ const Dashboard = () => {
             <Button variant="ghost" size="icon" onClick={() => navigate("/ranking")} className="sm:hidden">
               <Trophy className="h-4 w-4" />
             </Button>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/journey")} className="hidden sm:flex">
+              <Star className="h-4 w-4 mr-1" /> Jornada
+            </Button>
+            <Button variant="ghost" size="icon" onClick={() => navigate("/journey")} className="sm:hidden">
+              <Star className="h-4 w-4" />
+            </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate("/items")} className="hidden sm:flex">
               <Backpack className="h-4 w-4 mr-1" /> Itens
             </Button>

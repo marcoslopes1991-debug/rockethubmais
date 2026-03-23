@@ -43,6 +43,7 @@ const App = () => (
               <Route path="items" element={<AdminItems />} />
               <Route path="users" element={<AdminUsers />} />
               <Route path="import" element={<AdminImportQuestions />} />
+              <Route path="levels" element={<AdminLevels />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
