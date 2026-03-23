@@ -16,6 +16,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminQuestions from "./pages/admin/AdminQuestions";
 import AdminItems from "./pages/admin/AdminItems";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminImportQuestions from "./pages/admin/AdminImportQuestions";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => (
               <Route path="questions" element={<AdminQuestions />} />
               <Route path="items" element={<AdminItems />} />
               <Route path="users" element={<AdminUsers />} />
+              <Route path="import" element={<AdminImportQuestions />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

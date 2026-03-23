@@ -126,6 +126,7 @@ export type Database = {
           difficulty: string
           explanation: string
           id: string
+          nivel: string
           option_a: string
           option_b: string
           option_c: string
@@ -140,6 +141,7 @@ export type Database = {
           difficulty?: string
           explanation?: string
           id?: string
+          nivel?: string
           option_a: string
           option_b: string
           option_c: string
@@ -154,6 +156,7 @@ export type Database = {
           difficulty?: string
           explanation?: string
           id?: string
+          nivel?: string
           option_a?: string
           option_b?: string
           option_c?: string
