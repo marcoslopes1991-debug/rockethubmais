@@ -121,11 +121,16 @@ const Quiz = () => {
       is_correct: isCorrect,
     });
 
-    await updateStreak();
+    // Extra missions don't affect streak
+    if (missionType !== "extra") {
+      await updateStreak();
+    }
+
+    const effectiveXp = Math.round(currentQuestion.xp_reward * xpMultiplier);
 
     if (isCorrect) {
       setStreak((s) => s + 1);
-      setXpGained((prev) => prev + currentQuestion.xp_reward);
+      setXpGained((prev) => prev + effectiveXp);
       setShowXpBurst(true);
       setTimeout(() => setShowXpBurst(false), 1200);
       fireConfetti();
