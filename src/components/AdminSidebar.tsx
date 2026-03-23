@@ -21,6 +21,7 @@ const items = [
   { title: "Importar", url: "/admin/import", icon: Upload },
   { title: "Níveis", url: "/admin/levels", icon: TrendingUp },
   { title: "Conquistas", url: "/admin/achievements", icon: Award },
+  { title: "Config. IA", url: "/admin/ai-config", icon: Bot },
 ];
 
 export function AdminSidebar() {
