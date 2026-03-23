@@ -26,6 +26,7 @@ type OptionKey = "a" | "b" | "c" | "d";
 
 const Quiz = () => {
   const { user } = useAuth();
+  const { checkAndUnlock } = useAchievements();
   const navigate = useNavigate();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
