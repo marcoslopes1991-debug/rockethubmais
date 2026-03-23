@@ -82,6 +82,33 @@ export type Database = {
         }
         Relationships: []
       }
+      levels: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          level_number: number
+          min_xp: number
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          level_number: number
+          min_xp?: number
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          level_number?: number
+          min_xp?: number
+          name?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           blocked: boolean
