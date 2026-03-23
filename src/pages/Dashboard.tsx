@@ -161,6 +161,8 @@ const Dashboard = () => {
                 <motion.div
                   whileHover={{ scale: 1.05, rotate: 3 }}
                   transition={{ type: "spring", stiffness: 400 }}
+                  onClick={() => navigate("/profile")}
+                  className="cursor-pointer"
                 >
                   <AvatarDisplay xp={xp} size="lg" />
                 </motion.div>
