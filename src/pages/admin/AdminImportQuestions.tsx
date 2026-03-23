@@ -159,6 +159,19 @@ const AdminImportQuestions = () => {
   const [fileName, setFileName] = useState("");
   const [importing, setImporting] = useState(false);
   const [result, setResult] = useState<{ success: number; failed: number } | null>(null);
+  const [bulkText, setBulkText] = useState("");
+
+  const handleParse = () => {
+    if (!bulkText.trim()) return;
+    setResult(null);
+    setFileName("");
+    const raw = parseBulkText(bulkText);
+    if (raw.length === 0) {
+      toast({ title: "Nenhuma pergunta encontrada no texto", variant: "destructive" });
+      return;
+    }
+    setItems(raw.map((q, i) => validate(q, i)));
+  };
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
