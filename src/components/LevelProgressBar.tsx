@@ -22,7 +22,7 @@ const LevelProgressBar = ({ xp, className }: LevelProgressBarProps) => {
         <span className="font-display font-bold text-foreground">{current.name}</span>
         {next && (
           <span className="text-muted-foreground">
-            Próximo: {next.name} ({next.min_xp} XP)
+            Continue evoluindo para desbloquear o próximo nível
           </span>
         )}
       </div>
