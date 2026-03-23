@@ -218,7 +218,10 @@ const AdminQuestions = () => {
             <TableBody>
               {questions.map((q) => (
                 <TableRow key={q.id}>
-                  <TableCell className="max-w-xs truncate">{q.question}</TableCell>
+                   <TableCell className="max-w-xs truncate">{q.question}</TableCell>
+                  <TableCell>
+                    {q.mission_type === "special" ? "⭐ Especial" : q.mission_type === "extra" ? "📝 Extra" : "📋 Diária"}
+                  </TableCell>
                   <TableCell>{q.category}</TableCell>
                   <TableCell>{difficultyLabels[q.difficulty] ?? q.difficulty}</TableCell>
                   <TableCell>{q.xp_reward}</TableCell>
