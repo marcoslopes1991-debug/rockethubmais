@@ -24,11 +24,14 @@ const Profile = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, xp")
+      .select("display_name, xp, notifications_enabled")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
-        if (data) setProfile(data);
+        if (data) {
+          setProfile(data as any);
+          setNotificationsOn((data as any).notifications_enabled ?? true);
+        }
       });
   }, [user]);
 
