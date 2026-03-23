@@ -35,7 +35,7 @@ const MapNode = ({ level, index, isReached, isCurrent, OfficeIcon, onClick }: Ma
         {/* Circle */}
         <div
           className={cn(
-            "w-16 h-16 sm:w-20 sm:h-20 rounded-full border-[3px] flex items-center justify-center transition-all cursor-pointer",
+            "relative w-16 h-16 sm:w-20 sm:h-20 rounded-full border-[3px] flex items-center justify-center transition-all cursor-pointer overflow-hidden",
             isCurrent
               ? "border-primary bg-primary/15 ring-4 ring-primary/25 shadow-lg shadow-primary/20"
               : isReached
@@ -52,9 +52,20 @@ const MapNode = ({ level, index, isReached, isCurrent, OfficeIcon, onClick }: Ma
               transition={{ repeat: Infinity, duration: 2.5 }}
             />
           ) : isReached ? (
-            <CheckCircle2 className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
+            <img
+              src={avatar}
+              alt={level.name}
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover opacity-90"
+            />
           ) : (
             <Lock className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground/50" />
+          )}
+
+          {/* Green check badge for completed levels */}
+          {isReached && !isCurrent && (
+            <div className="absolute -bottom-0.5 -right-0.5 bg-green-500 text-white rounded-full p-0.5 shadow-md">
+              <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            </div>
           )}
         </div>
 
