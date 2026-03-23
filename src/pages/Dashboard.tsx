@@ -35,6 +35,8 @@ const Dashboard = () => {
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
   const { levels } = useLevels();
+  const { achievements, userAchievements, isUnlocked } = useAchievements();
+  const unlockedAchievements = achievements.filter((a) => isUnlocked(a.id));
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [answeredCount, setAnsweredCount] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
