@@ -58,7 +58,8 @@ const Items = () => {
     fetchData();
   }, [user]);
 
-  const level = getLevelInfo(xp);
+  const { levels: dbLevels } = useLevels();
+  const level = dbLevels.length > 0 ? getLevelFromList(dbLevels, xp) : { level_number: 0, name: "" };
 
   const isUnlocked = (item: Item) =>
     userItems.some((ui) => ui.item_id === item.id);
