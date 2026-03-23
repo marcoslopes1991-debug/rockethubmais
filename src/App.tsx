@@ -19,6 +19,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminImportQuestions from "./pages/admin/AdminImportQuestions";
 import AdminAchievements from "./pages/admin/AdminAchievements";
 import AdminLevels from "./pages/admin/AdminLevels";
+import AdminAiConfig from "./pages/admin/AdminAiConfig";
 import Journey from "./pages/Journey";
 import EvolutionMap from "./pages/EvolutionMap";
 import Achievements from "./pages/Achievements";
