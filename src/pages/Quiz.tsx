@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { playCorrectSound, playWrongSound } from "@/lib/sounds";
+import { useSearchParams } from "react-router-dom";
 
 interface Question {
   id: string;
@@ -21,6 +22,7 @@ interface Question {
   correct_option: string;
   explanation: string;
   xp_reward: number;
+  mission_type?: string;
 }
 
 type OptionKey = "a" | "b" | "c" | "d";
@@ -29,6 +31,8 @@ const Quiz = () => {
   const { user } = useAuth();
   const { checkAndUnlock } = useAchievements();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const missionType = searchParams.get("type") || "daily";
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState<OptionKey | null>(null);
@@ -37,6 +41,8 @@ const Quiz = () => {
   const [loading, setLoading] = useState(true);
   const [showXpBurst, setShowXpBurst] = useState(false);
   const [streak, setStreak] = useState(0);
+
+  const xpMultiplier = missionType === "special" ? 1.5 : missionType === "extra" ? 0.5 : 1;
 
   useEffect(() => {
     if (!user) return;
@@ -49,13 +55,25 @@ const Quiz = () => {
 
       const answeredSet = new Set(answeredIds?.map((a) => a.question_id) ?? []);
       const { data: allQuestions } = await supabase.from("questions").select("*");
-      const unanswered = (allQuestions ?? []).filter((q) => !answeredSet.has(q.id));
+      
+      const now = new Date().toISOString();
+      const unanswered = (allQuestions ?? []).filter((q: any) => {
+        if (answeredSet.has(q.id)) return false;
+        const qType = q.mission_type || "daily";
+        if (qType !== missionType) return false;
+        if (qType === "special") {
+          if (q.available_from && q.available_from > now) return false;
+          if (q.available_until && q.available_until < now) return false;
+        }
+        return true;
+      });
+      
       setQuestions(unanswered);
       setLoading(false);
     };
 
     fetchQuestions();
-  }, [user]);
+  }, [user, missionType]);
 
   const currentQuestion = questions[currentIndex];
 
