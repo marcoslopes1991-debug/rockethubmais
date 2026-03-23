@@ -49,11 +49,46 @@ export type Database = {
           },
         ]
       }
+      items: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          icon_emoji: string
+          id: string
+          name: string
+          required_level: number
+          required_xp: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string
+          icon_emoji?: string
+          id?: string
+          name: string
+          required_level?: number
+          required_xp?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          icon_emoji?: string
+          id?: string
+          name?: string
+          required_level?: number
+          required_xp?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
           display_name: string
           id: string
+          last_activity_date: string | null
+          streak_count: number
           updated_at: string
           user_id: string
           xp: number
@@ -62,6 +97,8 @@ export type Database = {
           created_at?: string
           display_name?: string
           id?: string
+          last_activity_date?: string | null
+          streak_count?: number
           updated_at?: string
           user_id: string
           xp?: number
@@ -70,6 +107,8 @@ export type Database = {
           created_at?: string
           display_name?: string
           id?: string
+          last_activity_date?: string | null
+          streak_count?: number
           updated_at?: string
           user_id?: string
           xp?: number
@@ -114,6 +153,38 @@ export type Database = {
           xp_reward?: number
         }
         Relationships: []
+      }
+      user_items: {
+        Row: {
+          equipped: boolean
+          id: string
+          item_id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          equipped?: boolean
+          id?: string
+          item_id: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          equipped?: boolean
+          id?: string
+          item_id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_items_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
