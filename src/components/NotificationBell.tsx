@@ -63,6 +63,7 @@ const NotificationBell = () => {
         },
         (payload) => {
           setNotifications((prev) => [payload.new as Notification, ...prev]);
+          playNotificationSound();
         }
       )
       .subscribe();
