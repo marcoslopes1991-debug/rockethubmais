@@ -16,8 +16,9 @@ const Profile = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { levels } = useLevels();
-  const [profile, setProfile] = useState<{ display_name: string; xp: number } | null>(null);
+  const [profile, setProfile] = useState<{ display_name: string; xp: number; notifications_enabled: boolean } | null>(null);
   const [soundOn, setSoundOn] = useState(isSoundEnabled());
+  const [notificationsOn, setNotificationsOn] = useState(true);
 
   useEffect(() => {
     if (!user) return;
