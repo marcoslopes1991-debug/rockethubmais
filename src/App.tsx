@@ -17,6 +17,8 @@ import AdminQuestions from "./pages/admin/AdminQuestions";
 import AdminItems from "./pages/admin/AdminItems";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminImportQuestions from "./pages/admin/AdminImportQuestions";
+import AdminLevels from "./pages/admin/AdminLevels";
+import Journey from "./pages/Journey";
 
 const queryClient = new QueryClient();
 
