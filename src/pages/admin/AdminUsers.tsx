@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, ShieldOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getLevelInfo } from "@/lib/levels";
+import { useLevels, getLevelFromList } from "@/hooks/useLevels";
 
 interface Profile {
   id: string;
@@ -20,6 +20,7 @@ interface Profile {
 
 const AdminUsers = () => {
   const { toast } = useToast();
+  const { levels: dbLevels } = useLevels();
   const [profiles, setProfiles] = useState<Profile[]>([]);
 
   const fetchProfiles = async () => {
@@ -64,7 +65,7 @@ const AdminUsers = () => {
             </TableHeader>
             <TableBody>
               {profiles.map((p) => {
-                const level = getLevelInfo(p.xp);
+                const level = dbLevels.length > 0 ? getLevelFromList(dbLevels, p.xp) : { name: "..." };
                 return (
                   <TableRow key={p.id}>
                     <TableCell className="font-medium">{p.display_name}</TableCell>

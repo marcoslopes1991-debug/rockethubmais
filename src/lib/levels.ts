@@ -12,12 +12,13 @@ export interface LevelInfo {
   avatar: string;
 }
 
+// Fallback static levels — used for avatar mapping and as defaults when DB is unavailable
 export const LEVELS: LevelInfo[] = [
-  { level: 0, name: "Consultor Perdido", minXp: 0, maxXp: 49, avatar: avatarLevel0 },
-  { level: 1, name: "Key User Raiz", minXp: 50, maxXp: 149, avatar: avatarLevel1 },
-  { level: 2, name: "Consultor Júnior", minXp: 150, maxXp: 299, avatar: avatarLevel2 },
-  { level: 3, name: "Consultor Pleno", minXp: 300, maxXp: 499, avatar: avatarLevel3 },
-  { level: 4, name: "Consultor Sênior", minXp: 500, maxXp: Infinity, avatar: avatarLevel4 },
+  { level: 0, name: "Usuário", minXp: 0, maxXp: 49, avatar: avatarLevel0 },
+  { level: 1, name: "Key User em Evolução", minXp: 50, maxXp: 119, avatar: avatarLevel1 },
+  { level: 2, name: "Consultor Júnior", minXp: 120, maxXp: 349, avatar: avatarLevel2 },
+  { level: 3, name: "Consultor Pleno", minXp: 350, maxXp: 949, avatar: avatarLevel3 },
+  { level: 4, name: "Consultor Sênior", minXp: 950, maxXp: Infinity, avatar: avatarLevel4 },
 ];
 
 export function getLevelInfo(xp: number): LevelInfo {
@@ -39,4 +40,13 @@ export function getNextLevel(xp: number): LevelInfo | null {
   const current = getLevelInfo(xp);
   const next = LEVELS.find((l) => l.level === current.level + 1);
   return next ?? null;
+}
+
+// Map DB level_number to avatar image
+export function getAvatarForLevel(levelNumber: number): string {
+  if (levelNumber <= 1) return avatarLevel0;
+  if (levelNumber <= 3) return avatarLevel1;
+  if (levelNumber <= 7) return avatarLevel2;
+  if (levelNumber <= 10) return avatarLevel3;
+  return avatarLevel4;
 }

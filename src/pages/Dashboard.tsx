@@ -9,7 +9,7 @@ import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star } from "luci
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import StreakBadge from "@/components/StreakBadge";
-import { getLevelInfo } from "@/lib/levels";
+import { useLevels, getLevelFromList } from "@/hooks/useLevels";
 import { motion } from "framer-motion";
 
 interface ProfileData {
@@ -33,6 +33,7 @@ const Dashboard = () => {
   const { user, signOut } = useAuth();
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
+  const { levels } = useLevels();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [answeredCount, setAnsweredCount] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
@@ -74,7 +75,7 @@ const Dashboard = () => {
 
   const hasUnanswered = answeredCount < totalQuestions;
   const xp = profile?.xp ?? 0;
-  const level = getLevelInfo(xp);
+  const level = levels.length > 0 ? getLevelFromList(levels, xp) : { name: "Carregando..." };
   const progressPercent = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
 
   return (
@@ -99,6 +100,12 @@ const Dashboard = () => {
             </Button>
             <Button variant="ghost" size="icon" onClick={() => navigate("/ranking")} className="sm:hidden">
               <Trophy className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/journey")} className="hidden sm:flex">
+              <Star className="h-4 w-4 mr-1" /> Jornada
+            </Button>
+            <Button variant="ghost" size="icon" onClick={() => navigate("/journey")} className="sm:hidden">
+              <Star className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate("/items")} className="hidden sm:flex">
               <Backpack className="h-4 w-4 mr-1" /> Itens

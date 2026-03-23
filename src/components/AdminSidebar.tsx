@@ -1,4 +1,4 @@
-import { LayoutDashboard, HelpCircle, Package, Users, ArrowLeft, Shield, Upload } from "lucide-react";
+import { LayoutDashboard, HelpCircle, Package, Users, ArrowLeft, Shield, Upload, TrendingUp } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import {
@@ -19,6 +19,7 @@ const items = [
   { title: "Itens", url: "/admin/items", icon: Package },
   { title: "Usuários", url: "/admin/users", icon: Users },
   { title: "Importar", url: "/admin/import", icon: Upload },
+  { title: "Níveis", url: "/admin/levels", icon: TrendingUp },
 ];
 
 export function AdminSidebar() {
