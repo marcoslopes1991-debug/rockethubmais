@@ -49,6 +49,7 @@ const App = () => (
               <Route path="users" element={<AdminUsers />} />
               <Route path="import" element={<AdminImportQuestions />} />
               <Route path="levels" element={<AdminLevels />} />
+              <Route path="achievements" element={<AdminAchievements />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -20,6 +20,7 @@ const items = [
   { title: "Usuários", url: "/admin/users", icon: Users },
   { title: "Importar", url: "/admin/import", icon: Upload },
   { title: "Níveis", url: "/admin/levels", icon: TrendingUp },
+  { title: "Conquistas", url: "/admin/achievements", icon: Award },
 ];
 
 export function AdminSidebar() {
