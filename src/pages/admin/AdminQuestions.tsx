@@ -207,7 +207,8 @@ const AdminQuestions = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Pergunta</TableHead>
+                 <TableHead>Pergunta</TableHead>
+                <TableHead>Tipo</TableHead>
                 <TableHead>Categoria</TableHead>
                 <TableHead>Dificuldade</TableHead>
                 <TableHead>XP</TableHead>
