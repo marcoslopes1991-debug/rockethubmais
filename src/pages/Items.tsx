@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Lock, Check, Sparkles } from "lucide-react";
-import { getLevelInfo } from "@/lib/levels";
+import { useLevels, getLevelFromList } from "@/hooks/useLevels";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
