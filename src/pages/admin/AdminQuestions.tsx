@@ -23,6 +23,9 @@ interface Question {
   xp_reward: number;
   category: string;
   difficulty: string;
+  mission_type: string;
+  available_from: string | null;
+  available_until: string | null;
 }
 
 const emptyForm: Omit<Question, "id"> = {
@@ -36,6 +39,9 @@ const emptyForm: Omit<Question, "id"> = {
   xp_reward: 10,
   category: "geral",
   difficulty: "medium",
+  mission_type: "daily",
+  available_from: null,
+  available_until: null,
 };
 
 const AdminQuestions = () => {
@@ -83,6 +89,9 @@ const AdminQuestions = () => {
       xp_reward: q.xp_reward,
       category: q.category,
       difficulty: q.difficulty,
+      mission_type: q.mission_type,
+      available_from: q.available_from,
+      available_until: q.available_until,
     });
     setEditingId(q.id);
     setOpen(true);
@@ -152,12 +161,37 @@ const AdminQuestions = () => {
                       <SelectItem value="hard">Difícil</SelectItem>
                     </SelectContent>
                   </Select>
+               </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Tipo de Missão</Label>
+                  <Select value={form.mission_type} onValueChange={(v) => setForm({ ...form, mission_type: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="daily">Diária</SelectItem>
+                      <SelectItem value="extra">Extra</SelectItem>
+                      <SelectItem value="special">Especial</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>XP de Recompensa</Label>
+                  <Input type="number" value={form.xp_reward} onChange={(e) => setForm({ ...form, xp_reward: Number(e.target.value) })} />
                 </div>
               </div>
-              <div>
-                <Label>XP de Recompensa</Label>
-                <Input type="number" value={form.xp_reward} onChange={(e) => setForm({ ...form, xp_reward: Number(e.target.value) })} />
-              </div>
+              {form.mission_type === "special" && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label>Disponível a partir de</Label>
+                    <Input type="datetime-local" value={form.available_from ?? ""} onChange={(e) => setForm({ ...form, available_from: e.target.value || null })} />
+                  </div>
+                  <div>
+                    <Label>Disponível até</Label>
+                    <Input type="datetime-local" value={form.available_until ?? ""} onChange={(e) => setForm({ ...form, available_until: e.target.value || null })} />
+                  </div>
+                </div>
+              )}
               <div>
                 <Label>Explicação</Label>
                 <Textarea value={form.explanation} onChange={(e) => setForm({ ...form, explanation: e.target.value })} />
@@ -173,7 +207,8 @@ const AdminQuestions = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Pergunta</TableHead>
+                 <TableHead>Pergunta</TableHead>
+                <TableHead>Tipo</TableHead>
                 <TableHead>Categoria</TableHead>
                 <TableHead>Dificuldade</TableHead>
                 <TableHead>XP</TableHead>
@@ -183,7 +218,10 @@ const AdminQuestions = () => {
             <TableBody>
               {questions.map((q) => (
                 <TableRow key={q.id}>
-                  <TableCell className="max-w-xs truncate">{q.question}</TableCell>
+                   <TableCell className="max-w-xs truncate">{q.question}</TableCell>
+                  <TableCell>
+                    {q.mission_type === "special" ? "⭐ Especial" : q.mission_type === "extra" ? "📝 Extra" : "📋 Diária"}
+                  </TableCell>
                   <TableCell>{q.category}</TableCell>
                   <TableCell>{difficultyLabels[q.difficulty] ?? q.difficulty}</TableCell>
                   <TableCell>{q.xp_reward}</TableCell>
@@ -201,7 +239,7 @@ const AdminQuestions = () => {
               ))}
               {questions.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
                     Nenhuma pergunta cadastrada
                   </TableCell>
                 </TableRow>

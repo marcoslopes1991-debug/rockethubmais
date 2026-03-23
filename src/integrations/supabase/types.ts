@@ -204,12 +204,15 @@ export type Database = {
       }
       questions: {
         Row: {
+          available_from: string | null
+          available_until: string | null
           category: string
           correct_option: string
           created_at: string
           difficulty: string
           explanation: string
           id: string
+          mission_type: string
           nivel: string
           option_a: string
           option_b: string
@@ -219,12 +222,15 @@ export type Database = {
           xp_reward: number
         }
         Insert: {
+          available_from?: string | null
+          available_until?: string | null
           category?: string
           correct_option: string
           created_at?: string
           difficulty?: string
           explanation?: string
           id?: string
+          mission_type?: string
           nivel?: string
           option_a: string
           option_b: string
@@ -234,12 +240,15 @@ export type Database = {
           xp_reward?: number
         }
         Update: {
+          available_from?: string | null
+          available_until?: string | null
           category?: string
           correct_option?: string
           created_at?: string
           difficulty?: string
           explanation?: string
           id?: string
+          mission_type?: string
           nivel?: string
           option_a?: string
           option_b?: string

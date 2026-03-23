@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { playCorrectSound, playWrongSound } from "@/lib/sounds";
+import { useSearchParams } from "react-router-dom";
 
 interface Question {
   id: string;
@@ -21,6 +22,7 @@ interface Question {
   correct_option: string;
   explanation: string;
   xp_reward: number;
+  mission_type?: string;
 }
 
 type OptionKey = "a" | "b" | "c" | "d";
@@ -29,6 +31,8 @@ const Quiz = () => {
   const { user } = useAuth();
   const { checkAndUnlock } = useAchievements();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const missionType = searchParams.get("type") || "daily";
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState<OptionKey | null>(null);
@@ -37,6 +41,8 @@ const Quiz = () => {
   const [loading, setLoading] = useState(true);
   const [showXpBurst, setShowXpBurst] = useState(false);
   const [streak, setStreak] = useState(0);
+
+  const xpMultiplier = missionType === "special" ? 1.5 : missionType === "extra" ? 0.5 : 1;
 
   useEffect(() => {
     if (!user) return;
@@ -49,13 +55,25 @@ const Quiz = () => {
 
       const answeredSet = new Set(answeredIds?.map((a) => a.question_id) ?? []);
       const { data: allQuestions } = await supabase.from("questions").select("*");
-      const unanswered = (allQuestions ?? []).filter((q) => !answeredSet.has(q.id));
+      
+      const now = new Date().toISOString();
+      const unanswered = (allQuestions ?? []).filter((q: any) => {
+        if (answeredSet.has(q.id)) return false;
+        const qType = q.mission_type || "daily";
+        if (qType !== missionType) return false;
+        if (qType === "special") {
+          if (q.available_from && q.available_from > now) return false;
+          if (q.available_until && q.available_until < now) return false;
+        }
+        return true;
+      });
+      
       setQuestions(unanswered);
       setLoading(false);
     };
 
     fetchQuestions();
-  }, [user]);
+  }, [user, missionType]);
 
   const currentQuestion = questions[currentIndex];
 
@@ -103,11 +121,16 @@ const Quiz = () => {
       is_correct: isCorrect,
     });
 
-    await updateStreak();
+    // Extra missions don't affect streak
+    if (missionType !== "extra") {
+      await updateStreak();
+    }
+
+    const effectiveXp = Math.round(currentQuestion.xp_reward * xpMultiplier);
 
     if (isCorrect) {
       setStreak((s) => s + 1);
-      setXpGained((prev) => prev + currentQuestion.xp_reward);
+      setXpGained((prev) => prev + effectiveXp);
       setShowXpBurst(true);
       setTimeout(() => setShowXpBurst(false), 1200);
       fireConfetti();
@@ -120,7 +143,7 @@ const Quiz = () => {
         .single();
 
       if (profile) {
-        const newXp = profile.xp + currentQuestion.xp_reward;
+        const newXp = profile.xp + effectiveXp;
         await supabase
           .from("profiles")
           .update({ xp: newXp })
@@ -240,7 +263,7 @@ const Quiz = () => {
                   exit={{ opacity: 0, y: -30 }}
                   transition={{ type: "spring", stiffness: 500 }}
                 >
-                  +{currentQuestion.xp_reward} XP
+                  +{Math.round(currentQuestion.xp_reward * xpMultiplier)} XP
                 </motion.span>
               )}
             </AnimatePresence>
@@ -335,7 +358,7 @@ const Quiz = () => {
                       >
                         <p className="font-display font-bold mb-1 text-lg">
                           {selected === currentQuestion.correct_option
-                            ? `✅ Correto! +${currentQuestion.xp_reward} XP`
+                            ? `✅ Correto! +${Math.round(currentQuestion.xp_reward * xpMultiplier)} XP`
                             : "❌ Errado!"}
                         </p>
                         <p className="text-sm text-muted-foreground">{currentQuestion.explanation}</p>
