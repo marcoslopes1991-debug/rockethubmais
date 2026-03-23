@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useAdmin } from "@/hooks/useAdmin";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Trophy, Target, LogOut, Backpack, Flame } from "lucide-react";
+import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield } from "lucide-react";
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import StreakBadge from "@/components/StreakBadge";
@@ -19,6 +20,7 @@ interface ProfileData {
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
+  const { isAdmin } = useAdmin();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [answeredCount, setAnsweredCount] = useState(0);
@@ -82,6 +84,11 @@ const Dashboard = () => {
             <Button variant="ghost" size="sm" onClick={() => navigate("/items")}>
               <Backpack className="h-4 w-4 mr-1" /> Itens
             </Button>
+            {isAdmin && (
+              <Button variant="ghost" size="sm" onClick={() => navigate("/admin")}>
+                <Shield className="h-4 w-4 mr-1" /> Admin
+              </Button>
+            )}
             <Button variant="ghost" size="icon" onClick={signOut}>
               <LogOut className="h-4 w-4" />
             </Button>

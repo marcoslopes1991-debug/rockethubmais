@@ -84,6 +84,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          blocked: boolean
           created_at: string
           display_name: string
           id: string
@@ -94,6 +95,7 @@ export type Database = {
           xp: number
         }
         Insert: {
+          blocked?: boolean
           created_at?: string
           display_name?: string
           id?: string
@@ -104,6 +106,7 @@ export type Database = {
           xp?: number
         }
         Update: {
+          blocked?: boolean
           created_at?: string
           display_name?: string
           id?: string
@@ -117,8 +120,10 @@ export type Database = {
       }
       questions: {
         Row: {
+          category: string
           correct_option: string
           created_at: string
+          difficulty: string
           explanation: string
           id: string
           option_a: string
@@ -129,8 +134,10 @@ export type Database = {
           xp_reward: number
         }
         Insert: {
+          category?: string
           correct_option: string
           created_at?: string
+          difficulty?: string
           explanation?: string
           id?: string
           option_a: string
@@ -141,8 +148,10 @@ export type Database = {
           xp_reward?: number
         }
         Update: {
+          category?: string
           correct_option?: string
           created_at?: string
+          difficulty?: string
           explanation?: string
           id?: string
           option_a?: string
@@ -186,15 +195,39 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -321,6 +354,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
