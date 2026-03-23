@@ -102,6 +102,36 @@ const Profile = () => {
           </CardContent>
         </Card>
 
+        {/* Notification settings */}
+        <Card className="glass-card">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Bell className="h-5 w-5 text-primary" />
+              Notificações
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium">Notificações do app</p>
+                <p className="text-xs text-muted-foreground">Missões especiais, streak em risco e lembretes</p>
+              </div>
+              <Switch
+                checked={notificationsOn}
+                onCheckedChange={async (checked) => {
+                  setNotificationsOn(checked);
+                  if (user) {
+                    await supabase
+                      .from("profiles")
+                      .update({ notifications_enabled: checked })
+                      .eq("user_id", user.id);
+                  }
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Security */}
         <Card className="glass-card">
           <CardHeader className="pb-2">
