@@ -20,6 +20,7 @@ interface ProfileData {
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
+  const { isAdmin } = useAdmin();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [answeredCount, setAnsweredCount] = useState(0);
