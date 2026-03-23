@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon } from "lucide-react";
+import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon, Award } from "lucide-react";
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import StreakBadge from "@/components/StreakBadge";
