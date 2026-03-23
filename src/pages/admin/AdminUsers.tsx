@@ -64,7 +64,7 @@ const AdminUsers = () => {
             </TableHeader>
             <TableBody>
               {profiles.map((p) => {
-                const level = getLevelInfo(p.xp);
+                const level = dbLevels.length > 0 ? getLevelFromList(dbLevels, p.xp) : { name: "..." };
                 return (
                   <TableRow key={p.id}>
                     <TableCell className="font-medium">{p.display_name}</TableCell>
