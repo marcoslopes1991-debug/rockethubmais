@@ -84,6 +84,11 @@ const Dashboard = () => {
             <Button variant="ghost" size="sm" onClick={() => navigate("/items")}>
               <Backpack className="h-4 w-4 mr-1" /> Itens
             </Button>
+            {isAdmin && (
+              <Button variant="ghost" size="sm" onClick={() => navigate("/admin")}>
+                <Shield className="h-4 w-4 mr-1" /> Admin
+              </Button>
+            )}
             <Button variant="ghost" size="icon" onClick={signOut}>
               <LogOut className="h-4 w-4" />
             </Button>
