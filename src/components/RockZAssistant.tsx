@@ -17,6 +17,9 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/rockz-chat`;
 export default function RockZAssistant() {
   const { user } = useAuth();
   const { levels } = useLevels();
+  const { config: aiConfig } = useAiConfig();
+  const aiName = aiConfig?.ai_name || "RockZ";
+  const aiImage = aiConfig?.button_image_url || rockzMascot;
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
