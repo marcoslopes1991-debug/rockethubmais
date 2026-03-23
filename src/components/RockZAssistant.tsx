@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/hooks/useAuth";
 import { useLevels, getLevelFromList } from "@/hooks/useLevels";
+import { useAiConfig } from "@/hooks/useAiConfig";
 import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
 import rockzMascot from "@/assets/rockz-mascot.png";
