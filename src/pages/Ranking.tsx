@@ -21,6 +21,7 @@ const Ranking = () => {
   const { user } = useAuth();
   const [profiles, setProfiles] = useState<RankProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const { levels } = useLevels();
 
   useEffect(() => {
     const fetchRanking = async () => {
