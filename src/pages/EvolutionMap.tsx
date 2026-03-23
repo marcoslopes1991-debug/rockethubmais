@@ -81,8 +81,15 @@ const EvolutionMap = () => {
             <ArrowLeft className="h-4 w-4 mr-1" /> Voltar
           </Button>
           <h1 className="font-display font-bold text-sm">Mapa de Evolução</h1>
-          <div className="flex items-center gap-1 text-sm font-bold text-xp">
-            <Zap className="h-4 w-4" /> {xp} XP
+          <div className="flex items-center gap-3">
+            {streak > 0 && (
+              <div className="flex items-center gap-1 text-sm font-bold text-orange-500">
+                🔥 {streak}
+              </div>
+            )}
+            <div className="flex items-center gap-1 text-sm font-bold text-xp">
+              <Zap className="h-4 w-4" /> {xp} XP
+            </div>
           </div>
         </div>
       </header>
