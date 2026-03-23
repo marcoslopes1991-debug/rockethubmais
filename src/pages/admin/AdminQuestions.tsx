@@ -161,12 +161,37 @@ const AdminQuestions = () => {
                       <SelectItem value="hard">Difícil</SelectItem>
                     </SelectContent>
                   </Select>
+               </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Tipo de Missão</Label>
+                  <Select value={form.mission_type} onValueChange={(v) => setForm({ ...form, mission_type: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="daily">Diária</SelectItem>
+                      <SelectItem value="extra">Extra</SelectItem>
+                      <SelectItem value="special">Especial</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>XP de Recompensa</Label>
+                  <Input type="number" value={form.xp_reward} onChange={(e) => setForm({ ...form, xp_reward: Number(e.target.value) })} />
                 </div>
               </div>
-              <div>
-                <Label>XP de Recompensa</Label>
-                <Input type="number" value={form.xp_reward} onChange={(e) => setForm({ ...form, xp_reward: Number(e.target.value) })} />
-              </div>
+              {form.mission_type === "special" && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label>Disponível a partir de</Label>
+                    <Input type="datetime-local" value={form.available_from ?? ""} onChange={(e) => setForm({ ...form, available_from: e.target.value || null })} />
+                  </div>
+                  <div>
+                    <Label>Disponível até</Label>
+                    <Input type="datetime-local" value={form.available_until ?? ""} onChange={(e) => setForm({ ...form, available_until: e.target.value || null })} />
+                  </div>
+                </div>
+              )}
               <div>
                 <Label>Explicação</Label>
                 <Textarea value={form.explanation} onChange={(e) => setForm({ ...form, explanation: e.target.value })} />
