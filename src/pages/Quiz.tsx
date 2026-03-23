@@ -118,10 +118,29 @@ const Quiz = () => {
         .single();
 
       if (profile) {
+        const newXp = profile.xp + currentQuestion.xp_reward;
         await supabase
           .from("profiles")
-          .update({ xp: profile.xp + currentQuestion.xp_reward })
+          .update({ xp: newXp })
           .eq("user_id", user.id);
+
+        // Check achievements after XP update
+        const { data: profileFull } = await supabase
+          .from("profiles")
+          .select("xp, streak_count")
+          .eq("user_id", user.id)
+          .single();
+        const { count: correctCount } = await supabase
+          .from("answers")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .eq("is_correct", true);
+        
+        checkAndUnlock({
+          xp: profileFull?.xp ?? newXp,
+          streak: profileFull?.streak_count ?? 0,
+          correctAnswers: correctCount ?? 0,
+        });
       }
     } else {
       setStreak(0);
