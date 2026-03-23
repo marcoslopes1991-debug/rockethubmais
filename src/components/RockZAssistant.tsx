@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/hooks/useAuth";
 import { useLevels, getLevelFromList } from "@/hooks/useLevels";
+import { useAiConfig } from "@/hooks/useAiConfig";
 import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
 import rockzMascot from "@/assets/rockz-mascot.png";
@@ -16,6 +17,9 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/rockz-chat`;
 export default function RockZAssistant() {
   const { user } = useAuth();
   const { levels } = useLevels();
+  const { config: aiConfig } = useAiConfig();
+  const aiName = aiConfig?.ai_name || "RockZ";
+  const aiImage = aiConfig?.button_image_url || rockzMascot;
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
@@ -109,7 +113,7 @@ export default function RockZAssistant() {
         }
       }
     } catch (e: any) {
-      setMessages((p) => [...p, { role: "assistant", content: `❌ ${e.message || "Erro ao se comunicar com RockZ"}` }]);
+      setMessages((p) => [...p, { role: "assistant", content: `❌ ${e.message || "Erro ao se comunicar com o assistente"}` }]);
     }
     setLoading(false);
   };
@@ -122,9 +126,9 @@ export default function RockZAssistant() {
         className="fixed bottom-6 right-6 z-50 rounded-full shadow-xl bg-primary p-1 hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-primary"
         animate={{ scale: [1, 1.05, 1] }}
         transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-        aria-label="Abrir assistente RockZ"
+        aria-label={`Abrir assistente ${aiName}`}
       >
-        <img src={rockzMascot} alt="RockZ" width={56} height={56} className="rounded-full" />
+        <img src={aiImage} alt={aiName} width={56} height={56} className="rounded-full" />
       </motion.button>
 
       {/* Chat panel */}
@@ -139,9 +143,9 @@ export default function RockZAssistant() {
           >
             {/* Header */}
             <div className="flex items-center gap-3 px-4 py-3 bg-primary text-primary-foreground">
-              <img src={rockzMascot} alt="RockZ" width={36} height={36} className="rounded-full bg-white/20" />
+              <img src={aiImage} alt={aiName} width={36} height={36} className="rounded-full bg-white/20" />
               <div className="flex-1 min-w-0">
-                <h3 className="font-display font-bold text-sm">RockZ - Assistente IA</h3>
+                <h3 className="font-display font-bold text-sm">{aiName} - Assistente IA</h3>
                 <p className="text-xs opacity-80">Especialista em SAP SD</p>
               </div>
               <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-white/20 h-8 w-8" onClick={() => setOpen(false)}>
@@ -153,8 +157,8 @@ export default function RockZAssistant() {
             <ScrollArea className="flex-1 p-4">
               {messages.length === 0 && (
                 <div className="text-center py-8 space-y-3">
-                  <img src={rockzMascot} alt="RockZ" width={80} height={80} className="mx-auto" loading="lazy" />
-                  <p className="text-sm font-medium">Olá! Eu sou o RockZ 🤖</p>
+                  <img src={aiImage} alt={aiName} width={80} height={80} className="mx-auto" loading="lazy" />
+                  <p className="text-sm font-medium">Olá! Eu sou o {aiName} 🤖</p>
                   <p className="text-xs text-muted-foreground">Seu assistente de aprendizado SAP SD. Pergunte qualquer coisa!</p>
                   <div className="flex flex-wrap justify-center gap-2 mt-3">
                     {["O que é SAP SD?", "Dicas de estudo", "Explique pedido de venda"].map((q) => (

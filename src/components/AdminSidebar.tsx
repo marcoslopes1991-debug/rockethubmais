@@ -1,4 +1,4 @@
-import { LayoutDashboard, HelpCircle, Package, Users, ArrowLeft, Shield, Upload, TrendingUp, Award } from "lucide-react";
+import { LayoutDashboard, HelpCircle, Package, Users, ArrowLeft, Shield, Upload, TrendingUp, Award, Bot } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import {
@@ -21,6 +21,7 @@ const items = [
   { title: "Importar", url: "/admin/import", icon: Upload },
   { title: "Níveis", url: "/admin/levels", icon: TrendingUp },
   { title: "Conquistas", url: "/admin/achievements", icon: Award },
+  { title: "Config. IA", url: "/admin/ai-config", icon: Bot },
 ];
 
 export function AdminSidebar() {
