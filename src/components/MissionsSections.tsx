@@ -35,9 +35,13 @@ const MissionsSections = () => {
         .select("id, question, xp_reward, mission_type, available_from, available_until");
 
       const now = new Date().toISOString();
-      const unanswered = (allQuestions ?? []).filter((q: any) => !answeredSet.has(q.id));
+      const unanswered = (allQuestions ?? []).filter((q: any) => !answeredSet.has(q.id) && q.is_active !== false);
 
-      const extraCount = unanswered.filter((q: any) => q.mission_type === "extra").length;
+      const extraCount = unanswered.filter((q: any) => {
+        if (q.mission_type !== "extra") return false;
+        if (q.available_from && q.available_from > now) return false;
+        return true;
+      }).length;
 
       const specialAvailable = unanswered.filter((q: any) => {
         if (q.mission_type !== "special") return false;
