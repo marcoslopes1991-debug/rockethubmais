@@ -33,6 +33,7 @@ const EvolutionMap = () => {
   const { user } = useAuth();
   const { levels, loading } = useLevels();
   const [xp, setXp] = useState(0);
+  const [streak, setStreak] = useState(0);
   const [selectedLevel, setSelectedLevel] = useState<DbLevel | null>(null);
   const [selectedReached, setSelectedReached] = useState(false);
 
@@ -40,10 +41,13 @@ const EvolutionMap = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("xp")
+      .select("xp, streak_count")
       .eq("user_id", user.id)
       .single()
-      .then(({ data }) => setXp(data?.xp ?? 0));
+      .then(({ data }) => {
+        setXp(data?.xp ?? 0);
+        setStreak(data?.streak_count ?? 0);
+      });
   }, [user]);
 
   if (loading) {
@@ -77,8 +81,15 @@ const EvolutionMap = () => {
             <ArrowLeft className="h-4 w-4 mr-1" /> Voltar
           </Button>
           <h1 className="font-display font-bold text-sm">Mapa de Evolução</h1>
-          <div className="flex items-center gap-1 text-sm font-bold text-xp">
-            <Zap className="h-4 w-4" /> {xp} XP
+          <div className="flex items-center gap-3">
+            {streak > 0 && (
+              <div className="flex items-center gap-1 text-sm font-bold text-orange-500">
+                🔥 {streak}
+              </div>
+            )}
+            <div className="flex items-center gap-1 text-sm font-bold text-xp">
+              <Zap className="h-4 w-4" /> {xp} XP
+            </div>
           </div>
         </div>
       </header>
@@ -140,6 +151,10 @@ const EvolutionMap = () => {
                 isCurrent={isCurrent}
                 OfficeIcon={officeIcons[i % officeIcons.length]}
                 onClick={() => {
+                  if (isCurrent) {
+                    navigate("/quiz");
+                    return;
+                  }
                   setSelectedLevel(level);
                   setSelectedReached(isReached);
                 }}
