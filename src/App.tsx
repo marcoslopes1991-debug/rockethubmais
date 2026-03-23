@@ -23,6 +23,7 @@ import Journey from "./pages/Journey";
 import EvolutionMap from "./pages/EvolutionMap";
 import Achievements from "./pages/Achievements";
 import Profile from "./pages/Profile";
+import RockZAssistant from "./components/RockZAssistant";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const App = () => (
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <RockZAssistant />
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>
