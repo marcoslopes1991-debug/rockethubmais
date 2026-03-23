@@ -113,7 +113,7 @@ export default function RockZAssistant() {
         }
       }
     } catch (e: any) {
-      setMessages((p) => [...p, { role: "assistant", content: `❌ ${e.message || "Erro ao se comunicar com RockZ"}` }]);
+      setMessages((p) => [...p, { role: "assistant", content: `❌ ${e.message || "Erro ao se comunicar com o assistente"}` }]);
     }
     setLoading(false);
   };
