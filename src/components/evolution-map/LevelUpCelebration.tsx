@@ -77,11 +77,22 @@ const LevelUpCelebration = ({ level, onClose }: Props) => {
             {level.name}
           </motion.p>
 
+          {level.description && (
+            <motion.p
+              className="text-muted-foreground text-sm mb-4 leading-relaxed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              {level.description}
+            </motion.p>
+          )}
+
           <motion.p
-            className="text-muted-foreground text-sm mb-6"
+            className="text-muted-foreground text-xs mb-6 italic"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.55 }}
           >
             Parabéns! Você alcançou um novo nível. Continue evoluindo!
           </motion.p>
