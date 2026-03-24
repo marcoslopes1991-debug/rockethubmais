@@ -276,6 +276,17 @@ const Profile = () => {
           </CardContent>
         </Card>
       </motion.main>
+
+      {listType && user && (
+        <FollowListDialog
+          userId={user.id}
+          type={listType}
+          open={!!listType}
+          onOpenChange={(open) => !open && setListType(null)}
+        />
+      )}
+
+      <UserSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </div>
   );
 };

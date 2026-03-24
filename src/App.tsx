@@ -49,6 +49,7 @@ const App = () => (
             <Route path="/items" element={<Items />} />
             <Route path="/achievements" element={<Achievements />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/user/:userId" element={<UserProfile />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
