@@ -168,6 +168,79 @@ const AdminGeneralSettings = () => {
           </Button>
         </CardContent>
       </Card>
+
+      {/* Mission Config Card */}
+      <Card className="glass-card">
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Target className="h-5 w-5 text-primary" />
+            Configurações de Missões
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Perguntas por missão diária *</Label>
+            <Input
+              type="number"
+              min={1}
+              value={dailyCount}
+              onChange={(e) => setDailyCount(Math.max(1, Number(e.target.value)))}
+            />
+            <p className="text-xs text-muted-foreground">Quantidade de perguntas exibidas nas missões diárias.</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Perguntas por missão extra (opcional)</Label>
+            <Input
+              type="number"
+              min={1}
+              placeholder="Padrão: mesmo da diária"
+              value={extraCount}
+              onChange={(e) => setExtraCount(e.target.value === "" ? "" : Math.max(1, Number(e.target.value)))}
+            />
+            <p className="text-xs text-muted-foreground">Se vazio, utiliza o mesmo valor da missão diária.</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Perguntas por missão especial (opcional)</Label>
+            <Input
+              type="number"
+              min={1}
+              placeholder="Padrão: mesmo da diária"
+              value={specialCount}
+              onChange={(e) => setSpecialCount(e.target.value === "" ? "" : Math.max(1, Number(e.target.value)))}
+            />
+            <p className="text-xs text-muted-foreground">Se vazio, utiliza o mesmo valor da missão diária.</p>
+          </div>
+
+          <Button
+            onClick={async () => {
+              if (!missionConfigId) return;
+              setSavingMission(true);
+              const { error } = await supabase
+                .from("mission_config" as any)
+                .update({
+                  daily_question_count: dailyCount,
+                  extra_question_count: extraCount === "" ? null : extraCount,
+                  special_question_count: specialCount === "" ? null : specialCount,
+                  updated_at: new Date().toISOString(),
+                } as any)
+                .eq("id", missionConfigId);
+              if (error) {
+                toast({ title: "Erro ao salvar", description: error.message, variant: "destructive" });
+              } else {
+                toast({ title: "Configurações de missões salvas!" });
+              }
+              setSavingMission(false);
+            }}
+            disabled={savingMission}
+            className="w-full"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {savingMission ? "Salvando..." : "Salvar configurações de missões"}
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 };
