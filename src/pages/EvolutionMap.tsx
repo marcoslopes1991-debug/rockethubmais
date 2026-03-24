@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useLevels, getLevelFromList, getLevelProgressFromList } from "@/hooks/useLevels";
-import { getAvatarForLevel } from "@/lib/levels";
+import { getGenderedAvatar } from "@/lib/levels";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft, Zap, Coffee, Monitor, Briefcase, Award, Building2,
@@ -37,6 +37,7 @@ const EvolutionMap = () => {
   const { levels, loading } = useLevels();
   const [xp, setXp] = useState(0);
   const [streak, setStreak] = useState(0);
+  const [gender, setGender] = useState<string | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<DbLevel | null>(null);
   const [selectedReached, setSelectedReached] = useState(false);
   const [celebratingLevel, setCelebratingLevel] = useState<DbLevel | null>(null);
@@ -46,12 +47,13 @@ const EvolutionMap = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("xp, streak_count")
+      .select("xp, streak_count, gender")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
         setXp(data?.xp ?? 0);
         setStreak(data?.streak_count ?? 0);
+        setGender(data?.gender ?? null);
       });
   }, [user]);
 
@@ -131,7 +133,7 @@ const EvolutionMap = () => {
         >
           <div className="relative shrink-0">
             <img
-              src={getAvatarForLevel(currentLevel.level_number)}
+              src={getGenderedAvatar(currentLevel, gender)}
               alt={currentLevel.name}
               className="w-12 h-12 rounded-full border-2 border-primary object-cover"
             />
@@ -169,6 +171,7 @@ const EvolutionMap = () => {
                 isReached={isReached}
                 isCurrent={isCurrent}
                 OfficeIcon={officeIcons[i % officeIcons.length]}
+                gender={gender}
                 onClick={() => {
                   if (isCurrent) {
                     navigate("/quiz");
@@ -193,6 +196,7 @@ const EvolutionMap = () => {
       {/* Level-up celebration */}
       <LevelUpCelebration
         level={celebratingLevel}
+        gender={gender}
         onClose={() => setCelebratingLevel(null)}
       />
     </div>

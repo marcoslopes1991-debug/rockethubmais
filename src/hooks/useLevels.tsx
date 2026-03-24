@@ -7,6 +7,8 @@ export interface DbLevel {
   name: string;
   min_xp: number;
   description: string;
+  avatar_male_url: string | null;
+  avatar_female_url: string | null;
 }
 
 let cachedLevels: DbLevel[] | null = null;
@@ -18,7 +20,7 @@ export function useLevels() {
   const fetchLevels = async () => {
     const { data } = await supabase
       .from("levels")
-      .select("id, level_number, name, min_xp, description")
+      .select("id, level_number, name, min_xp, description, avatar_male_url, avatar_female_url")
       .order("level_number");
     if (data) {
       cachedLevels = data;
@@ -38,7 +40,7 @@ export function getLevelFromList(levels: DbLevel[], xp: number): DbLevel {
   for (let i = levels.length - 1; i >= 0; i--) {
     if (xp >= levels[i].min_xp) return levels[i];
   }
-  return levels[0] ?? { id: "", level_number: 1, name: "Usuário", min_xp: 0, description: "" };
+  return levels[0] ?? { id: "", level_number: 1, name: "Usuário", min_xp: 0, description: "", avatar_male_url: null, avatar_female_url: null };
 }
 
 export function getLevelProgressFromList(levels: DbLevel[], xp: number): number {

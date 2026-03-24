@@ -1,15 +1,16 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { getAvatarForLevel } from "@/lib/levels";
+import { getGenderedAvatar } from "@/lib/levels";
 import { Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { DbLevel } from "@/hooks/useLevels";
 
 interface Props {
   level: DbLevel | null;
+  gender: string | null;
   onClose: () => void;
 }
 
-const LevelUpCelebration = ({ level, onClose }: Props) => {
+const LevelUpCelebration = ({ level, gender, onClose }: Props) => {
   if (!level) return null;
 
   return (
@@ -41,7 +42,7 @@ const LevelUpCelebration = ({ level, onClose }: Props) => {
               transition={{ repeat: Infinity, duration: 2 }}
             />
             <img
-              src={getAvatarForLevel(level.level_number)}
+              src={getGenderedAvatar(level, gender)}
               alt={level.name}
               className="w-24 h-24 rounded-full border-4 border-primary object-cover relative z-10"
             />

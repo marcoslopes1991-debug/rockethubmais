@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getAvatarForLevel } from "@/lib/levels";
+import { getGenderedAvatar } from "@/lib/levels";
 import type { DbLevel } from "@/hooks/useLevels";
 import type { LucideIcon } from "lucide-react";
 
@@ -11,11 +11,12 @@ interface MapNodeProps {
   isReached: boolean;
   isCurrent: boolean;
   OfficeIcon: LucideIcon;
+  gender: string | null;
   onClick: () => void;
 }
 
-const MapNode = ({ level, index, isReached, isCurrent, OfficeIcon, onClick }: MapNodeProps) => {
-  const avatar = getAvatarForLevel(level.level_number);
+const MapNode = ({ level, index, isReached, isCurrent, OfficeIcon, gender, onClick }: MapNodeProps) => {
+  const avatar = getGenderedAvatar(level, gender);
   const isLeft = index % 2 === 0;
 
   return (

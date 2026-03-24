@@ -165,6 +165,8 @@ export type Database = {
       }
       levels: {
         Row: {
+          avatar_female_url: string | null
+          avatar_male_url: string | null
           created_at: string
           description: string
           id: string
@@ -173,6 +175,8 @@ export type Database = {
           name: string
         }
         Insert: {
+          avatar_female_url?: string | null
+          avatar_male_url?: string | null
           created_at?: string
           description?: string
           id?: string
@@ -181,6 +185,8 @@ export type Database = {
           name: string
         }
         Update: {
+          avatar_female_url?: string | null
+          avatar_male_url?: string | null
           created_at?: string
           description?: string
           id?: string
