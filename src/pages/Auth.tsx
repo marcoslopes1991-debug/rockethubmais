@@ -17,6 +17,7 @@ const Auth = () => {
   const [displayName, setDisplayName] = useState("");
   const [gender, setGender] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -24,6 +25,26 @@ const Auth = () => {
   useEffect(() => {
     if (user) navigate("/");
   }, [user, navigate]);
+
+  useEffect(() => {
+    supabase
+      .from("ai_config" as any)
+      .select("logo_url")
+      .limit(1)
+      .single()
+      .then(({ data }: any) => {
+        if (data?.logo_url) setLogoUrl(data.logo_url);
+      });
+  }, []);
+
+  const LogoDisplay = () =>
+    logoUrl ? (
+      <img src={logoUrl} alt="Logo" className="mx-auto h-16 object-contain" />
+    ) : (
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary">
+        <Zap className="h-7 w-7 text-primary-foreground" />
+      </div>
+    );
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
