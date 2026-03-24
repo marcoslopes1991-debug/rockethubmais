@@ -227,25 +227,43 @@ const Dashboard = () => {
 
         {/* Stats */}
         <motion.div className="grid grid-cols-3 gap-3" variants={item}>
-          {[
-            { icon: Zap, value: xp, label: "XP Total", color: "text-xp" },
-            { icon: Flame, value: profile?.streak_count ?? 0, label: "Streak", color: "text-accent" },
-            { icon: Target, value: `${progressPercent}%`, label: "Progresso", color: "text-primary" },
-          ].map((stat, i) => (
-            <motion.div
-              key={i}
-              whileHover={{ scale: 1.05, y: -4 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              <Card className="glass-card cursor-default">
-                <CardContent className="pt-5 pb-4 text-center">
-                  <stat.icon className={`h-6 w-6 ${stat.color} mx-auto mb-1`} />
-                  <p className="text-2xl font-display font-bold">{stat.value}</p>
-                  <p className="text-xs text-muted-foreground">{stat.label}</p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+          {(() => {
+            const streak = profile?.streak_count ?? 0;
+            const streakMsg = streak === 0
+              ? "Comece hoje! 💪"
+              : streak <= 2
+              ? "Começando sua sequência 🔥"
+              : streak <= 6
+              ? "Você está indo bem 🚀"
+              : streak <= 13
+              ? "Não perca hoje! 🎯"
+              : "Imparável! ⚡";
+
+            const stats = [
+              { icon: Zap, value: xp, label: "XP Total", color: "text-xp", msg: null },
+              { icon: Flame, value: streak, label: "Streak", color: "text-accent", msg: streakMsg },
+              { icon: Target, value: `${progressPercent}%`, label: "Progresso", color: "text-primary", msg: null },
+            ];
+
+            return stats.map((stat, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ scale: 1.05, y: -4 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                <Card className={cn("glass-card cursor-default", stat.msg && streak > 0 && "border-accent/30")}>
+                  <CardContent className="pt-5 pb-4 text-center">
+                    <stat.icon className={`h-6 w-6 ${stat.color} mx-auto mb-1`} />
+                    <p className="text-2xl font-display font-bold">{stat.value}</p>
+                    <p className="text-xs text-muted-foreground">{stat.label}</p>
+                    {stat.msg && (
+                      <p className="text-[10px] text-accent font-medium mt-1">{stat.msg}</p>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ));
+          })()}
         </motion.div>
 
         {/* Achievements showcase */}
