@@ -190,6 +190,30 @@ export type Database = {
         }
         Relationships: []
       }
+      mission_config: {
+        Row: {
+          daily_question_count: number
+          extra_question_count: number | null
+          id: string
+          special_question_count: number | null
+          updated_at: string
+        }
+        Insert: {
+          daily_question_count?: number
+          extra_question_count?: number | null
+          id?: string
+          special_question_count?: number | null
+          updated_at?: string
+        }
+        Update: {
+          daily_question_count?: number
+          extra_question_count?: number | null
+          id?: string
+          special_question_count?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           action_url: string | null

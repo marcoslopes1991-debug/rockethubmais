@@ -48,6 +48,22 @@ const Quiz = () => {
     if (!user) return;
 
     const fetchQuestions = async () => {
+      // Fetch mission config for question limits
+      const { data: mConfig } = await supabase
+        .from("mission_config" as any)
+        .select("daily_question_count, extra_question_count, special_question_count")
+        .limit(1)
+        .single();
+
+      const mc = mConfig as any;
+      const dailyLimit = mc?.daily_question_count ?? 5;
+      const limitMap: Record<string, number> = {
+        daily: dailyLimit,
+        extra: mc?.extra_question_count ?? dailyLimit,
+        special: mc?.special_question_count ?? dailyLimit,
+      };
+      const questionLimit = limitMap[missionType] ?? dailyLimit;
+
       const { data: answeredIds } = await supabase
         .from("answers")
         .select("question_id")
@@ -67,7 +83,7 @@ const Quiz = () => {
         return true;
       });
       
-      setQuestions(unanswered);
+      setQuestions(unanswered.slice(0, questionLimit));
       setLoading(false);
     };
 
