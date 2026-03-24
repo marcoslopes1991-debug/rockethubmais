@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect } from "react";
 import { Zap } from "lucide-react";
 
 const Auth = () => {
@@ -16,6 +15,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [gender, setGender] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -52,14 +52,23 @@ const Auth = () => {
         navigate("/");
       }
     } else {
-      const { error } = await supabase.auth.signUp({
+      if (!gender) {
+        toast({ title: "Campo obrigatório", description: "Selecione seu sexo para continuar.", variant: "destructive" });
+        setLoading(false);
+        return;
+      }
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { display_name: displayName || email.split("@")[0] } },
+        options: { data: { display_name: displayName || email.split("@")[0], gender } },
       });
       if (error) {
         toast({ title: "Erro ao cadastrar", description: error.message, variant: "destructive" });
       } else {
+        // Update profile with gender
+        if (data.user) {
+          await supabase.from("profiles").update({ gender } as any).eq("user_id", data.user.id);
+        }
         toast({ title: "Conta criada!", description: "Verifique seu e-mail para confirmar o cadastro." });
         setIsLogin(true);
       }
@@ -127,15 +136,46 @@ const Auth = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="name">Nome</Label>
-                <Input
-                  id="name"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="Seu nome"
-                />
-              </div>
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nome</Label>
+                  <Input
+                    id="name"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    placeholder="Seu nome"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Sexo</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setGender("masculino")}
+                      className={`flex items-center justify-center gap-2 rounded-lg border-2 p-3 text-sm font-medium transition-all ${
+                        gender === "masculino"
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border bg-background text-muted-foreground hover:border-primary/50"
+                      }`}
+                    >
+                      <span className="text-lg">♂️</span>
+                      Masculino
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setGender("feminino")}
+                      className={`flex items-center justify-center gap-2 rounded-lg border-2 p-3 text-sm font-medium transition-all ${
+                        gender === "feminino"
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border bg-background text-muted-foreground hover:border-primary/50"
+                      }`}
+                    >
+                      <span className="text-lg">♀️</span>
+                      Feminino
+                    </button>
+                  </div>
+                </div>
+              </>
             )}
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
