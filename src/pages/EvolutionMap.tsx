@@ -47,12 +47,13 @@ const EvolutionMap = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("xp, streak_count")
+      .select("xp, streak_count, gender")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
         setXp(data?.xp ?? 0);
         setStreak(data?.streak_count ?? 0);
+        setGender(data?.gender ?? null);
       });
   }, [user]);
 
