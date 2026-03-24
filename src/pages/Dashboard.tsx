@@ -17,6 +17,7 @@ import MissionsSections from "@/components/MissionsSections";
 import NotificationBell from "@/components/NotificationBell";
 import UserSearchDialog from "@/components/social/UserSearchDialog";
 import SuggestedUsers from "@/components/social/SuggestedUsers";
+import ActionCard from "@/components/dashboard/ActionCard";
 import {
   Sheet,
   SheetContent,
