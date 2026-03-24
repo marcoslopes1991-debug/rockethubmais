@@ -42,7 +42,7 @@ const Profile = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, xp, notifications_enabled, avatar_url, gender")
+      .select("display_name, xp, notifications_enabled, avatar_url, gender, is_public, hide_followers")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
