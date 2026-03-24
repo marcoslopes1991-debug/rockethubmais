@@ -7,6 +7,8 @@ export interface DbLevel {
   name: string;
   min_xp: number;
   description: string;
+  avatar_male_url: string | null;
+  avatar_female_url: string | null;
 }
 
 let cachedLevels: DbLevel[] | null = null;
