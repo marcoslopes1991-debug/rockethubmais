@@ -20,6 +20,7 @@ import AdminImportQuestions from "./pages/admin/AdminImportQuestions";
 import AdminAchievements from "./pages/admin/AdminAchievements";
 import AdminLevels from "./pages/admin/AdminLevels";
 import AdminAiConfig from "./pages/admin/AdminAiConfig";
+import AdminGeneralSettings from "./pages/admin/AdminGeneralSettings";
 import Journey from "./pages/Journey";
 import EvolutionMap from "./pages/EvolutionMap";
 import Achievements from "./pages/Achievements";
@@ -55,6 +56,7 @@ const App = () => (
               <Route path="levels" element={<AdminLevels />} />
               <Route path="achievements" element={<AdminAchievements />} />
               <Route path="ai-config" element={<AdminAiConfig />} />
+              <Route path="settings" element={<AdminGeneralSettings />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
