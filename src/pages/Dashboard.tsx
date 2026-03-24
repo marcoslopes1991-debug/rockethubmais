@@ -93,6 +93,8 @@ const Dashboard = () => {
   const hasUnanswered = answeredCount < totalQuestions;
   const xp = profile?.xp ?? 0;
   const level = levels.length > 0 ? getLevelFromList(levels, xp) : { name: "Carregando..." };
+  const nextLevel = levels.length > 0 ? getNextLevelFromList(levels, xp) : null;
+  const xpRemaining = nextLevel ? nextLevel.min_xp - xp : 0;
   const progressPercent = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
 
   return (
