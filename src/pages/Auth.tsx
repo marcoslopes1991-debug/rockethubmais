@@ -102,9 +102,7 @@ const Auth = () => {
       <div className="min-h-screen flex items-center justify-center bg-background px-4">
         <Card className="w-full max-w-md glass-card animate-slide-up">
           <CardHeader className="text-center space-y-2">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary">
-              <Zap className="h-7 w-7 text-primary-foreground" />
-            </div>
+            <LogoDisplay />
             <CardTitle className="text-2xl font-display">Esqueci minha senha</CardTitle>
             <CardDescription>Digite seu e-mail para receber o link de redefinição</CardDescription>
           </CardHeader>
