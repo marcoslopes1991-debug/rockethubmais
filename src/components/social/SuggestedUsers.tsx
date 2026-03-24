@@ -65,19 +65,20 @@ const SuggestedUsers = () => {
           <Users className="h-4 w-4 text-primary" />
           <span className="font-display font-bold text-sm">Pessoas para seguir</span>
         </div>
-        <div className="space-y-2">
-          {suggestions.map((u) => {
-            const levelInfo = levels.length > 0 ? getLevelFromList(levels, u.xp) : { name: "..." };
+        <div className="space-y-1">
+          {suggestions.map((u, i) => {
+            const levelInfo = levels.length > 0 ? getLevelFromList(levels, u.xp) : null;
             const following = isFollowing(u.user_id);
 
             return (
               <motion.div
                 key={u.user_id}
-                className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors"
+                className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-muted/50 transition-colors"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05 }}
               >
-                <button onClick={() => navigate(`/user/${u.user_id}`)}>
+                <button onClick={() => navigate(`/user/${u.user_id}`)} className="shrink-0">
                   <UserAvatar
                     avatarUrl={u.avatar_url}
                     gender={u.gender}
@@ -90,7 +91,18 @@ const SuggestedUsers = () => {
                   onClick={() => navigate(`/user/${u.user_id}`)}
                 >
                   <p className="font-medium truncate text-sm">{u.display_name}</p>
-                  <p className="text-xs text-muted-foreground">{levelInfo.name}</p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    {levelInfo && (
+                      <span className="flex items-center gap-0.5 text-[11px] text-accent font-semibold">
+                        <Star className="h-3 w-3" />
+                        Nv. {levelInfo.level_number}
+                      </span>
+                    )}
+                    <span className="flex items-center gap-0.5 text-[11px] text-muted-foreground">
+                      <Zap className="h-3 w-3 text-xp" />
+                      {u.xp} XP
+                    </span>
+                  </div>
                 </button>
                 <Button
                   variant={following ? "secondary" : "default"}
