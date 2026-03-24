@@ -37,6 +37,7 @@ const EvolutionMap = () => {
   const { levels, loading } = useLevels();
   const [xp, setXp] = useState(0);
   const [streak, setStreak] = useState(0);
+  const [gender, setGender] = useState<string | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<DbLevel | null>(null);
   const [selectedReached, setSelectedReached] = useState(false);
   const [celebratingLevel, setCelebratingLevel] = useState<DbLevel | null>(null);
