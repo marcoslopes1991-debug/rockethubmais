@@ -25,6 +25,7 @@ import Journey from "./pages/Journey";
 import EvolutionMap from "./pages/EvolutionMap";
 import Achievements from "./pages/Achievements";
 import Profile from "./pages/Profile";
+import Chat from "./pages/Chat";
 import RockZAssistant from "./components/RockZAssistant";
 
 const queryClient = new QueryClient();
