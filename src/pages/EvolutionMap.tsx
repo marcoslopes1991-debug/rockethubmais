@@ -171,6 +171,7 @@ const EvolutionMap = () => {
                 isReached={isReached}
                 isCurrent={isCurrent}
                 OfficeIcon={officeIcons[i % officeIcons.length]}
+                gender={gender}
                 onClick={() => {
                   if (isCurrent) {
                     navigate("/quiz");
