@@ -22,6 +22,7 @@ const items = [
   { title: "Níveis", url: "/admin/levels", icon: TrendingUp },
   { title: "Conquistas", url: "/admin/achievements", icon: Award },
   { title: "Config. IA", url: "/admin/ai-config", icon: Bot },
+  { title: "Config. Gerais", url: "/admin/settings", icon: Settings },
 ];
 
 export function AdminSidebar() {

@@ -56,6 +56,7 @@ const App = () => (
               <Route path="levels" element={<AdminLevels />} />
               <Route path="achievements" element={<AdminAchievements />} />
               <Route path="ai-config" element={<AdminAiConfig />} />
+              <Route path="settings" element={<AdminGeneralSettings />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
