@@ -52,14 +52,23 @@ const Auth = () => {
         navigate("/");
       }
     } else {
-      const { error } = await supabase.auth.signUp({
+      if (!gender) {
+        toast({ title: "Campo obrigatório", description: "Selecione seu sexo para continuar.", variant: "destructive" });
+        setLoading(false);
+        return;
+      }
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { display_name: displayName || email.split("@")[0] } },
+        options: { data: { display_name: displayName || email.split("@")[0], gender } },
       });
       if (error) {
         toast({ title: "Erro ao cadastrar", description: error.message, variant: "destructive" });
       } else {
+        // Update profile with gender
+        if (data.user) {
+          await supabase.from("profiles").update({ gender } as any).eq("user_id", data.user.id);
+        }
         toast({ title: "Conta criada!", description: "Verifique seu e-mail para confirmar o cadastro." });
         setIsLogin(true);
       }
