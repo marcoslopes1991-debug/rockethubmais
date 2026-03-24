@@ -168,6 +168,11 @@ const Dashboard = () => {
         initial="hidden"
         animate="show"
       >
+        {/* Action card */}
+        <motion.div variants={item}>
+          <ActionCard hasStarted={answeredCount > 0} hasUnanswered={hasUnanswered} />
+        </motion.div>
+
         {/* Hero card with avatar */}
         <motion.div variants={item}>
           <Card className="glass-card overflow-hidden">
