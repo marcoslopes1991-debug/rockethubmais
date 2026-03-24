@@ -88,13 +88,18 @@ const Ranking = () => {
                       )}
                     >
                       {getRankIcon(i)}
-                      <UserAvatar
-                        avatarUrl={p.avatar_url}
-                        gender={p.gender}
-                        displayName={p.display_name}
-                        size="sm"
-                      />
-                      <div className="flex-1 min-w-0">
+                      <button onClick={() => navigate(isSelf ? "/profile" : `/user/${p.user_id}`)}>
+                        <UserAvatar
+                          avatarUrl={p.avatar_url}
+                          gender={p.gender}
+                          displayName={p.display_name}
+                          size="sm"
+                        />
+                      </button>
+                      <button
+                        className="flex-1 min-w-0 text-left"
+                        onClick={() => navigate(isSelf ? "/profile" : `/user/${p.user_id}`)}
+                      >
                         <p className="font-medium truncate">
                           {p.display_name}
                           {isSelf && (
@@ -102,7 +107,7 @@ const Ranking = () => {
                           )}
                         </p>
                         <p className="text-xs text-muted-foreground">{levelInfo.name}</p>
-                      </div>
+                      </button>
                       <div className="flex items-center gap-2">
                         {p.streak_count > 0 && (
                           <span className="flex items-center gap-0.5 text-xs text-accent">

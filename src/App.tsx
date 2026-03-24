@@ -25,6 +25,7 @@ import Journey from "./pages/Journey";
 import EvolutionMap from "./pages/EvolutionMap";
 import Achievements from "./pages/Achievements";
 import Profile from "./pages/Profile";
+import UserProfile from "./pages/UserProfile";
 import Chat from "./pages/Chat";
 import RockZAssistant from "./components/RockZAssistant";
 
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/items" element={<Items />} />
             <Route path="/achievements" element={<Achievements />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/user/:userId" element={<UserProfile />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />

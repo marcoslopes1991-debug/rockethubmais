@@ -8,9 +8,11 @@ import { isSoundEnabled, setSoundEnabled } from "@/lib/sounds";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Volume2, Shield, Star, Zap, Bell, Users, Camera } from "lucide-react";
+import { ArrowLeft, Volume2, Shield, Star, Zap, Bell, Users, Camera, Search } from "lucide-react";
 import UserAvatar from "@/components/UserAvatar";
 import LevelProgressBar from "@/components/LevelProgressBar";
+import FollowListDialog from "@/components/social/FollowListDialog";
+import UserSearchDialog from "@/components/social/UserSearchDialog";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -29,6 +31,8 @@ const Profile = () => {
   const [soundOn, setSoundOn] = useState(isSoundEnabled());
   const [notificationsOn, setNotificationsOn] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [listType, setListType] = useState<"followers" | "following" | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -167,20 +171,35 @@ const Profile = () => {
 
               {/* Followers / Following */}
               <div className="flex items-center gap-6 mt-2">
-                <div className="flex flex-col items-center">
+                <button
+                  onClick={() => setListType("followers")}
+                  className="flex flex-col items-center hover:opacity-80 transition-opacity"
+                >
                   <span className="text-lg font-bold">{followerCount}</span>
                   <span className="text-xs text-muted-foreground flex items-center gap-1">
                     <Users className="h-3 w-3" /> Seguidores
                   </span>
-                </div>
+                </button>
                 <div className="h-8 w-px bg-border" />
-                <div className="flex flex-col items-center">
+                <button
+                  onClick={() => setListType("following")}
+                  className="flex flex-col items-center hover:opacity-80 transition-opacity"
+                >
                   <span className="text-lg font-bold">{followingCount}</span>
                   <span className="text-xs text-muted-foreground flex items-center gap-1">
                     <Users className="h-3 w-3" /> Seguindo
                   </span>
-                </div>
+                </button>
               </div>
+
+              {/* Search users button */}
+              <Button
+                variant="outline"
+                className="mt-2 w-full max-w-xs"
+                onClick={() => setSearchOpen(true)}
+              >
+                <Search className="h-4 w-4 mr-2" /> Buscar usuários
+              </Button>
 
               <div className="w-full mt-2">
                 <LevelProgressBar xp={xp} />
@@ -257,6 +276,17 @@ const Profile = () => {
           </CardContent>
         </Card>
       </motion.main>
+
+      {listType && user && (
+        <FollowListDialog
+          userId={user.id}
+          type={listType}
+          open={!!listType}
+          onOpenChange={(open) => !open && setListType(null)}
+        />
+      )}
+
+      <UserSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </div>
   );
 };

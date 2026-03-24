@@ -6,7 +6,7 @@ import { useAdmin } from "@/hooks/useAdmin";
 import { useAchievements } from "@/hooks/useAchievements";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon, Award, Menu } from "lucide-react";
+import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon, Award, Menu, Search } from "lucide-react";
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import StreakBadge from "@/components/StreakBadge";
@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 import SoundToggle from "@/components/SoundToggle";
 import MissionsSections from "@/components/MissionsSections";
 import NotificationBell from "@/components/NotificationBell";
+import UserSearchDialog from "@/components/social/UserSearchDialog";
 import {
   Sheet,
   SheetContent,
@@ -51,6 +52,7 @@ const Dashboard = () => {
   const [answeredCount, setAnsweredCount] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [equippedItems, setEquippedItems] = useState<{ icon_emoji: string; name: string }[]>([]);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -108,6 +110,9 @@ const Dashboard = () => {
           </motion.div>
           <div className="flex items-center gap-1 sm:gap-2">
             <StreakBadge streak={profile?.streak_count ?? 0} />
+            <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)} title="Buscar">
+              <Search className="h-5 w-5" />
+            </Button>
             <Button variant="ghost" size="icon" onClick={() => navigate("/evolution-map")} title="Mapa">
               <MapIcon className="h-5 w-5" />
             </Button>
@@ -292,6 +297,8 @@ const Dashboard = () => {
         {/* Extra & Special Missions */}
         <MissionsSections />
       </motion.main>
+
+      <UserSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </div>
   );
 };
