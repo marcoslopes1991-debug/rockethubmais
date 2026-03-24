@@ -25,6 +25,7 @@ import Journey from "./pages/Journey";
 import EvolutionMap from "./pages/EvolutionMap";
 import Achievements from "./pages/Achievements";
 import Profile from "./pages/Profile";
+import UserProfile from "./pages/UserProfile";
 import Chat from "./pages/Chat";
 import RockZAssistant from "./components/RockZAssistant";
 
