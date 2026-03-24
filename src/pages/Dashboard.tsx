@@ -52,6 +52,7 @@ const Dashboard = () => {
   const [answeredCount, setAnsweredCount] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [equippedItems, setEquippedItems] = useState<{ icon_emoji: string; name: string }[]>([]);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
