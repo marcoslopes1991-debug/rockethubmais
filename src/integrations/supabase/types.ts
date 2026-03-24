@@ -263,7 +263,9 @@ export type Database = {
           created_at: string
           display_name: string
           gender: string | null
+          hide_followers: boolean
           id: string
+          is_public: boolean
           last_activity_date: string | null
           notifications_enabled: boolean
           streak_count: number
@@ -277,7 +279,9 @@ export type Database = {
           created_at?: string
           display_name?: string
           gender?: string | null
+          hide_followers?: boolean
           id?: string
+          is_public?: boolean
           last_activity_date?: string | null
           notifications_enabled?: boolean
           streak_count?: number
@@ -291,7 +295,9 @@ export type Database = {
           created_at?: string
           display_name?: string
           gender?: string | null
+          hide_followers?: boolean
           id?: string
+          is_public?: boolean
           last_activity_date?: string | null
           notifications_enabled?: boolean
           streak_count?: number

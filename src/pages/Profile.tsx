@@ -13,6 +13,7 @@ import UserAvatar from "@/components/UserAvatar";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import FollowListDialog from "@/components/social/FollowListDialog";
 import UserSearchDialog from "@/components/social/UserSearchDialog";
+import PrivacySettings from "@/components/profile/PrivacySettings";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -27,6 +28,8 @@ const Profile = () => {
     notifications_enabled: boolean;
     avatar_url: string | null;
     gender: string | null;
+    is_public: boolean;
+    hide_followers: boolean;
   } | null>(null);
   const [soundOn, setSoundOn] = useState(isSoundEnabled());
   const [notificationsOn, setNotificationsOn] = useState(true);
@@ -39,7 +42,7 @@ const Profile = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, xp, notifications_enabled, avatar_url, gender")
+      .select("display_name, xp, notifications_enabled, avatar_url, gender, is_public, hide_followers")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
@@ -256,6 +259,14 @@ const Profile = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Privacy */}
+        {profile && (
+          <PrivacySettings
+            isPublic={profile.is_public}
+            hideFollowers={profile.hide_followers}
+          />
+        )}
 
         {/* Security */}
         <Card className="glass-card">

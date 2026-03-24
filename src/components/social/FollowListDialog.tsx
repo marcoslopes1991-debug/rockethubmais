@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -6,7 +6,8 @@ import { useFollows } from "@/hooks/useFollows";
 import { useLevels, getLevelFromList } from "@/hooks/useLevels";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { UserPlus, UserCheck } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { UserPlus, UserCheck, ArrowUpDown } from "lucide-react";
 import UserAvatar from "@/components/UserAvatar";
 
 interface FollowListDialogProps {
@@ -24,20 +25,22 @@ interface UserItem {
   gender: string | null;
 }
 
+type SortOption = "recent" | "alpha" | "level" | "not_following_back";
+
 const FollowListDialog = ({ userId, type, open, onOpenChange }: FollowListDialogProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { levels } = useLevels();
-  const { isFollowing, toggleFollow, loading: followLoading } = useFollows();
+  const { isFollowing, toggleFollow, loading: followLoading, followingIds } = useFollows();
   const [users, setUsers] = useState<UserItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sort, setSort] = useState<SortOption>("recent");
 
   useEffect(() => {
     if (!open) return;
     setLoading(true);
 
     const fetchList = async () => {
-      // Get follow relationships
       const column = type === "followers" ? "following_id" : "follower_id";
       const selectColumn = type === "followers" ? "follower_id" : "following_id";
 
@@ -65,6 +68,25 @@ const FollowListDialog = ({ userId, type, open, onOpenChange }: FollowListDialog
     fetchList();
   }, [open, userId, type]);
 
+  const sortedUsers = useMemo(() => {
+    const list = [...users];
+    switch (sort) {
+      case "alpha":
+        return list.sort((a, b) => a.display_name.localeCompare(b.display_name));
+      case "level":
+        return list.sort((a, b) => b.xp - a.xp);
+      case "not_following_back":
+        return list.sort((a, b) => {
+          const aFollowed = followingIds.has(a.user_id) ? 1 : 0;
+          const bFollowed = followingIds.has(b.user_id) ? 1 : 0;
+          return aFollowed - bFollowed;
+        });
+      case "recent":
+      default:
+        return list;
+    }
+  }, [users, sort, followingIds]);
+
   const title = type === "followers" ? "Seguidores" : "Seguindo";
 
   return (
@@ -73,13 +95,34 @@ const FollowListDialog = ({ userId, type, open, onOpenChange }: FollowListDialog
         <DialogHeader>
           <DialogTitle className="font-display">{title}</DialogTitle>
         </DialogHeader>
+
+        {/* Sort filter */}
+        {users.length > 1 && (
+          <div className="flex items-center gap-2 mb-1">
+            <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+            <Select value={sort} onValueChange={(v) => setSort(v as SortOption)}>
+              <SelectTrigger className="h-8 text-xs w-auto min-w-[160px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="recent">Mais recentes</SelectItem>
+                <SelectItem value="alpha">Ordem alfabética</SelectItem>
+                <SelectItem value="level">Nível mais alto</SelectItem>
+                {type === "followers" && (
+                  <SelectItem value="not_following_back">Não segue de volta</SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
         <div className="overflow-y-auto space-y-2 pr-1">
           {loading ? (
             <p className="text-center text-muted-foreground py-8">Carregando...</p>
           ) : users.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">Nenhum usuário encontrado.</p>
           ) : (
-            users.map((u) => {
+            sortedUsers.map((u) => {
               const levelInfo = levels.length > 0 ? getLevelFromList(levels, u.xp) : { name: "..." };
               const isSelf = u.user_id === user?.id;
               const following = isFollowing(u.user_id);
