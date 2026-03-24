@@ -13,6 +13,7 @@ import UserAvatar from "@/components/UserAvatar";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import FollowListDialog from "@/components/social/FollowListDialog";
 import UserSearchDialog from "@/components/social/UserSearchDialog";
+import PrivacySettings from "@/components/profile/PrivacySettings";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
