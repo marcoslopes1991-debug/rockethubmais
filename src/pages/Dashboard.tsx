@@ -10,7 +10,7 @@ import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon, Aw
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import StreakBadge from "@/components/StreakBadge";
-import { useLevels, getLevelFromList } from "@/hooks/useLevels";
+import { useLevels, getLevelFromList, getNextLevelFromList } from "@/hooks/useLevels";
 import { motion } from "framer-motion";
 import SoundToggle from "@/components/SoundToggle";
 import MissionsSections from "@/components/MissionsSections";
@@ -93,6 +93,8 @@ const Dashboard = () => {
   const hasUnanswered = answeredCount < totalQuestions;
   const xp = profile?.xp ?? 0;
   const level = levels.length > 0 ? getLevelFromList(levels, xp) : { name: "Carregando..." };
+  const nextLevel = levels.length > 0 ? getNextLevelFromList(levels, xp) : null;
+  const xpRemaining = nextLevel ? nextLevel.min_xp - xp : 0;
   const progressPercent = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
 
   return (
@@ -212,6 +214,12 @@ const Dashboard = () => {
               </div>
               <div className="mt-5">
                 <LevelProgressBar xp={xp} />
+                {nextLevel && (
+                  <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
+                    <Zap className="h-3 w-3 text-primary" />
+                    Faltam <span className="font-bold text-foreground">{xpRemaining} XP</span> para {nextLevel.name}
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
