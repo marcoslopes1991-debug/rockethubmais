@@ -42,11 +42,26 @@ export function getNextLevel(xp: number): LevelInfo | null {
   return next ?? null;
 }
 
-// Map DB level_number to avatar image
+// Map DB level_number to avatar image (static fallback)
 export function getAvatarForLevel(levelNumber: number): string {
   if (levelNumber <= 1) return avatarLevel0;
   if (levelNumber <= 3) return avatarLevel1;
   if (levelNumber <= 7) return avatarLevel2;
   if (levelNumber <= 10) return avatarLevel3;
   return avatarLevel4;
+}
+
+// Gender-aware avatar: prefer DB URL, fallback to static
+export function getGenderedAvatar(
+  level: { level_number: number; avatar_male_url?: string | null; avatar_female_url?: string | null },
+  gender: string | null | undefined
+): string {
+  const isFemale = gender === "female" || gender === "feminino";
+  const url = isFemale ? level.avatar_female_url : level.avatar_male_url;
+  if (url) return url;
+  // fallback: try the other gender's avatar
+  const altUrl = isFemale ? level.avatar_male_url : level.avatar_female_url;
+  if (altUrl) return altUrl;
+  // final fallback: static
+  return getAvatarForLevel(level.level_number);
 }
