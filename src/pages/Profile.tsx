@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -8,25 +8,34 @@ import { isSoundEnabled, setSoundEnabled } from "@/lib/sounds";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Volume2, Shield, Star, Zap, Bell, Users } from "lucide-react";
-import AvatarDisplay from "@/components/AvatarDisplay";
+import { ArrowLeft, Volume2, Shield, Star, Zap, Bell, Users, Camera } from "lucide-react";
+import UserAvatar from "@/components/UserAvatar";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 const Profile = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { levels } = useLevels();
   const { followerCount, followingCount, fetchCounts } = useFollows();
-  const [profile, setProfile] = useState<{ display_name: string; xp: number; notifications_enabled: boolean } | null>(null);
+  const [profile, setProfile] = useState<{
+    display_name: string;
+    xp: number;
+    notifications_enabled: boolean;
+    avatar_url: string | null;
+    gender: string | null;
+  } | null>(null);
   const [soundOn, setSoundOn] = useState(isSoundEnabled());
   const [notificationsOn, setNotificationsOn] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, xp, notifications_enabled")
+      .select("display_name, xp, notifications_enabled, avatar_url, gender")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
@@ -45,6 +54,52 @@ const Profile = () => {
     const next = !soundOn;
     setSoundEnabled(next);
     setSoundOn(next);
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Formato não suportado. Use JPG ou PNG.");
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Imagem muito grande. Máximo 2MB.");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const filePath = `${user.id}/avatar.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(filePath);
+
+      const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+
+      await supabase
+        .from("profiles")
+        .update({ avatar_url: avatarUrl })
+        .eq("user_id", user.id);
+
+      setProfile((prev) => prev ? { ...prev, avatar_url: avatarUrl } : prev);
+      toast.success("Foto atualizada!");
+    } catch (err: any) {
+      toast.error("Erro ao enviar foto: " + err.message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -67,7 +122,37 @@ const Profile = () => {
         <Card className="glass-card overflow-hidden">
           <CardContent className="pt-6">
             <div className="flex flex-col items-center text-center gap-3">
-              <AvatarDisplay xp={xp} size="lg" />
+              {/* Avatar with upload overlay */}
+              <div className="relative group">
+                <UserAvatar
+                  avatarUrl={profile?.avatar_url}
+                  gender={profile?.gender}
+                  displayName={profile?.display_name}
+                  size="lg"
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+                >
+                  <Camera className="h-6 w-6 text-white" />
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png"
+                  className="hidden"
+                  onChange={handleAvatarUpload}
+                />
+              </div>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="text-xs text-primary font-medium hover:underline"
+              >
+                {uploading ? "Enviando..." : "Alterar foto"}
+              </button>
+
               <div>
                 <h1 className="text-xl font-display font-bold">{profile?.display_name || "Estudante"}</h1>
                 <div className="flex items-center justify-center gap-1.5 mt-1">
