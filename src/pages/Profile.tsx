@@ -260,6 +260,14 @@ const Profile = () => {
           </CardContent>
         </Card>
 
+        {/* Privacy */}
+        {profile && (
+          <PrivacySettings
+            isPublic={profile.is_public}
+            hideFollowers={profile.hide_followers}
+          />
+        )}
+
         {/* Security */}
         <Card className="glass-card">
           <CardHeader className="pb-2">
