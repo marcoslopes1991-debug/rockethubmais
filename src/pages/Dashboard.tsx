@@ -110,6 +110,9 @@ const Dashboard = () => {
           </motion.div>
           <div className="flex items-center gap-1 sm:gap-2">
             <StreakBadge streak={profile?.streak_count ?? 0} />
+            <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)} title="Buscar">
+              <Search className="h-5 w-5" />
+            </Button>
             <Button variant="ghost" size="icon" onClick={() => navigate("/evolution-map")} title="Mapa">
               <MapIcon className="h-5 w-5" />
             </Button>
