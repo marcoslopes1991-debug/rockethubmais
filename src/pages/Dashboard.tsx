@@ -288,16 +288,10 @@ const Dashboard = () => {
               </Button>
             </motion.div>
           ) : (
-            <Card className="glass-card text-center p-8">
-              <motion.div
-                animate={{ rotate: [0, -10, 10, -10, 0] }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-              >
-                <Trophy className="h-12 w-12 text-xp mx-auto mb-3" />
-              </motion.div>
-              <h2 className="text-xl font-display font-bold">Parabéns!</h2>
-              <p className="text-muted-foreground">Você respondeu todas as perguntas disponíveis 🎉</p>
-            </Card>
+            <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-muted/50 border border-border/50">
+              <Trophy className="h-5 w-5 text-muted-foreground shrink-0" />
+              <p className="text-sm text-muted-foreground">Você respondeu todas as perguntas disponíveis 🎉</p>
+            </div>
            )}
         </motion.div>
 
