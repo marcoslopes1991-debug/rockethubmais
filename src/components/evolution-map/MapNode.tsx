@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getAvatarForLevel } from "@/lib/levels";
+import { getGenderedAvatar } from "@/lib/levels";
 import type { DbLevel } from "@/hooks/useLevels";
 import type { LucideIcon } from "lucide-react";
 
