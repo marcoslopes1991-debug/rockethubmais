@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,8 @@ interface Notification {
   message: string;
   read: boolean;
   created_at: string;
+  action_url: string | null;
+  reference_id: string | null;
 }
 
 const typeEmojis: Record<string, string> = {
@@ -28,8 +31,18 @@ const typeEmojis: Record<string, string> = {
   general: "📢",
 };
 
+const defaultRoutes: Record<string, string> = {
+  special_mission: "/quiz?type=special",
+  streak_warning: "/quiz",
+  inactivity: "/dashboard",
+  achievement: "/achievements",
+  level_up: "/evolution-map",
+  general: "/dashboard",
+};
+
 const NotificationBell = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
 
@@ -50,7 +63,6 @@ const NotificationBell = () => {
 
     fetchNotifications();
 
-    // Realtime subscription
     const channel = supabase
       .channel("user-notifications")
       .on(
@@ -83,11 +95,19 @@ const NotificationBell = () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
-  const markRead = async (id: string) => {
-    await supabase.from("notifications").update({ read: true }).eq("id", id);
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
+  const handleClick = async (n: Notification) => {
+    // Mark as read
+    if (!n.read) {
+      await supabase.from("notifications").update({ read: true }).eq("id", n.id);
+      setNotifications((prev) =>
+        prev.map((notif) => (notif.id === n.id ? { ...notif, read: true } : notif))
+      );
+    }
+
+    // Close popover and navigate
+    setOpen(false);
+    const targetUrl = n.action_url || defaultRoutes[n.type] || "/dashboard";
+    navigate(targetUrl);
   };
 
   return (
@@ -133,10 +153,10 @@ const NotificationBell = () => {
               {notifications.map((n) => (
                 <motion.button
                   key={n.id}
-                  className={`w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors ${
+                  className={`w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors cursor-pointer ${
                     !n.read ? "bg-primary/5" : ""
                   }`}
-                  onClick={() => markRead(n.id)}
+                  onClick={() => handleClick(n)}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                 >

@@ -18,25 +18,24 @@ Deno.serve(async (req) => {
 
     const now = new Date();
     const today = now.toISOString().split("T")[0];
-    const notifications: { user_id: string; type: string; title: string; message: string }[] = [];
+    const notifications: { user_id: string; type: string; title: string; message: string; action_url: string; reference_id?: string }[] = [];
 
     // 1. Check for new special missions available
     const { data: specialMissions } = await supabase
       .from("questions")
       .select("id")
       .eq("mission_type", "special")
+      .eq("is_active", true)
       .lte("available_from", now.toISOString())
       .gte("available_until", now.toISOString());
 
     if (specialMissions && specialMissions.length > 0) {
-      // Get all users with notifications enabled
       const { data: profiles } = await supabase
         .from("profiles")
         .select("user_id")
         .eq("notifications_enabled", true);
 
       if (profiles) {
-        // Check which users already got notified today about special missions
         const { data: existingNotifs } = await supabase
           .from("notifications")
           .select("user_id")
@@ -52,13 +51,14 @@ Deno.serve(async (req) => {
               type: "special_mission",
               title: "Nova missão especial! ⭐",
               message: "Uma missão especial está disponível com XP bônus! Não perca essa chance de evoluir 🚀",
+              action_url: "/quiz?type=special",
             });
           }
         }
       }
     }
 
-    // 2. Check streak warnings (users who were active yesterday but not today)
+    // 2. Check streak warnings
     const yesterday = new Date(now);
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = yesterday.toISOString().split("T")[0];
@@ -86,12 +86,13 @@ Deno.serve(async (req) => {
             type: "streak_warning",
             title: "Seu streak está em risco! 🔥",
             message: `Você tem ${profile.streak_count} dias de streak! Complete uma missão hoje para não perder sua sequência 💪`,
+            action_url: "/quiz",
           });
         }
       }
     }
 
-    // 3. Check inactive users (no activity for 3+ days)
+    // 3. Check inactive users (3+ days)
     const threeDaysAgo = new Date(now);
     threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
     const threeDaysAgoStr = threeDaysAgo.toISOString().split("T")[0];
@@ -118,6 +119,7 @@ Deno.serve(async (req) => {
             type: "inactivity",
             title: "Sentimos sua falta! 💤",
             message: "Sua jornada de evolução continua te esperando. Volte e conquiste novos níveis! 🎯",
+            action_url: "/dashboard",
           });
         }
       }
@@ -136,13 +138,8 @@ Deno.serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        generated: notifications.length,
-      }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      JSON.stringify({ success: true, generated: notifications.length }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {
     console.error("Error:", err);
