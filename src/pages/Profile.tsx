@@ -28,6 +28,8 @@ const Profile = () => {
     notifications_enabled: boolean;
     avatar_url: string | null;
     gender: string | null;
+    is_public: boolean;
+    hide_followers: boolean;
   } | null>(null);
   const [soundOn, setSoundOn] = useState(isSoundEnabled());
   const [notificationsOn, setNotificationsOn] = useState(true);
