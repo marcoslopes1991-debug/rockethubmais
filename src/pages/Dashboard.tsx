@@ -214,6 +214,13 @@ const Dashboard = () => {
               </div>
               <div className="mt-5">
                 <LevelProgressBar xp={xp} />
+                {nextLevel && (
+                  <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
+                    <Zap className="h-3 w-3 text-primary" />
+                    Faltam <span className="font-bold text-foreground">{xpRemaining} XP</span> para {nextLevel.name}
+                  </p>
+                )}
+              </div>
               </div>
             </CardContent>
           </Card>
