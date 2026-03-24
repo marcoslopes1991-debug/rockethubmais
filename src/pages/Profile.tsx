@@ -8,9 +8,11 @@ import { isSoundEnabled, setSoundEnabled } from "@/lib/sounds";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Volume2, Shield, Star, Zap, Bell, Users, Camera } from "lucide-react";
+import { ArrowLeft, Volume2, Shield, Star, Zap, Bell, Users, Camera, Search } from "lucide-react";
 import UserAvatar from "@/components/UserAvatar";
 import LevelProgressBar from "@/components/LevelProgressBar";
+import FollowListDialog from "@/components/social/FollowListDialog";
+import UserSearchDialog from "@/components/social/UserSearchDialog";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
