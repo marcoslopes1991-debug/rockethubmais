@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useLevels, getLevelFromList, getLevelProgressFromList } from "@/hooks/useLevels";
-import { getAvatarForLevel } from "@/lib/levels";
+import { getGenderedAvatar } from "@/lib/levels";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft, Zap, Coffee, Monitor, Briefcase, Award, Building2,
