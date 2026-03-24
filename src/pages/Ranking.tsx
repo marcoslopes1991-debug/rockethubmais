@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useFollows } from "@/hooks/useFollows";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Crown, Medal, Zap, Flame } from "lucide-react";
+import { ArrowLeft, Crown, Medal, Zap, Flame, UserPlus, UserCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLevels, getLevelFromList } from "@/hooks/useLevels";
 import AvatarDisplay from "@/components/AvatarDisplay";
@@ -22,6 +23,7 @@ const Ranking = () => {
   const [profiles, setProfiles] = useState<RankProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const { levels } = useLevels();
+  const { isFollowing, toggleFollow, loading: followLoading } = useFollows();
 
   useEffect(() => {
     const fetchRanking = async () => {
@@ -71,12 +73,14 @@ const Ranking = () => {
               <div className="space-y-2">
                 {profiles.map((p, i) => {
                   const levelInfo = levels.length > 0 ? getLevelFromList(levels, p.xp) : { name: "..." };
+                  const following = isFollowing(p.user_id);
+                  const isSelf = p.user_id === user?.id;
                   return (
                     <div
                       key={p.user_id}
                       className={cn(
                         "flex items-center gap-3 p-3 rounded-lg transition-colors",
-                        p.user_id === user?.id
+                        isSelf
                           ? "bg-primary/10 border border-primary/20"
                           : "hover:bg-muted/50"
                       )}
@@ -86,13 +90,13 @@ const Ranking = () => {
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate">
                           {p.display_name}
-                          {p.user_id === user?.id && (
+                          {isSelf && (
                             <span className="text-xs text-primary ml-2">(você)</span>
                           )}
                         </p>
                         <p className="text-xs text-muted-foreground">{levelInfo.name}</p>
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
                         {p.streak_count > 0 && (
                           <span className="flex items-center gap-0.5 text-xs text-accent">
                             <Flame className="h-3 w-3" /> {p.streak_count}
@@ -102,6 +106,21 @@ const Ranking = () => {
                           <Zap className="h-4 w-4" />
                           {p.xp}
                         </div>
+                        {!isSelf && user && (
+                          <Button
+                            variant={following ? "secondary" : "default"}
+                            size="sm"
+                            className="h-7 px-2 text-xs"
+                            disabled={followLoading}
+                            onClick={() => toggleFollow(p.user_id)}
+                          >
+                            {following ? (
+                              <><UserCheck className="h-3 w-3 mr-1" /> Seguindo</>
+                            ) : (
+                              <><UserPlus className="h-3 w-3 mr-1" /> Seguir</>
+                            )}
+                          </Button>
+                        )}
                       </div>
                     </div>
                   );
