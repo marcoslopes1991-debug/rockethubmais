@@ -10,7 +10,7 @@ import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon, Aw
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import StreakBadge from "@/components/StreakBadge";
-import { useLevels, getLevelFromList } from "@/hooks/useLevels";
+import { useLevels, getLevelFromList, getNextLevelFromList } from "@/hooks/useLevels";
 import { motion } from "framer-motion";
 import SoundToggle from "@/components/SoundToggle";
 import MissionsSections from "@/components/MissionsSections";
