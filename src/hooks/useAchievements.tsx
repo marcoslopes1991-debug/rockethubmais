@@ -88,6 +88,8 @@ export function useAchievements() {
             type: "achievement",
             title: `${ach.icon_emoji} Conquista desbloqueada!`,
             message: `Você conquistou "${ach.name}"! ${ach.description}`,
+            action_url: "/achievements",
+            reference_id: ach.id,
           });
         }
       }
