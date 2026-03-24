@@ -6,7 +6,7 @@ import { useFollows } from "@/hooks/useFollows";
 import { useLevels, getLevelFromList } from "@/hooks/useLevels";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { UserPlus, UserCheck, Users } from "lucide-react";
+import { UserPlus, UserCheck, Users, Star, Zap } from "lucide-react";
 import UserAvatar from "@/components/UserAvatar";
 import { motion } from "framer-motion";
 
