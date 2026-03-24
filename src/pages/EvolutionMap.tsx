@@ -196,6 +196,7 @@ const EvolutionMap = () => {
       {/* Level-up celebration */}
       <LevelUpCelebration
         level={celebratingLevel}
+        gender={gender}
         onClose={() => setCelebratingLevel(null)}
       />
     </div>
