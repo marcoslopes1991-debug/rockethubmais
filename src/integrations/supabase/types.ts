@@ -55,18 +55,21 @@ export type Database = {
           ai_name: string
           button_image_url: string | null
           id: string
+          logo_url: string | null
           updated_at: string
         }
         Insert: {
           ai_name?: string
           button_image_url?: string | null
           id?: string
+          logo_url?: string | null
           updated_at?: string
         }
         Update: {
           ai_name?: string
           button_image_url?: string | null
           id?: string
+          logo_url?: string | null
           updated_at?: string
         }
         Relationships: []

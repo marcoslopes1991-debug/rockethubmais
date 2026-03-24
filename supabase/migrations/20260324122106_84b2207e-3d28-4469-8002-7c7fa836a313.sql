@@ -1,0 +1,1 @@
+ALTER TABLE public.ai_config ADD COLUMN logo_url text DEFAULT NULL;
