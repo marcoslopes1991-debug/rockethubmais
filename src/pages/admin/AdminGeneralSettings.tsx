@@ -3,7 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Settings, Upload, Trash2, Save, ImageIcon } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Settings, Upload, Trash2, Save, ImageIcon, Target } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const AdminGeneralSettings = () => {
