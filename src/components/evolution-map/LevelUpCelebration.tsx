@@ -42,7 +42,7 @@ const LevelUpCelebration = ({ level, gender, onClose }: Props) => {
               transition={{ repeat: Infinity, duration: 2 }}
             />
             <img
-              src={getAvatarForLevel(level.level_number)}
+              src={getGenderedAvatar(level, gender)}
               alt={level.name}
               className="w-24 h-24 rounded-full border-4 border-primary object-cover relative z-10"
             />
