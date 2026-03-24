@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Zap } from "lucide-react";
+import avatarMale from "@/assets/avatar-male.png";
+import avatarFemale from "@/assets/avatar-female.png";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -153,7 +155,24 @@ const Auth = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <>
+               <>
+                {/* Avatar preview */}
+                {gender && (
+                  <div className="flex justify-center">
+                    <div className="relative">
+                      <img
+                        src={gender === "masculino" ? avatarMale : avatarFemale}
+                        alt={`Avatar ${gender}`}
+                        className="w-24 h-24 rounded-full border-4 border-primary/30 object-cover bg-muted shadow-lg transition-all duration-300"
+                        width={96}
+                        height={96}
+                      />
+                      <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                        ✓
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label htmlFor="name">Nome</Label>
                   <Input
