@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 import SoundToggle from "@/components/SoundToggle";
 import MissionsSections from "@/components/MissionsSections";
 import NotificationBell from "@/components/NotificationBell";
+import UserSearchDialog from "@/components/social/UserSearchDialog";
 import {
   Sheet,
   SheetContent,
