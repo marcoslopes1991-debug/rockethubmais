@@ -297,6 +297,8 @@ const Dashboard = () => {
         {/* Extra & Special Missions */}
         <MissionsSections />
       </motion.main>
+
+      <UserSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </div>
   );
 };
