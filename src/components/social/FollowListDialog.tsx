@@ -111,6 +111,8 @@ const FollowListDialog = ({ userId, type, open, onOpenChange }: FollowListDialog
                     >
                       {following ? (
                         <><UserCheck className="h-3 w-3 mr-1" /> Seguindo</>
+                      ) : type === "followers" && !following ? (
+                        <><UserPlus className="h-3 w-3 mr-1" /> Seguir de volta</>
                       ) : (
                         <><UserPlus className="h-3 w-3 mr-1" /> Seguir</>
                       )}

@@ -16,6 +16,7 @@ import SoundToggle from "@/components/SoundToggle";
 import MissionsSections from "@/components/MissionsSections";
 import NotificationBell from "@/components/NotificationBell";
 import UserSearchDialog from "@/components/social/UserSearchDialog";
+import SuggestedUsers from "@/components/social/SuggestedUsers";
 import {
   Sheet,
   SheetContent,
@@ -296,6 +297,11 @@ const Dashboard = () => {
 
         {/* Extra & Special Missions */}
         <MissionsSections />
+
+        {/* User suggestions */}
+        <motion.div variants={item}>
+          <SuggestedUsers />
+        </motion.div>
       </motion.main>
 
       <UserSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />

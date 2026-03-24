@@ -31,6 +31,27 @@ export const useFollows = () => {
     fetchMyFollowing();
   }, [fetchMyFollowing]);
 
+  const sendFollowNotification = async (targetUserId: string) => {
+    if (!user) return;
+    // Get current user's display name
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("display_name")
+      .eq("user_id", user.id)
+      .single();
+
+    const displayName = profile?.display_name || "Alguém";
+
+    await supabase.from("notifications").insert({
+      user_id: targetUserId,
+      type: "social",
+      title: "Novo seguidor! 👋",
+      message: `${displayName} começou a seguir você`,
+      action_url: `/user/${user.id}`,
+      reference_id: user.id,
+    });
+  };
+
   const toggleFollow = async (targetUserId: string) => {
     if (!user || loading) return;
     setLoading(true);
@@ -52,6 +73,8 @@ export const useFollows = () => {
         .from("follows")
         .insert({ follower_id: user.id, following_id: targetUserId });
       setFollowingIds((prev) => new Set(prev).add(targetUserId));
+      // Send notification to the followed user
+      sendFollowNotification(targetUserId);
     }
     setLoading(false);
   };

@@ -23,6 +23,7 @@ interface Notification {
 }
 
 const typeEmojis: Record<string, string> = {
+  social: "👋",
   special_mission: "⭐",
   streak_warning: "🔥",
   inactivity: "💤",
@@ -31,7 +32,18 @@ const typeEmojis: Record<string, string> = {
   general: "📢",
 };
 
+const typeLabels: Record<string, string> = {
+  social: "Social",
+  special_mission: "Missão",
+  streak_warning: "Streak",
+  inactivity: "Atividade",
+  achievement: "Conquista",
+  level_up: "Nível",
+  general: "Geral",
+};
+
 const defaultRoutes: Record<string, string> = {
+  social: "/ranking",
   special_mission: "/quiz?type=special",
   streak_warning: "/quiz",
   inactivity: "/dashboard",
@@ -160,11 +172,16 @@ const NotificationBell = () => {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                 >
-                  <div className="flex gap-2">
+                   <div className="flex gap-2">
                     <span className="text-lg shrink-0">
                       {typeEmojis[n.type] || typeEmojis.general}
                     </span>
                     <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
+                          {typeLabels[n.type] || typeLabels.general}
+                        </span>
+                      </div>
                       <p className="text-sm font-bold truncate">{n.title}</p>
                       <p className="text-xs text-muted-foreground line-clamp-2">
                         {n.message}
