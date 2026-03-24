@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useFollows } from "@/hooks/useFollows";
 import { useLevels, getLevelFromList } from "@/hooks/useLevels";
 import { isSoundEnabled, setSoundEnabled } from "@/lib/sounds";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Volume2, Shield, Star, Zap, Bell } from "lucide-react";
+import { ArrowLeft, Volume2, Shield, Star, Zap, Bell, Users } from "lucide-react";
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import { motion } from "framer-motion";
@@ -16,6 +17,7 @@ const Profile = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { levels } = useLevels();
+  const { followerCount, followingCount, fetchCounts } = useFollows();
   const [profile, setProfile] = useState<{ display_name: string; xp: number; notifications_enabled: boolean } | null>(null);
   const [soundOn, setSoundOn] = useState(isSoundEnabled());
   const [notificationsOn, setNotificationsOn] = useState(true);
@@ -33,7 +35,8 @@ const Profile = () => {
           setNotificationsOn((data as any).notifications_enabled ?? true);
         }
       });
-  }, [user]);
+    fetchCounts(user.id);
+  }, [user, fetchCounts]);
 
   const xp = profile?.xp ?? 0;
   const level = levels.length > 0 ? getLevelFromList(levels, xp) : { name: "Carregando..." };
@@ -76,6 +79,24 @@ const Profile = () => {
                   <span className="text-sm font-bold">{xp} XP</span>
                 </div>
               </div>
+
+              {/* Followers / Following */}
+              <div className="flex items-center gap-6 mt-2">
+                <div className="flex flex-col items-center">
+                  <span className="text-lg font-bold">{followerCount}</span>
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Users className="h-3 w-3" /> Seguidores
+                  </span>
+                </div>
+                <div className="h-8 w-px bg-border" />
+                <div className="flex flex-col items-center">
+                  <span className="text-lg font-bold">{followingCount}</span>
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Users className="h-3 w-3" /> Seguindo
+                  </span>
+                </div>
+              </div>
+
               <div className="w-full mt-2">
                 <LevelProgressBar xp={xp} />
               </div>
