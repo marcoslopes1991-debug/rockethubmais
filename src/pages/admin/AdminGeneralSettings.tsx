@@ -14,6 +14,13 @@ const AdminGeneralSettings = () => {
   const [saving, setSaving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Mission config state
+  const [missionConfigId, setMissionConfigId] = useState<string | null>(null);
+  const [dailyCount, setDailyCount] = useState(5);
+  const [extraCount, setExtraCount] = useState<number | "">("");
+  const [specialCount, setSpecialCount] = useState<number | "">("");
+  const [savingMission, setSavingMission] = useState(false);
+
   useEffect(() => {
     supabase
       .from("ai_config" as any)
@@ -24,6 +31,20 @@ const AdminGeneralSettings = () => {
         if (data) {
           setConfigId(data.id);
           setLogoUrl(data.logo_url);
+        }
+      });
+
+    supabase
+      .from("mission_config" as any)
+      .select("*")
+      .limit(1)
+      .single()
+      .then(({ data }: any) => {
+        if (data) {
+          setMissionConfigId(data.id);
+          setDailyCount(data.daily_question_count ?? 5);
+          setExtraCount(data.extra_question_count ?? "");
+          setSpecialCount(data.special_question_count ?? "");
         }
       });
   }, []);
