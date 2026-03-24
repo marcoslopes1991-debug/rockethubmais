@@ -20,7 +20,7 @@ export function useLevels() {
   const fetchLevels = async () => {
     const { data } = await supabase
       .from("levels")
-      .select("id, level_number, name, min_xp, description")
+      .select("id, level_number, name, min_xp, description, avatar_male_url, avatar_female_url")
       .order("level_number");
     if (data) {
       cachedLevels = data;
