@@ -31,6 +31,8 @@ const Profile = () => {
   const [soundOn, setSoundOn] = useState(isSoundEnabled());
   const [notificationsOn, setNotificationsOn] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [listType, setListType] = useState<"followers" | "following" | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
