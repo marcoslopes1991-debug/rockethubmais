@@ -221,7 +221,6 @@ const Dashboard = () => {
                   </p>
                 )}
               </div>
-              </div>
             </CardContent>
           </Card>
         </motion.div>
