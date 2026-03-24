@@ -8,13 +8,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Crown, Medal, Zap, Flame, UserPlus, UserCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLevels, getLevelFromList } from "@/hooks/useLevels";
-import AvatarDisplay from "@/components/AvatarDisplay";
+import UserAvatar from "@/components/UserAvatar";
 
 interface RankProfile {
   user_id: string;
   display_name: string;
   xp: number;
   streak_count: number;
+  avatar_url: string | null;
+  gender: string | null;
 }
 
 const Ranking = () => {
@@ -29,11 +31,11 @@ const Ranking = () => {
     const fetchRanking = async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("user_id, display_name, xp, streak_count")
+        .select("user_id, display_name, xp, streak_count, avatar_url, gender")
         .order("xp", { ascending: false })
         .limit(50);
 
-      setProfiles(data ?? []);
+      setProfiles((data as any) ?? []);
       setLoading(false);
     };
 
@@ -86,7 +88,12 @@ const Ranking = () => {
                       )}
                     >
                       {getRankIcon(i)}
-                      <AvatarDisplay xp={p.xp} size="sm" />
+                      <UserAvatar
+                        avatarUrl={p.avatar_url}
+                        gender={p.gender}
+                        displayName={p.display_name}
+                        size="sm"
+                      />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate">
                           {p.display_name}
