@@ -21,9 +21,12 @@ const LevelProgressBar = ({ xp, className }: LevelProgressBarProps) => {
       <div className="flex items-center justify-between text-sm">
         <span className="font-display font-bold text-foreground">{current.name}</span>
         {next && (
-          <span className="text-muted-foreground">
-            Continue evoluindo para desbloquear o próximo nível
+          <span className="text-xs text-muted-foreground font-medium">
+            {xp} / {next.min_xp} XP
           </span>
+        )}
+        {!next && (
+          <span className="text-xs text-primary font-bold">Nível máximo! 🏆</span>
         )}
       </div>
       <div className="h-3 bg-muted rounded-full overflow-hidden">
@@ -31,16 +34,6 @@ const LevelProgressBar = ({ xp, className }: LevelProgressBarProps) => {
           className="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all duration-700 ease-out"
           style={{ width: `${progress}%` }}
         />
-      </div>
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <Zap className="h-3 w-3 text-xp" /> {xp} XP
-        </span>
-        {next ? (
-          <span>Continue evoluindo para desbloquear o próximo nível</span>
-        ) : (
-          <span className="text-primary font-bold">Nível máximo! 🏆</span>
-        )}
       </div>
     </div>
   );
