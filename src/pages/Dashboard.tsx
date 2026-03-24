@@ -6,7 +6,7 @@ import { useAdmin } from "@/hooks/useAdmin";
 import { useAchievements } from "@/hooks/useAchievements";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon, Award } from "lucide-react";
+import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon, Award, Menu } from "lucide-react";
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import StreakBadge from "@/components/StreakBadge";
@@ -15,6 +15,13 @@ import { motion } from "framer-motion";
 import SoundToggle from "@/components/SoundToggle";
 import MissionsSections from "@/components/MissionsSections";
 import NotificationBell from "@/components/NotificationBell";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface ProfileData {
   display_name: string;
@@ -101,51 +108,49 @@ const Dashboard = () => {
           </motion.div>
           <div className="flex items-center gap-1 sm:gap-2">
             <StreakBadge streak={profile?.streak_count ?? 0} />
-            <Button variant="ghost" size="sm" onClick={() => navigate("/ranking")} className="hidden sm:flex">
-              <Trophy className="h-4 w-4 mr-1" /> Ranking
+            <Button variant="ghost" size="icon" onClick={() => navigate("/evolution-map")} title="Mapa">
+              <MapIcon className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => navigate("/ranking")} className="sm:hidden">
-              <Trophy className="h-4 w-4" />
+            <Button variant="ghost" size="icon" onClick={() => navigate("/ranking")} title="Ranking">
+              <Trophy className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/journey")} className="hidden sm:flex">
-              <Star className="h-4 w-4 mr-1" /> Jornada
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => navigate("/journey")} className="sm:hidden">
-              <Star className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/evolution-map")} className="hidden sm:flex">
-              <MapIcon className="h-4 w-4 mr-1" /> Mapa
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => navigate("/evolution-map")} className="sm:hidden">
-              <MapIcon className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/items")} className="hidden sm:flex">
-              <Backpack className="h-4 w-4 mr-1" /> Itens
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => navigate("/items")} className="sm:hidden">
-              <Backpack className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/achievements")} className="hidden sm:flex">
-              <Award className="h-4 w-4 mr-1" /> Conquistas
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => navigate("/achievements")} className="sm:hidden">
-              <Award className="h-4 w-4" />
-            </Button>
-            {isAdmin && (
-              <Button variant="ghost" size="sm" onClick={() => navigate("/admin")} className="hidden sm:flex">
-                <Shield className="h-4 w-4 mr-1" /> Admin
-              </Button>
-            )}
-            {isAdmin && (
-              <Button variant="ghost" size="icon" onClick={() => navigate("/admin")} className="sm:hidden">
-                <Shield className="h-4 w-4" />
-              </Button>
-            )}
             <NotificationBell />
-            <SoundToggle />
-            <Button variant="ghost" size="icon" onClick={signOut}>
-              <LogOut className="h-4 w-4" />
-            </Button>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" title="Menu">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-72">
+                <SheetHeader>
+                  <SheetTitle className="font-display">Menu</SheetTitle>
+                </SheetHeader>
+                <nav className="flex flex-col gap-2 mt-6">
+                  <Button variant="ghost" className="justify-start h-12 text-base" onClick={() => navigate("/journey")}>
+                    <Star className="h-5 w-5 mr-3" /> Jornada
+                  </Button>
+                  <Button variant="ghost" className="justify-start h-12 text-base" onClick={() => navigate("/items")}>
+                    <Backpack className="h-5 w-5 mr-3" /> Itens
+                  </Button>
+                  <Button variant="ghost" className="justify-start h-12 text-base" onClick={() => navigate("/achievements")}>
+                    <Award className="h-5 w-5 mr-3" /> Conquistas
+                  </Button>
+                  {isAdmin && (
+                    <Button variant="ghost" className="justify-start h-12 text-base" onClick={() => navigate("/admin")}>
+                      <Shield className="h-5 w-5 mr-3" /> Admin
+                    </Button>
+                  )}
+                  <div className="border-t border-border my-2" />
+                  <div className="flex items-center gap-2 px-4">
+                    <SoundToggle />
+                    <span className="text-sm text-muted-foreground">Som</span>
+                  </div>
+                  <Button variant="ghost" className="justify-start h-12 text-base text-destructive" onClick={signOut}>
+                    <LogOut className="h-5 w-5 mr-3" /> Sair
+                  </Button>
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </header>
