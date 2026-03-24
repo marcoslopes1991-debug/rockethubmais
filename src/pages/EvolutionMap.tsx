@@ -133,7 +133,7 @@ const EvolutionMap = () => {
         >
           <div className="relative shrink-0">
             <img
-              src={getAvatarForLevel(currentLevel.level_number)}
+              src={getGenderedAvatar(currentLevel, gender)}
               alt={currentLevel.name}
               className="w-12 h-12 rounded-full border-2 border-primary object-cover"
             />
