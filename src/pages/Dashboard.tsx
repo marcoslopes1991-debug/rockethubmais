@@ -297,6 +297,11 @@ const Dashboard = () => {
 
         {/* Extra & Special Missions */}
         <MissionsSections />
+
+        {/* User suggestions */}
+        <motion.div variants={item}>
+          <SuggestedUsers />
+        </motion.div>
       </motion.main>
 
       <UserSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
