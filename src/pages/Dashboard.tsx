@@ -17,6 +17,7 @@ import MissionsSections from "@/components/MissionsSections";
 import NotificationBell from "@/components/NotificationBell";
 import UserSearchDialog from "@/components/social/UserSearchDialog";
 import SuggestedUsers from "@/components/social/SuggestedUsers";
+import ActionCard from "@/components/dashboard/ActionCard";
 import {
   Sheet,
   SheetContent,
@@ -167,6 +168,11 @@ const Dashboard = () => {
         initial="hidden"
         animate="show"
       >
+        {/* Action card */}
+        <motion.div variants={item}>
+          <ActionCard hasStarted={answeredCount > 0} hasUnanswered={hasUnanswered} />
+        </motion.div>
+
         {/* Hero card with avatar */}
         <motion.div variants={item}>
           <Card className="glass-card overflow-hidden">
