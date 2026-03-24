@@ -16,6 +16,7 @@ import SoundToggle from "@/components/SoundToggle";
 import MissionsSections from "@/components/MissionsSections";
 import NotificationBell from "@/components/NotificationBell";
 import UserSearchDialog from "@/components/social/UserSearchDialog";
+import SuggestedUsers from "@/components/social/SuggestedUsers";
 import {
   Sheet,
   SheetContent,
