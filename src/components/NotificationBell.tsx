@@ -23,6 +23,7 @@ interface Notification {
 }
 
 const typeEmojis: Record<string, string> = {
+  social: "👋",
   special_mission: "⭐",
   streak_warning: "🔥",
   inactivity: "💤",
@@ -31,7 +32,18 @@ const typeEmojis: Record<string, string> = {
   general: "📢",
 };
 
+const typeLabels: Record<string, string> = {
+  social: "Social",
+  special_mission: "Missão",
+  streak_warning: "Streak",
+  inactivity: "Atividade",
+  achievement: "Conquista",
+  level_up: "Nível",
+  general: "Geral",
+};
+
 const defaultRoutes: Record<string, string> = {
+  social: "/ranking",
   special_mission: "/quiz?type=special",
   streak_warning: "/quiz",
   inactivity: "/dashboard",
