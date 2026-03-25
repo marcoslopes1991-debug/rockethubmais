@@ -32,9 +32,12 @@ import {
 
 interface ProfileData {
   display_name: string;
+  username: string | null;
+  bio: string | null;
   xp: number;
   streak_count: number;
   last_activity_date: string | null;
+  modulos_interesse: string[] | null;
 }
 
 const container = {
