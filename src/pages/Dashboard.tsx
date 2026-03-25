@@ -194,33 +194,34 @@ const Dashboard = () => {
         {/* Hero card with avatar */}
         <motion.div variants={item}>
           <Card className="glass-card overflow-hidden">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-5">
+            <CardContent className="pt-6 space-y-5">
+              {/* BLOCO 1 — IDENTIDADE */}
+              <div className="flex items-center gap-4">
                 <motion.div
                   whileHover={{ scale: 1.05, rotate: 3 }}
                   transition={{ type: "spring", stiffness: 400 }}
                   onClick={() => navigate("/profile")}
-                  className="cursor-pointer"
+                  className="cursor-pointer shrink-0"
                 >
                   <AvatarDisplay xp={xp} size="lg" />
                 </motion.div>
-                <div className="flex-1 min-w-0 space-y-1">
-                  <h1 className="text-2xl font-display font-bold truncate">
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-xl font-display font-bold truncate leading-tight">
                     {profile?.display_name || "Estudante"}
                   </h1>
                   {profile?.username && (
-                    <p className="text-sm text-muted-foreground">@{profile.username}</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">@{profile.username}</p>
                   )}
-                  <div className="flex items-center gap-1.5">
-                    <Star className="h-4 w-4 text-accent" />
-                    <p className="text-sm text-muted-foreground">{level.name}</p>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <Star className="h-3.5 w-3.5 text-accent" />
+                    <span className="text-xs font-semibold text-muted-foreground">{level.name}</span>
                   </div>
                   {equippedItems.length > 0 && (
-                    <div className="flex gap-1 flex-wrap">
+                    <div className="flex gap-1 flex-wrap mt-1.5">
                       {equippedItems.map((eqItem, i) => (
-                        <motion.span 
-                          key={i} 
-                          className="text-lg" 
+                        <motion.span
+                          key={i}
+                          className="text-base"
                           title={eqItem.name}
                           whileHover={{ scale: 1.3, rotate: 10 }}
                         >
@@ -232,60 +233,61 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Bio */}
-              <div className="mt-3">
+              {/* BLOCO 2 — BIO E CONTEXTO */}
+              <div className="space-y-2.5">
                 {profile?.bio ? (
-                  <p className="text-sm text-muted-foreground line-clamp-2">{profile.bio}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{profile.bio}</p>
                 ) : (
                   <button
                     onClick={() => navigate("/profile")}
-                    className="text-sm text-muted-foreground/50 italic hover:text-muted-foreground transition-colors"
+                    className="text-sm text-muted-foreground/40 italic hover:text-muted-foreground transition-colors"
                   >
                     Adicione uma bio...
                   </button>
                 )}
+                {profile?.modulos_interesse && profile.modulos_interesse.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {profile.modulos_interesse.map((mod) => (
+                      <span
+                        key={mod}
+                        className="text-[11px] px-2.5 py-0.5 rounded-full bg-secondary text-secondary-foreground font-bold tracking-wide"
+                      >
+                        {mod}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              {/* Module badges */}
-              {profile?.modulos_interesse && profile.modulos_interesse.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  {profile.modulos_interesse.map((mod) => (
-                    <span
-                      key={mod}
-                      className="text-xs px-2.5 py-0.5 rounded-full bg-secondary text-secondary-foreground font-semibold"
-                    >
-                      {mod}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {/* Social counters */}
-              <div className="flex items-center gap-6 mt-4 pt-4 border-t border-border/50">
+              {/* BLOCO 3 — SOCIAL */}
+              <div className="flex items-center justify-around py-3 rounded-lg bg-muted/40">
                 <button
                   onClick={() => { setFollowDialogType("followers"); setFollowDialogOpen(true); }}
-                  className="flex flex-col items-center hover:opacity-80 transition-opacity"
+                  className="flex flex-col items-center gap-0.5 hover:opacity-70 transition-opacity"
                 >
                   <span className="text-lg font-display font-bold">{followerCount}</span>
-                  <span className="text-xs text-muted-foreground">seguidores</span>
+                  <span className="text-[11px] text-muted-foreground font-medium">seguidores</span>
                 </button>
+                <div className="w-px h-8 bg-border/60" />
                 <button
                   onClick={() => { setFollowDialogType("following"); setFollowDialogOpen(true); }}
-                  className="flex flex-col items-center hover:opacity-80 transition-opacity"
+                  className="flex flex-col items-center gap-0.5 hover:opacity-70 transition-opacity"
                 >
                   <span className="text-lg font-display font-bold">{followingCount}</span>
-                  <span className="text-xs text-muted-foreground">seguindo</span>
+                  <span className="text-[11px] text-muted-foreground font-medium">seguindo</span>
                 </button>
+                <div className="w-px h-8 bg-border/60" />
                 <button
                   onClick={() => navigate("/profile")}
-                  className="flex flex-col items-center hover:opacity-80 transition-opacity"
+                  className="flex flex-col items-center gap-0.5 hover:opacity-70 transition-opacity"
                 >
                   <span className="text-lg font-display font-bold">0</span>
-                  <span className="text-xs text-muted-foreground">posts</span>
+                  <span className="text-[11px] text-muted-foreground font-medium">posts</span>
                 </button>
               </div>
 
-              <div className="mt-5">
+              {/* BLOCO 4 — PROGRESSO */}
+              <div>
                 <LevelProgressBar xp={xp} />
                 {nextLevel && (
                   <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
