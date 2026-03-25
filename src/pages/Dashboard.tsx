@@ -19,6 +19,7 @@ import NotificationBell from "@/components/NotificationBell";
 import UserSearchDialog from "@/components/social/UserSearchDialog";
 import SuggestedUsers from "@/components/social/SuggestedUsers";
 import ActionCard from "@/components/dashboard/ActionCard";
+import { useAppBranding } from "@/hooks/useAppBranding";
 import {
   Sheet,
   SheetContent,
