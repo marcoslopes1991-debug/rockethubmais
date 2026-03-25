@@ -367,6 +367,14 @@ const Dashboard = () => {
       </motion.main>
 
       <UserSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
+      {user && (
+        <FollowListDialog
+          userId={user.id}
+          type={followDialogType}
+          open={followDialogOpen}
+          onOpenChange={setFollowDialogOpen}
+        />
+      )}
     </div>
   );
 };
