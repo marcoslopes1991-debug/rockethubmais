@@ -37,6 +37,10 @@ export default function NewFollowersBubble() {
 
       if (newCount && newCount > 0) {
         setCount(newCount);
+        // Confetti on first appearance after a short delay
+        setTimeout(() => {
+          if (btnRef.current) fireConfetti();
+        }, 600);
       }
     };
 
