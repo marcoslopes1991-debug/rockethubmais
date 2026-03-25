@@ -80,8 +80,34 @@ const AdminGeneralSettings = () => {
     toast({ title: "Logo carregada!" });
   };
 
+  const handleFaviconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Arquivo inválido", description: "Selecione uma imagem PNG, JPG ou ICO", variant: "destructive" });
+      return;
+    }
+    setUploadingFavicon(true);
+    const ext = file.name.split(".").pop();
+    const path = `app-favicon-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("ai-config").upload(path, file, { upsert: true });
+    if (error) {
+      toast({ title: "Erro no upload", description: error.message, variant: "destructive" });
+      setUploadingFavicon(false);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from("ai-config").getPublicUrl(path);
+    setFaviconUrl(urlData.publicUrl);
+    setUploadingFavicon(false);
+    toast({ title: "Favicon carregado!" });
+  };
+
   const removeLogo = () => {
     setLogoUrl(null);
+  };
+
+  const removeFavicon = () => {
+    setFaviconUrl(null);
   };
 
   const save = async () => {
@@ -89,7 +115,7 @@ const AdminGeneralSettings = () => {
     setSaving(true);
     const { error } = await supabase
       .from("ai_config" as any)
-      .update({ logo_url: logoUrl, app_name: appName, updated_at: new Date().toISOString() } as any)
+      .update({ logo_url: logoUrl, favicon_url: faviconUrl, app_name: appName, updated_at: new Date().toISOString() } as any)
       .eq("id", configId);
 
     if (error) {
