@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserPlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import FollowListDialog from "@/components/social/FollowListDialog";
+import confetti from "canvas-confetti";
 
 const LAST_SEEN_FOLLOWERS_KEY = "last_seen_followers_at";
 
@@ -11,6 +12,16 @@ export default function NewFollowersBubble() {
   const { user } = useAuth();
   const [count, setCount] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+
+  // Fire confetti from button position
+  const fireConfetti = () => {
+    if (!btnRef.current) return;
+    const rect = btnRef.current.getBoundingClientRect();
+    const x = (rect.left + rect.width / 2) / window.innerWidth;
+    const y = (rect.top + rect.height / 2) / window.innerHeight;
+    confetti({ particleCount: 40, spread: 60, origin: { x, y }, colors: ["#FFD700", "#FF6B6B", "#4ECDC4", "#A78BFA"], startVelocity: 20, gravity: 0.8, scalar: 0.8 });
+  };
 
   // Load unseen followers on mount
   useEffect(() => {
@@ -26,6 +37,10 @@ export default function NewFollowersBubble() {
 
       if (newCount && newCount > 0) {
         setCount(newCount);
+        // Confetti on first appearance after a short delay
+        setTimeout(() => {
+          if (btnRef.current) fireConfetti();
+        }, 600);
       }
     };
 
@@ -58,6 +73,7 @@ export default function NewFollowersBubble() {
     : `+${count} novos seguidores`;
 
   const handleClick = () => {
+    fireConfetti();
     setDialogOpen(true);
     setCount(0);
     localStorage.setItem(LAST_SEEN_FOLLOWERS_KEY, new Date().toISOString());
@@ -68,6 +84,7 @@ export default function NewFollowersBubble() {
       <div className="fixed bottom-24 right-6 z-50">
         <AnimatePresence>
           <motion.button
+            ref={btnRef}
             initial={{ opacity: 0, scale: 0.5, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.5, y: 20 }}
