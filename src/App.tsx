@@ -73,6 +73,8 @@ const AppContent = () => {
               <Route path="*" element={<NotFound />} />
             </Routes>
             <RockZAssistant />
+            <NewFollowersBubble />
+            <WelcomeBackBanner />
           </BrowserRouter>
         </AuthProvider>
       </TooltipProvider>
