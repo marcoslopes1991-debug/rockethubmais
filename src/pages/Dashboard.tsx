@@ -32,9 +32,12 @@ import {
 
 interface ProfileData {
   display_name: string;
+  username: string | null;
+  bio: string | null;
   xp: number;
   streak_count: number;
   last_activity_date: string | null;
+  modulos_interesse: string[] | null;
 }
 
 const container = {
@@ -71,7 +74,7 @@ const Dashboard = () => {
       const [profileRes, answersRes, questionsRes, itemsRes] = await Promise.all([
         supabase
           .from("profiles")
-          .select("display_name, xp, streak_count, last_activity_date")
+          .select("display_name, username, bio, xp, streak_count, last_activity_date, modulos_interesse")
           .eq("user_id", user.id)
           .single(),
         supabase.from("answers").select("id").eq("user_id", user.id),
@@ -205,6 +208,9 @@ const Dashboard = () => {
                   <h1 className="text-2xl font-display font-bold truncate">
                     {profile?.display_name || "Estudante"}
                   </h1>
+                  {profile?.username && (
+                    <p className="text-sm text-muted-foreground">@{profile.username}</p>
+                  )}
                   <div className="flex items-center gap-1.5">
                     <Star className="h-4 w-4 text-accent" />
                     <p className="text-sm text-muted-foreground">{level.name}</p>
@@ -226,6 +232,34 @@ const Dashboard = () => {
                 </div>
               </div>
 
+              {/* Bio */}
+              <div className="mt-3">
+                {profile?.bio ? (
+                  <p className="text-sm text-muted-foreground line-clamp-2">{profile.bio}</p>
+                ) : (
+                  <button
+                    onClick={() => navigate("/profile")}
+                    className="text-sm text-muted-foreground/50 italic hover:text-muted-foreground transition-colors"
+                  >
+                    Adicione uma bio...
+                  </button>
+                )}
+              </div>
+
+              {/* Module badges */}
+              {profile?.modulos_interesse && profile.modulos_interesse.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-3">
+                  {profile.modulos_interesse.map((mod) => (
+                    <span
+                      key={mod}
+                      className="text-xs px-2.5 py-0.5 rounded-full bg-secondary text-secondary-foreground font-semibold"
+                    >
+                      {mod}
+                    </span>
+                  ))}
+                </div>
+              )}
+
               {/* Social counters */}
               <div className="flex items-center gap-6 mt-4 pt-4 border-t border-border/50">
                 <button
@@ -242,10 +276,13 @@ const Dashboard = () => {
                   <span className="text-lg font-display font-bold">{followingCount}</span>
                   <span className="text-xs text-muted-foreground">seguindo</span>
                 </button>
-                <div className="flex flex-col items-center">
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="flex flex-col items-center hover:opacity-80 transition-opacity"
+                >
                   <span className="text-lg font-display font-bold">0</span>
                   <span className="text-xs text-muted-foreground">posts</span>
-                </div>
+                </button>
               </div>
 
               <div className="mt-5">
