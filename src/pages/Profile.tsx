@@ -215,9 +215,9 @@ const Profile = () => {
             </div>
 
             {/* Module badges */}
-            {profile?.modulos_interesse && profile.modulos_interesse.length > 0 && (
+            {profile?.modulos_interesse && profile.modulos_interesse.filter((mod) => mod && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(mod)).length > 0 && (
               <div className="mt-3">
-                <ModuleBadges modules={profile.modulos_interesse} />
+                <ModuleBadges modules={profile.modulos_interesse.filter((mod) => mod && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(mod))} />
               </div>
             )}
 
