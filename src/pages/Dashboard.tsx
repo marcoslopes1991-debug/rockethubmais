@@ -53,12 +53,15 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { levels } = useLevels();
   const { achievements, userAchievements, isUnlocked } = useAchievements();
+  const { followerCount, followingCount, fetchCounts } = useFollows();
   const unlockedAchievements = achievements.filter((a) => isUnlocked(a.id));
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [answeredCount, setAnsweredCount] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [equippedItems, setEquippedItems] = useState<{ icon_emoji: string; name: string }[]>([]);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [followDialogType, setFollowDialogType] = useState<"followers" | "following">("followers");
+  const [followDialogOpen, setFollowDialogOpen] = useState(false);
   const { appName, logoUrl: brandLogoUrl } = useAppBranding();
 
   useEffect(() => {
