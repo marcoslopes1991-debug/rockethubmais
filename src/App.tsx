@@ -22,6 +22,7 @@ import AdminLevels from "./pages/admin/AdminLevels";
 import AdminAiConfig from "./pages/admin/AdminAiConfig";
 import AdminGeneralSettings from "./pages/admin/AdminGeneralSettings";
 import AdminReservedUsernames from "./pages/admin/AdminReservedUsernames";
+import AdminOnboarding from "./pages/admin/AdminOnboarding";
 import Journey from "./pages/Journey";
 import EvolutionMap from "./pages/EvolutionMap";
 import Achievements from "./pages/Achievements";
@@ -63,6 +64,7 @@ const App = () => (
               <Route path="ai-config" element={<AdminAiConfig />} />
               <Route path="settings" element={<AdminGeneralSettings />} />
               <Route path="reserved-usernames" element={<AdminReservedUsernames />} />
+              <Route path="onboarding" element={<AdminOnboarding />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
