@@ -73,6 +73,7 @@ export default function NewFollowersBubble() {
     : `+${count} novos seguidores`;
 
   const handleClick = () => {
+    fireConfetti();
     setDialogOpen(true);
     setCount(0);
     localStorage.setItem(LAST_SEEN_FOLLOWERS_KEY, new Date().toISOString());
@@ -83,6 +84,7 @@ export default function NewFollowersBubble() {
       <div className="fixed bottom-24 right-6 z-50">
         <AnimatePresence>
           <motion.button
+            ref={btnRef}
             initial={{ opacity: 0, scale: 0.5, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.5, y: 20 }}
