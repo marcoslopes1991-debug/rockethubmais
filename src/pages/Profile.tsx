@@ -8,42 +8,49 @@ import { isSoundEnabled, setSoundEnabled } from "@/lib/sounds";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Volume2, Shield, Star, Zap, Bell, Users, Camera, Search } from "lucide-react";
+import { ArrowLeft, Volume2, Shield, Star, Zap, Bell, Camera, Search, FileText } from "lucide-react";
 import UserAvatar from "@/components/UserAvatar";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import FollowListDialog from "@/components/social/FollowListDialog";
 import UserSearchDialog from "@/components/social/UserSearchDialog";
 import PrivacySettings from "@/components/profile/PrivacySettings";
+import ProfileBio from "@/components/profile/ProfileBio";
+import ModuleBadges from "@/components/profile/ModuleBadges";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+
+interface ProfileData {
+  display_name: string;
+  xp: number;
+  notifications_enabled: boolean;
+  avatar_url: string | null;
+  gender: string | null;
+  is_public: boolean;
+  hide_followers: boolean;
+  username: string | null;
+  bio: string;
+  modulos_interesse: string[] | null;
+}
 
 const Profile = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { levels } = useLevels();
   const { followerCount, followingCount, fetchCounts } = useFollows();
-  const [profile, setProfile] = useState<{
-    display_name: string;
-    xp: number;
-    notifications_enabled: boolean;
-    avatar_url: string | null;
-    gender: string | null;
-    is_public: boolean;
-    hide_followers: boolean;
-    username: string | null;
-  } | null>(null);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
   const [soundOn, setSoundOn] = useState(isSoundEnabled());
   const [notificationsOn, setNotificationsOn] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [listType, setListType] = useState<"followers" | "following" | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [postsCount] = useState(0); // Prepared for future posts feature
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, xp, notifications_enabled, avatar_url, gender, is_public, hide_followers, username")
+      .select("display_name, xp, notifications_enabled, avatar_url, gender, is_public, hide_followers, username, bio, modulos_interesse")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
@@ -117,21 +124,24 @@ const Profile = () => {
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <span className="font-display font-bold text-lg">Perfil & Configurações</span>
+          <span className="font-display font-bold text-lg">
+            {profile?.username ? `@${profile.username}` : "Perfil"}
+          </span>
         </div>
       </header>
 
       <motion.main
-        className="container px-4 py-8 max-w-lg mx-auto space-y-6"
+        className="container px-4 py-6 max-w-lg mx-auto space-y-5"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        {/* User info */}
+        {/* Social profile header */}
         <Card className="glass-card overflow-hidden">
-          <CardContent className="pt-6">
-            <div className="flex flex-col items-center text-center gap-3">
-              {/* Avatar with upload overlay */}
-              <div className="relative group">
+          <CardContent className="pt-6 pb-5">
+            {/* Top row: avatar + counters */}
+            <div className="flex items-center gap-5">
+              {/* Avatar with upload */}
+              <div className="relative group shrink-0">
                 <UserAvatar
                   avatarUrl={profile?.avatar_url}
                   gender={profile?.gender}
@@ -153,64 +163,87 @@ const Profile = () => {
                   onChange={handleAvatarUpload}
                 />
               </div>
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
-                className="text-xs text-primary font-medium hover:underline"
-              >
-                {uploading ? "Enviando..." : "Alterar foto"}
-              </button>
 
-              <div>
-                <h1 className="text-xl font-display font-bold">{profile?.display_name || "Estudante"}</h1>
-                {profile?.username && (
-                  <p className="text-sm text-muted-foreground">@{profile.username}</p>
-                )}
-                <div className="flex items-center justify-center gap-1.5 mt-1">
-                  <Star className="h-4 w-4 text-accent" />
-                  <span className="text-sm text-muted-foreground">{level.name}</span>
-                </div>
-                <div className="flex items-center justify-center gap-1.5 mt-1">
-                  <Zap className="h-4 w-4 text-xp" />
-                  <span className="text-sm font-bold">{xp} XP</span>
-                </div>
-              </div>
-
-              {/* Followers / Following */}
-              <div className="flex items-center gap-6 mt-2">
+              {/* Stats counters */}
+              <div className="flex-1 flex items-center justify-around">
+                <button className="flex flex-col items-center" disabled>
+                  <span className="text-lg font-bold">{postsCount}</span>
+                  <span className="text-xs text-muted-foreground">
+                    <FileText className="h-3 w-3 inline mr-0.5" />Posts
+                  </span>
+                </button>
                 <button
                   onClick={() => setListType("followers")}
                   className="flex flex-col items-center hover:opacity-80 transition-opacity"
                 >
                   <span className="text-lg font-bold">{followerCount}</span>
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Users className="h-3 w-3" /> Seguidores
-                  </span>
+                  <span className="text-xs text-muted-foreground">Seguidores</span>
                 </button>
-                <div className="h-8 w-px bg-border" />
                 <button
                   onClick={() => setListType("following")}
                   className="flex flex-col items-center hover:opacity-80 transition-opacity"
                 >
                   <span className="text-lg font-bold">{followingCount}</span>
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Users className="h-3 w-3" /> Seguindo
-                  </span>
+                  <span className="text-xs text-muted-foreground">Seguindo</span>
                 </button>
               </div>
+            </div>
 
-              {/* Search users button */}
+            {/* Name + username + level */}
+            <div className="mt-4 space-y-1">
+              <h1 className="text-base font-display font-bold">{profile?.display_name || "Estudante"}</h1>
+              {profile?.username && (
+                <p className="text-sm text-muted-foreground">@{profile.username}</p>
+              )}
+              <div className="flex items-center gap-3 text-sm">
+                <span className="flex items-center gap-1 text-muted-foreground">
+                  <Star className="h-3.5 w-3.5 text-accent" /> {level.name}
+                </span>
+                <span className="flex items-center gap-1 font-bold">
+                  <Zap className="h-3.5 w-3.5 text-xp" /> {xp} XP
+                </span>
+              </div>
+            </div>
+
+            {/* Bio */}
+            <div className="mt-3">
+              <ProfileBio
+                bio={profile?.bio ?? ""}
+                editable
+                onUpdate={(newBio) => setProfile((prev) => prev ? { ...prev, bio: newBio } : prev)}
+              />
+            </div>
+
+            {/* Module badges */}
+            {profile?.modulos_interesse && profile.modulos_interesse.length > 0 && (
+              <div className="mt-3">
+                <ModuleBadges modules={profile.modulos_interesse} />
+              </div>
+            )}
+
+            {/* Action buttons */}
+            <div className="flex gap-2 mt-4">
               <Button
                 variant="outline"
-                className="mt-2 w-full max-w-xs"
+                className="flex-1"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+              >
+                <Camera className="h-4 w-4 mr-1.5" />
+                {uploading ? "Enviando..." : "Editar foto"}
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1"
                 onClick={() => setSearchOpen(true)}
               >
-                <Search className="h-4 w-4 mr-2" /> Buscar usuários
+                <Search className="h-4 w-4 mr-1.5" /> Buscar
               </Button>
+            </div>
 
-              <div className="w-full mt-2">
-                <LevelProgressBar xp={xp} />
-              </div>
+            {/* Level progress */}
+            <div className="mt-4">
+              <LevelProgressBar xp={xp} />
             </div>
           </CardContent>
         </Card>
