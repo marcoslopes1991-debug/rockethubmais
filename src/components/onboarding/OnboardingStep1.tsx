@@ -25,6 +25,7 @@ interface OnboardingStep1Props {
   setSelectedModules: (v: string[]) => void;
   onNext: () => void;
   loading: boolean;
+  accountCreated?: boolean;
 }
 
 export default function OnboardingStep1({
@@ -34,7 +35,7 @@ export default function OnboardingStep1({
   password, setPassword,
   gender, setGender,
   selectedModules, setSelectedModules,
-  onNext, loading,
+  onNext, loading, accountCreated,
 }: OnboardingStep1Props) {
   const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken" | "invalid">("idle");
   const [modules, setModules] = useState<{ id: string; name: string }[]>([]);
@@ -158,12 +159,12 @@ export default function OnboardingStep1({
 
       <div className="space-y-2">
         <Label htmlFor="email">E-mail</Label>
-        <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" required />
+        <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" required disabled={accountCreated} />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="password">Senha</Label>
-        <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required minLength={6} />
+        <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required minLength={6} disabled={accountCreated} />
       </div>
 
       {modules.length > 0 && (
