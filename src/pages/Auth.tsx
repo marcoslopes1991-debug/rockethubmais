@@ -79,12 +79,31 @@ const Auth = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       toast({ title: "Erro ao entrar", description: error.message, variant: "destructive" });
-    } else {
-      navigate("/");
+      setLoading(false);
+      return;
     }
+    // Check user status
+    if (signInData.user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("status")
+        .eq("user_id", signInData.user.id)
+        .single();
+      const status = (profile as any)?.status;
+      if (status === "blocked" || status === "deactivated") {
+        await supabase.auth.signOut();
+        const msg = status === "blocked"
+          ? "Sua conta está bloqueada. Entre em contato com o suporte."
+          : "Sua conta foi desativada. Entre em contato com o suporte.";
+        toast({ title: "Acesso negado", description: msg, variant: "destructive" });
+        setLoading(false);
+        return;
+      }
+    }
+    navigate("/");
     setLoading(false);
   };
 

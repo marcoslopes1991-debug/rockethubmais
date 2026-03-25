@@ -31,7 +31,8 @@ const Ranking = () => {
     const fetchRanking = async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("user_id, display_name, xp, streak_count, avatar_url, gender")
+        .select("user_id, display_name, xp, streak_count, avatar_url, gender, status")
+        .eq("status", "active")
         .order("xp", { ascending: false })
         .limit(50);
 

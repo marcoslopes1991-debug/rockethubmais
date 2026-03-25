@@ -322,6 +322,7 @@ export type Database = {
           modulos_interesse: string[] | null
           notifications_enabled: boolean
           perfil_sap: string | null
+          status: string
           streak_count: number
           tempo_experiencia_sap: string | null
           trabalha_com_sap: boolean | null
@@ -344,6 +345,7 @@ export type Database = {
           modulos_interesse?: string[] | null
           notifications_enabled?: boolean
           perfil_sap?: string | null
+          status?: string
           streak_count?: number
           tempo_experiencia_sap?: string | null
           trabalha_com_sap?: boolean | null
@@ -366,6 +368,7 @@ export type Database = {
           modulos_interesse?: string[] | null
           notifications_enabled?: boolean
           perfil_sap?: string | null
+          status?: string
           streak_count?: number
           tempo_experiencia_sap?: string | null
           trabalha_com_sap?: boolean | null
@@ -544,6 +547,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_delete_user: {
+        Args: { target_user_id: string }
+        Returns: undefined
+      }
       check_username_available: {
         Args: { p_username: string }
         Returns: boolean

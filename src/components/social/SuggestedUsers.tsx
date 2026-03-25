@@ -33,8 +33,9 @@ const SuggestedUsers = () => {
       // Get users not followed yet, ordered by recent activity and xp
       const { data } = await supabase
         .from("profiles")
-        .select("user_id, display_name, xp, avatar_url, gender")
+        .select("user_id, display_name, xp, avatar_url, gender, status")
         .neq("user_id", user.id)
+        .eq("status", "active")
         .order("updated_at", { ascending: false })
         .limit(50);
 
