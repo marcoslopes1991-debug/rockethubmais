@@ -30,6 +30,7 @@ const Profile = () => {
     gender: string | null;
     is_public: boolean;
     hide_followers: boolean;
+    username: string | null;
   } | null>(null);
   const [soundOn, setSoundOn] = useState(isSoundEnabled());
   const [notificationsOn, setNotificationsOn] = useState(true);
@@ -42,7 +43,7 @@ const Profile = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, xp, notifications_enabled, avatar_url, gender, is_public, hide_followers")
+      .select("display_name, xp, notifications_enabled, avatar_url, gender, is_public, hide_followers, username")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
@@ -162,6 +163,9 @@ const Profile = () => {
 
               <div>
                 <h1 className="text-xl font-display font-bold">{profile?.display_name || "Estudante"}</h1>
+                {profile?.username && (
+                  <p className="text-sm text-muted-foreground">@{profile.username}</p>
+                )}
                 <div className="flex items-center justify-center gap-1.5 mt-1">
                   <Star className="h-4 w-4 text-accent" />
                   <span className="text-sm text-muted-foreground">{level.name}</span>

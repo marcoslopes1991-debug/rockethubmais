@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,9 +7,12 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { Zap } from "lucide-react";
+import { Zap, Check, X, Loader2, AtSign } from "lucide-react";
 import avatarMale from "@/assets/avatar-male.png";
 import avatarFemale from "@/assets/avatar-female.png";
+
+const USERNAME_REGEX = /^[a-zA-Z0-9._]{3,20}$/;
+const USERNAME_CHAR_REGEX = /^[a-zA-Z0-9._]*$/;
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,6 +20,8 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [username, setUsername] = useState("");
+  const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken" | "invalid">("idle");
   const [gender, setGender] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
@@ -38,6 +43,45 @@ const Auth = () => {
         if (data?.logo_url) setLogoUrl(data.logo_url);
       });
   }, []);
+
+  // Real-time username availability check
+  const checkUsername = useCallback(async (value: string) => {
+    if (value.length < 3) {
+      setUsernameStatus("invalid");
+      return;
+    }
+    if (!USERNAME_REGEX.test(value)) {
+      setUsernameStatus("invalid");
+      return;
+    }
+    setUsernameStatus("checking");
+    const { data, error } = await supabase.rpc("check_username_available", {
+      p_username: value,
+    });
+    if (error) {
+      setUsernameStatus("idle");
+      return;
+    }
+    setUsernameStatus(data ? "available" : "taken");
+  }, []);
+
+  useEffect(() => {
+    if (!username || username.length < 3) {
+      setUsernameStatus(username.length > 0 ? "invalid" : "idle");
+      return;
+    }
+    if (!USERNAME_CHAR_REGEX.test(username)) {
+      setUsernameStatus("invalid");
+      return;
+    }
+    const timeout = setTimeout(() => checkUsername(username), 400);
+    return () => clearTimeout(timeout);
+  }, [username, checkUsername]);
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.toLowerCase().replace(/[^a-z0-9._]/g, "");
+    if (val.length <= 20) setUsername(val);
+  };
 
   const LogoDisplay = () =>
     logoUrl ? (
@@ -80,6 +124,17 @@ const Auth = () => {
         setLoading(false);
         return;
       }
+      if (!username || !USERNAME_REGEX.test(username)) {
+        toast({ title: "Nome de usuário inválido", description: "Use 3-20 caracteres: letras, números, ponto ou underline.", variant: "destructive" });
+        setLoading(false);
+        return;
+      }
+      if (usernameStatus === "taken") {
+        toast({ title: "Nome indisponível", description: "Esse nome de usuário já está em uso.", variant: "destructive" });
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -88,15 +143,27 @@ const Auth = () => {
       if (error) {
         toast({ title: "Erro ao cadastrar", description: error.message, variant: "destructive" });
       } else {
-        // Update profile with gender
         if (data.user) {
-          await supabase.from("profiles").update({ gender } as any).eq("user_id", data.user.id);
+          await supabase.from("profiles").update({ gender, username } as any).eq("user_id", data.user.id);
         }
         toast({ title: "Conta criada!", description: "Verifique seu e-mail para confirmar o cadastro." });
         setIsLogin(true);
       }
     }
     setLoading(false);
+  };
+
+  const UsernameStatusIcon = () => {
+    switch (usernameStatus) {
+      case "checking":
+        return <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />;
+      case "available":
+        return <Check className="h-4 w-4 text-green-500" />;
+      case "taken":
+        return <X className="h-4 w-4 text-destructive" />;
+      default:
+        return null;
+    }
   };
 
   if (isForgot) {
@@ -144,7 +211,7 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md glass-card animate-slide-up">
         <CardHeader className="text-center space-y-2">
-            <LogoDisplay />
+          <LogoDisplay />
           <CardTitle className="text-2xl font-display">
             {isLogin ? "Bem-vindo de volta!" : "Crie sua conta"}
           </CardTitle>
@@ -155,7 +222,7 @@ const Auth = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-               <>
+              <>
                 {/* Avatar preview */}
                 {gender && (
                   <div className="flex justify-center">
@@ -182,6 +249,41 @@ const Auth = () => {
                     placeholder="Seu nome"
                   />
                 </div>
+
+                {/* Username field */}
+                <div className="space-y-2">
+                  <Label htmlFor="username">Nome de usuário</Label>
+                  <div className="relative">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      <AtSign className="h-4 w-4" />
+                    </div>
+                    <Input
+                      id="username"
+                      value={username}
+                      onChange={handleUsernameChange}
+                      placeholder="seu_usuario"
+                      className="pl-9 pr-9"
+                      required
+                      minLength={3}
+                      maxLength={20}
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <UsernameStatusIcon />
+                    </div>
+                  </div>
+                  {usernameStatus === "available" && (
+                    <p className="text-xs text-green-500">Nome de usuário disponível</p>
+                  )}
+                  {usernameStatus === "taken" && (
+                    <p className="text-xs text-destructive">Esse nome de usuário já está em uso</p>
+                  )}
+                  {usernameStatus === "invalid" && username.length > 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      3-20 caracteres: letras, números, ponto ou underline
+                    </p>
+                  )}
+                </div>
+
                 <div className="space-y-2">
                   <Label>Sexo</Label>
                   <div className="grid grid-cols-2 gap-3">
