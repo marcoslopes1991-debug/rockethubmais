@@ -271,6 +271,7 @@ export type Database = {
           streak_count: number
           updated_at: string
           user_id: string
+          username: string | null
           xp: number
         }
         Insert: {
@@ -287,6 +288,7 @@ export type Database = {
           streak_count?: number
           updated_at?: string
           user_id: string
+          username?: string | null
           xp?: number
         }
         Update: {
@@ -303,6 +305,7 @@ export type Database = {
           streak_count?: number
           updated_at?: string
           user_id?: string
+          username?: string | null
           xp?: number
         }
         Relationships: []
@@ -451,6 +454,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_username_available: {
+        Args: { p_username: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
