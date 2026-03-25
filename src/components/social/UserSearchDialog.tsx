@@ -54,7 +54,8 @@ const UserSearchDialog = ({ open, onOpenChange }: UserSearchDialogProps) => {
 
         let queryBuilder = supabase
           .from("profiles")
-          .select("user_id, display_name, xp, avatar_url, gender, username");
+          .select("user_id, display_name, xp, avatar_url, gender, username")
+          .eq("status", "active");
 
         if (isUsernameSearch) {
           queryBuilder = queryBuilder.ilike("username", `%${searchTerm}%`);
