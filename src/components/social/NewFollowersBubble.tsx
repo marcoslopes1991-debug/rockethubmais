@@ -12,6 +12,16 @@ export default function NewFollowersBubble() {
   const { user } = useAuth();
   const [count, setCount] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+
+  // Fire confetti from button position
+  const fireConfetti = () => {
+    if (!btnRef.current) return;
+    const rect = btnRef.current.getBoundingClientRect();
+    const x = (rect.left + rect.width / 2) / window.innerWidth;
+    const y = (rect.top + rect.height / 2) / window.innerHeight;
+    confetti({ particleCount: 40, spread: 60, origin: { x, y }, colors: ["#FFD700", "#FF6B6B", "#4ECDC4", "#A78BFA"], startVelocity: 20, gravity: 0.8, scalar: 0.8 });
+  };
 
   // Load unseen followers on mount
   useEffect(() => {
