@@ -55,6 +55,7 @@ export type Database = {
           ai_name: string
           app_name: string
           button_image_url: string | null
+          favicon_url: string | null
           id: string
           logo_url: string | null
           updated_at: string
@@ -64,6 +65,7 @@ export type Database = {
           ai_name?: string
           app_name?: string
           button_image_url?: string | null
+          favicon_url?: string | null
           id?: string
           logo_url?: string | null
           updated_at?: string
@@ -73,6 +75,7 @@ export type Database = {
           ai_name?: string
           app_name?: string
           button_image_url?: string | null
+          favicon_url?: string | null
           id?: string
           logo_url?: string | null
           updated_at?: string

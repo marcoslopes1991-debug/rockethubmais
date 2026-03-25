@@ -11,9 +11,12 @@ const AdminGeneralSettings = () => {
   const [configId, setConfigId] = useState<string | null>(null);
   const [appName, setAppName] = useState("QuizLearn");
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [faviconUrl, setFaviconUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadingFavicon, setUploadingFavicon] = useState(false);
   const [saving, setSaving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const faviconRef = useRef<HTMLInputElement>(null);
 
   // Mission config state
   const [missionConfigId, setMissionConfigId] = useState<string | null>(null);
@@ -25,13 +28,14 @@ const AdminGeneralSettings = () => {
   useEffect(() => {
     supabase
       .from("ai_config" as any)
-      .select("id, logo_url, app_name")
+      .select("id, logo_url, app_name, favicon_url")
       .limit(1)
       .single()
       .then(({ data }: any) => {
         if (data) {
           setConfigId(data.id);
           setLogoUrl(data.logo_url);
+          setFaviconUrl(data.favicon_url);
           setAppName(data.app_name || "QuizLearn");
         }
       });
@@ -76,8 +80,34 @@ const AdminGeneralSettings = () => {
     toast({ title: "Logo carregada!" });
   };
 
+  const handleFaviconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Arquivo inválido", description: "Selecione uma imagem PNG, JPG ou ICO", variant: "destructive" });
+      return;
+    }
+    setUploadingFavicon(true);
+    const ext = file.name.split(".").pop();
+    const path = `app-favicon-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("ai-config").upload(path, file, { upsert: true });
+    if (error) {
+      toast({ title: "Erro no upload", description: error.message, variant: "destructive" });
+      setUploadingFavicon(false);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from("ai-config").getPublicUrl(path);
+    setFaviconUrl(urlData.publicUrl);
+    setUploadingFavicon(false);
+    toast({ title: "Favicon carregado!" });
+  };
+
   const removeLogo = () => {
     setLogoUrl(null);
+  };
+
+  const removeFavicon = () => {
+    setFaviconUrl(null);
   };
 
   const save = async () => {
@@ -85,7 +115,7 @@ const AdminGeneralSettings = () => {
     setSaving(true);
     const { error } = await supabase
       .from("ai_config" as any)
-      .update({ logo_url: logoUrl, app_name: appName, updated_at: new Date().toISOString() } as any)
+      .update({ logo_url: logoUrl, favicon_url: faviconUrl, app_name: appName, updated_at: new Date().toISOString() } as any)
       .eq("id", configId);
 
     if (error) {
@@ -159,7 +189,48 @@ const AdminGeneralSettings = () => {
             </div>
           </div>
 
-          {/* Preview */}
+          {/* Favicon */}
+          <div className="space-y-3">
+            <Label>Favicon (ícone da aba do navegador)</Label>
+            <div className="flex items-center gap-6">
+              <div className="w-16 h-16 rounded-xl border-2 border-border bg-muted flex items-center justify-center overflow-hidden">
+                {faviconUrl ? (
+                  <img src={faviconUrl} alt="Favicon" className="w-full h-full object-contain p-1" />
+                ) : (
+                  <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                    <ImageIcon className="h-6 w-6" />
+                    <span className="text-[9px]">Padrão</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col gap-2">
+                <input
+                  ref={faviconRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/jpg,image/x-icon,image/svg+xml"
+                  className="hidden"
+                  onChange={handleFaviconUpload}
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => faviconRef.current?.click()}
+                  disabled={uploadingFavicon}
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  {uploadingFavicon ? "Enviando..." : "Enviar favicon"}
+                </Button>
+                {faviconUrl && (
+                  <Button variant="ghost" size="sm" className="text-destructive" onClick={removeFavicon}>
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Remover favicon
+                  </Button>
+                )}
+                <p className="text-xs text-muted-foreground">PNG, JPG, SVG ou ICO. Recomendado: 32×32 ou 64×64 px.</p>
+              </div>
+            </div>
+          </div>
+
           <div className="border border-border rounded-xl p-6 bg-muted/30">
             <p className="text-xs text-muted-foreground mb-3">Pré-visualização na tela de login:</p>
             <div className="flex flex-col items-center gap-2">
