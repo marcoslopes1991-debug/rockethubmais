@@ -96,7 +96,8 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [user]);
+    fetchCounts(user.id);
+  }, [user, fetchCounts]);
 
   const hasUnanswered = answeredCount < totalQuestions;
   const xp = profile?.xp ?? 0;
@@ -224,7 +225,28 @@ const Dashboard = () => {
                   )}
                 </div>
               </div>
-              <div className="mt-5">
+
+              {/* Social counters */}
+              <div className="flex items-center gap-6 mt-4 pt-4 border-t border-border/50">
+                <button
+                  onClick={() => { setFollowDialogType("followers"); setFollowDialogOpen(true); }}
+                  className="flex flex-col items-center hover:opacity-80 transition-opacity"
+                >
+                  <span className="text-lg font-display font-bold">{followerCount}</span>
+                  <span className="text-xs text-muted-foreground">seguidores</span>
+                </button>
+                <button
+                  onClick={() => { setFollowDialogType("following"); setFollowDialogOpen(true); }}
+                  className="flex flex-col items-center hover:opacity-80 transition-opacity"
+                >
+                  <span className="text-lg font-display font-bold">{followingCount}</span>
+                  <span className="text-xs text-muted-foreground">seguindo</span>
+                </button>
+                <div className="flex flex-col items-center">
+                  <span className="text-lg font-display font-bold">0</span>
+                  <span className="text-xs text-muted-foreground">posts</span>
+                </div>
+              </div>
                 <LevelProgressBar xp={xp} />
                 {nextLevel && (
                   <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
