@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserPlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import FollowListDialog from "@/components/social/FollowListDialog";
+import confetti from "canvas-confetti";
 
 const LAST_SEEN_FOLLOWERS_KEY = "last_seen_followers_at";
 
