@@ -129,18 +129,14 @@ const MapNode = ({ level, index, isReached, isCurrent, OfficeIcon, gender, onCli
               Nível {level.level_number}
             </span>
           </div>
-          {isReached && (
-            <motion.span
-              className={cn(
-                "text-[11px] sm:text-xs leading-tight",
-                isCurrent ? "font-bold text-foreground" : "text-foreground/60"
-              )}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              {level.name}
-            </motion.span>
-          )}
+          <span
+            className={cn(
+              "text-[11px] sm:text-xs leading-tight",
+              isCurrent ? "font-bold text-foreground" : isReached ? "text-foreground/60" : "text-muted-foreground/50"
+            )}
+          >
+            {level.name}
+          </span>
           {isCurrent && (
             <motion.span
               className="text-[10px] sm:text-xs font-bold text-primary mt-1 flex items-center gap-1"
@@ -151,8 +147,8 @@ const MapNode = ({ level, index, isReached, isCurrent, OfficeIcon, gender, onCli
             </motion.span>
           )}
           {!isReached && (
-            <span className="text-[10px] text-muted-foreground/40 italic">
-              Bloqueado
+            <span className="text-[10px] text-muted-foreground/40 italic flex items-center gap-1">
+              <Lock className="h-2.5 w-2.5" /> Bloqueado
             </span>
           )}
         </div>
