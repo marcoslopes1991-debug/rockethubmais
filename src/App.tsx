@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
+import { useAppBranding } from "@/hooks/useAppBranding";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
@@ -33,7 +34,9 @@ import RockZAssistant from "./components/RockZAssistant";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const AppContent = () => {
+  useAppBranding();
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -72,6 +75,12 @@ const App = () => (
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>
+  );
+};
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <AppContent />
   </QueryClientProvider>
 );
 
