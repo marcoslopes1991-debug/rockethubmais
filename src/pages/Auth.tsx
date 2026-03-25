@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,12 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { Zap, Check, X, Loader2, AtSign } from "lucide-react";
-import avatarMale from "@/assets/avatar-male.png";
-import avatarFemale from "@/assets/avatar-female.png";
-
-const USERNAME_REGEX = /^[a-zA-Z0-9._]{3,20}$/;
-const USERNAME_CHAR_REGEX = /^[a-zA-Z0-9._]*$/;
+import { Zap } from "lucide-react";
+import OnboardingStep1 from "@/components/onboarding/OnboardingStep1";
+import OnboardingStep2 from "@/components/onboarding/OnboardingStep2";
+import OnboardingStep3 from "@/components/onboarding/OnboardingStep3";
+import OnboardingProgress from "@/components/onboarding/OnboardingProgress";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -21,19 +20,25 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [username, setUsername] = useState("");
-  const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken" | "invalid">("idle");
-  const [gender, setGender] = useState<string>("");
+  const [gender, setGender] = useState("");
   const [loading, setLoading] = useState(false);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [appName, setAppName] = useState("QuizLearn");
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user } = useAuth();
 
+  // Onboarding state
+  const [step, setStep] = useState(1);
+  const [selectedModules, setSelectedModules] = useState<string[]>([]);
+  const [trabalhaSap, setTrabalhaSap] = useState<boolean | null>(null);
+  const [perfilSap, setPerfilSap] = useState("");
+  const [tempoSap, setTempoSap] = useState("");
+  const [cursosRockethub, setCursosRockethub] = useState<string[]>([]);
+
   useEffect(() => {
     if (user) navigate("/");
   }, [user, navigate]);
-
-  const [appName, setAppName] = useState("QuizLearn");
 
   useEffect(() => {
     supabase
@@ -46,45 +51,6 @@ const Auth = () => {
         if (data?.app_name) setAppName(data.app_name);
       });
   }, []);
-
-  // Real-time username availability check
-  const checkUsername = useCallback(async (value: string) => {
-    if (value.length < 3) {
-      setUsernameStatus("invalid");
-      return;
-    }
-    if (!USERNAME_REGEX.test(value)) {
-      setUsernameStatus("invalid");
-      return;
-    }
-    setUsernameStatus("checking");
-    const { data, error } = await supabase.rpc("check_username_available", {
-      p_username: value,
-    });
-    if (error) {
-      setUsernameStatus("idle");
-      return;
-    }
-    setUsernameStatus(data ? "available" : "taken");
-  }, []);
-
-  useEffect(() => {
-    if (!username || username.length < 3) {
-      setUsernameStatus(username.length > 0 ? "invalid" : "idle");
-      return;
-    }
-    if (!USERNAME_CHAR_REGEX.test(username)) {
-      setUsernameStatus("invalid");
-      return;
-    }
-    const timeout = setTimeout(() => checkUsername(username), 400);
-    return () => clearTimeout(timeout);
-  }, [username, checkUsername]);
-
-  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value.toLowerCase().replace(/[^a-z0-9._]/g, "");
-    if (val.length <= 20) setUsername(val);
-  };
 
   const LogoDisplay = () =>
     logoUrl ? (
@@ -110,65 +76,89 @@ const Auth = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
-    if (isLogin) {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        toast({ title: "Erro ao entrar", description: error.message, variant: "destructive" });
-      } else {
-        navigate("/");
-      }
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      toast({ title: "Erro ao entrar", description: error.message, variant: "destructive" });
     } else {
-      if (!gender) {
-        toast({ title: "Campo obrigatório", description: "Selecione seu sexo para continuar.", variant: "destructive" });
-        setLoading(false);
-        return;
-      }
-      if (!username || !USERNAME_REGEX.test(username)) {
-        toast({ title: "Nome de usuário inválido", description: "Use 3-20 caracteres: letras, números, ponto ou underline.", variant: "destructive" });
-        setLoading(false);
-        return;
-      }
-      if (usernameStatus === "taken") {
-        toast({ title: "Nome indisponível", description: "Esse nome de usuário já está em uso.", variant: "destructive" });
-        setLoading(false);
-        return;
-      }
-
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { display_name: displayName || email.split("@")[0], gender } },
-      });
-      if (error) {
-        toast({ title: "Erro ao cadastrar", description: error.message, variant: "destructive" });
-      } else {
-        if (data.user) {
-          await supabase.from("profiles").update({ gender, username } as any).eq("user_id", data.user.id);
-        }
-        toast({ title: "Conta criada!", description: "Verifique seu e-mail para confirmar o cadastro." });
-        setIsLogin(true);
-      }
+      navigate("/");
     }
     setLoading(false);
   };
 
-  const UsernameStatusIcon = () => {
-    switch (usernameStatus) {
-      case "checking":
-        return <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />;
-      case "available":
-        return <Check className="h-4 w-4 text-green-500" />;
-      case "taken":
-        return <X className="h-4 w-4 text-destructive" />;
-      default:
-        return null;
+  // Step 1 → create account, then go to step 2
+  const handleStep1Next = async () => {
+    if (!gender) {
+      toast({ title: "Campo obrigatório", description: "Selecione seu sexo para continuar.", variant: "destructive" });
+      return;
     }
+    setLoading(true);
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { display_name: displayName || email.split("@")[0], gender } },
+    });
+    if (error) {
+      toast({ title: "Erro ao cadastrar", description: error.message, variant: "destructive" });
+      setLoading(false);
+      return;
+    }
+    if (data.user) {
+      await supabase
+        .from("profiles")
+        .update({
+          gender,
+          username,
+          modulos_interesse: selectedModules,
+        } as any)
+        .eq("user_id", data.user.id);
+    }
+    setLoading(false);
+    setStep(2);
   };
 
+  // Step 2 → save SAP answers, go to step 3
+  const handleStep2Next = async () => {
+    setLoading(true);
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    if (currentUser) {
+      await supabase
+        .from("profiles")
+        .update({
+          trabalha_com_sap: trabalhaSap,
+          perfil_sap: trabalhaSap ? perfilSap : null,
+          tempo_experiencia_sap: trabalhaSap ? tempoSap : null,
+          cursos_rockethub: !trabalhaSap ? cursosRockethub : [],
+        } as any)
+        .eq("user_id", currentUser.id);
+    }
+    setLoading(false);
+    setStep(3);
+  };
+
+  const handleFinish = () => {
+    // Sign out so user confirms email first, then logs in
+    supabase.auth.signOut().then(() => {
+      toast({ title: "Conta criada!", description: "Verifique seu e-mail para confirmar o cadastro." });
+      setIsLogin(true);
+      setStep(1);
+      // Reset fields
+      setDisplayName("");
+      setUsername("");
+      setEmail("");
+      setPassword("");
+      setGender("");
+      setSelectedModules([]);
+      setTrabalhaSap(null);
+      setPerfilSap("");
+      setTempoSap("");
+      setCursosRockethub([]);
+    });
+  };
+
+  // Forgot password screen
   if (isForgot) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background px-4">
@@ -182,25 +172,14 @@ const Auth = () => {
             <form onSubmit={handleForgotPassword} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">E-mail</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="seu@email.com"
-                  required
-                />
+                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" required />
               </div>
               <Button type="submit" className="w-full" size="lg" disabled={loading}>
                 {loading ? "Enviando..." : "Enviar link"}
               </Button>
             </form>
             <div className="mt-4 text-center">
-              <button
-                type="button"
-                onClick={() => setIsForgot(false)}
-                className="text-sm text-muted-foreground hover:text-primary transition-colors"
-              >
+              <button type="button" onClick={() => setIsForgot(false)} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 Voltar ao login
               </button>
             </div>
@@ -210,159 +189,94 @@ const Auth = () => {
     );
   }
 
+  // Signup onboarding flow
+  if (!isLogin) {
+    const totalSteps = 2;
+    const titles = ["Crie sua conta", "Sobre você", "Bem-vindo!"];
+    const descriptions = ["Comece sua jornada de aprendizado", "Nos conte um pouco mais sobre você", ""];
+
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
+        <Card className="w-full max-w-md glass-card animate-slide-up">
+          <CardHeader className="text-center space-y-2">
+            <LogoDisplay />
+            <CardTitle className="text-2xl font-display">{titles[step - 1]}</CardTitle>
+            {descriptions[step - 1] && <CardDescription>{descriptions[step - 1]}</CardDescription>}
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {step < 3 && <OnboardingProgress currentStep={step} totalSteps={totalSteps} />}
+
+            {step === 1 && (
+              <OnboardingStep1
+                displayName={displayName} setDisplayName={setDisplayName}
+                username={username} setUsername={setUsername}
+                email={email} setEmail={setEmail}
+                password={password} setPassword={setPassword}
+                gender={gender} setGender={setGender}
+                selectedModules={selectedModules} setSelectedModules={setSelectedModules}
+                onNext={handleStep1Next} loading={loading}
+              />
+            )}
+
+            {step === 2 && (
+              <OnboardingStep2
+                trabalhaSap={trabalhaSap} setTrabalhaSap={setTrabalhaSap}
+                perfilSap={perfilSap} setPerfilSap={setPerfilSap}
+                tempoSap={tempoSap} setTempoSap={setTempoSap}
+                cursosRockethub={cursosRockethub} setCursosRockethub={setCursosRockethub}
+                onNext={handleStep2Next} onBack={() => setStep(1)}
+                loading={loading}
+              />
+            )}
+
+            {step === 3 && (
+              <OnboardingStep3 displayName={displayName} onFinish={handleFinish} />
+            )}
+
+            {step === 1 && (
+              <div className="text-center">
+                <button type="button" onClick={() => setIsLogin(true)} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Já tem conta? Faça login
+                </button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Login screen
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md glass-card animate-slide-up">
         <CardHeader className="text-center space-y-2">
           <LogoDisplay />
-          <CardTitle className="text-2xl font-display">
-            {isLogin ? "Bem-vindo de volta!" : "Crie sua conta"}
-          </CardTitle>
-          <CardDescription>
-            {isLogin ? "Entre para continuar aprendendo" : "Comece sua jornada de aprendizado"}
-          </CardDescription>
+          <CardTitle className="text-2xl font-display">Bem-vindo de volta!</CardTitle>
+          <CardDescription>Entre para continuar aprendendo</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
-              <>
-                {/* Avatar preview */}
-                {gender && (
-                  <div className="flex justify-center">
-                    <div className="relative">
-                      <img
-                        src={gender === "masculino" ? avatarMale : avatarFemale}
-                        alt={`Avatar ${gender}`}
-                        className="w-24 h-24 rounded-full border-4 border-primary/30 object-cover bg-muted shadow-lg transition-all duration-300"
-                        width={96}
-                        height={96}
-                      />
-                      <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center text-xs">
-                        ✓
-                      </div>
-                    </div>
-                  </div>
-                )}
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nome</Label>
-                  <Input
-                    id="name"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    placeholder="Seu nome"
-                  />
-                </div>
-
-                {/* Username field */}
-                <div className="space-y-2">
-                  <Label htmlFor="username">Nome de usuário</Label>
-                  <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                      <AtSign className="h-4 w-4" />
-                    </div>
-                    <Input
-                      id="username"
-                      value={username}
-                      onChange={handleUsernameChange}
-                      placeholder="seu_usuario"
-                      className="pl-9 pr-9"
-                      required
-                      minLength={3}
-                      maxLength={20}
-                    />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                      <UsernameStatusIcon />
-                    </div>
-                  </div>
-                  {usernameStatus === "available" && (
-                    <p className="text-xs text-green-500">Nome de usuário disponível</p>
-                  )}
-                  {usernameStatus === "taken" && (
-                    <p className="text-xs text-destructive">Esse nome de usuário já está em uso</p>
-                  )}
-                  {usernameStatus === "invalid" && username.length > 0 && (
-                    <p className="text-xs text-muted-foreground">
-                      3-20 caracteres: letras, números, ponto ou underline
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Sexo</Label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setGender("masculino")}
-                      className={`flex items-center justify-center gap-2 rounded-lg border-2 p-3 text-sm font-medium transition-all ${
-                        gender === "masculino"
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border bg-background text-muted-foreground hover:border-primary/50"
-                      }`}
-                    >
-                      <span className="text-lg">♂️</span>
-                      Masculino
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setGender("feminino")}
-                      className={`flex items-center justify-center gap-2 rounded-lg border-2 p-3 text-sm font-medium transition-all ${
-                        gender === "feminino"
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border bg-background text-muted-foreground hover:border-primary/50"
-                      }`}
-                    >
-                      <span className="text-lg">♀️</span>
-                      Feminino
-                    </button>
-                  </div>
-                </div>
-              </>
-            )}
+          <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="seu@email.com"
-                required
-              />
+              <Label htmlFor="login-email">E-mail</Label>
+              <Input id="login-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                minLength={6}
-              />
+              <Label htmlFor="login-password">Senha</Label>
+              <Input id="login-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required minLength={6} />
             </div>
-            {isLogin && (
-              <div className="text-right">
-                <button
-                  type="button"
-                  onClick={() => setIsForgot(true)}
-                  className="text-xs text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Esqueci minha senha
-                </button>
-              </div>
-            )}
+            <div className="text-right">
+              <button type="button" onClick={() => setIsForgot(true)} className="text-xs text-muted-foreground hover:text-primary transition-colors">
+                Esqueci minha senha
+              </button>
+            </div>
             <Button type="submit" className="w-full" size="lg" disabled={loading}>
-              {loading ? "Carregando..." : isLogin ? "Entrar" : "Criar conta"}
+              {loading ? "Carregando..." : "Entrar"}
             </Button>
           </form>
           <div className="mt-4 text-center">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-muted-foreground hover:text-primary transition-colors"
-            >
-              {isLogin ? "Não tem conta? Cadastre-se" : "Já tem conta? Faça login"}
+            <button type="button" onClick={() => setIsLogin(false)} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              Não tem conta? Cadastre-se
             </button>
           </div>
         </CardContent>
