@@ -5,9 +5,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useAchievements } from "@/hooks/useAchievements";
+import { useFollows } from "@/hooks/useFollows";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon, Award, Menu, Search } from "lucide-react";
+import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon, Award, Menu, Search, Users } from "lucide-react";
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import StreakBadge from "@/components/StreakBadge";
@@ -19,6 +20,7 @@ import NotificationBell from "@/components/NotificationBell";
 import UserSearchDialog from "@/components/social/UserSearchDialog";
 import SuggestedUsers from "@/components/social/SuggestedUsers";
 import ActionCard from "@/components/dashboard/ActionCard";
+import FollowListDialog from "@/components/social/FollowListDialog";
 import { useAppBranding } from "@/hooks/useAppBranding";
 import {
   Sheet,
@@ -51,12 +53,15 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { levels } = useLevels();
   const { achievements, userAchievements, isUnlocked } = useAchievements();
+  const { followerCount, followingCount, fetchCounts } = useFollows();
   const unlockedAchievements = achievements.filter((a) => isUnlocked(a.id));
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [answeredCount, setAnsweredCount] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [equippedItems, setEquippedItems] = useState<{ icon_emoji: string; name: string }[]>([]);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [followDialogType, setFollowDialogType] = useState<"followers" | "following">("followers");
+  const [followDialogOpen, setFollowDialogOpen] = useState(false);
   const { appName, logoUrl: brandLogoUrl } = useAppBranding();
 
   useEffect(() => {
@@ -91,7 +96,8 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [user]);
+    fetchCounts(user.id);
+  }, [user, fetchCounts]);
 
   const hasUnanswered = answeredCount < totalQuestions;
   const xp = profile?.xp ?? 0;
@@ -219,6 +225,29 @@ const Dashboard = () => {
                   )}
                 </div>
               </div>
+
+              {/* Social counters */}
+              <div className="flex items-center gap-6 mt-4 pt-4 border-t border-border/50">
+                <button
+                  onClick={() => { setFollowDialogType("followers"); setFollowDialogOpen(true); }}
+                  className="flex flex-col items-center hover:opacity-80 transition-opacity"
+                >
+                  <span className="text-lg font-display font-bold">{followerCount}</span>
+                  <span className="text-xs text-muted-foreground">seguidores</span>
+                </button>
+                <button
+                  onClick={() => { setFollowDialogType("following"); setFollowDialogOpen(true); }}
+                  className="flex flex-col items-center hover:opacity-80 transition-opacity"
+                >
+                  <span className="text-lg font-display font-bold">{followingCount}</span>
+                  <span className="text-xs text-muted-foreground">seguindo</span>
+                </button>
+                <div className="flex flex-col items-center">
+                  <span className="text-lg font-display font-bold">0</span>
+                  <span className="text-xs text-muted-foreground">posts</span>
+                </div>
+              </div>
+
               <div className="mt-5">
                 <LevelProgressBar xp={xp} />
                 {nextLevel && (
@@ -338,6 +367,14 @@ const Dashboard = () => {
       </motion.main>
 
       <UserSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
+      {user && (
+        <FollowListDialog
+          userId={user.id}
+          type={followDialogType}
+          open={followDialogOpen}
+          onOpenChange={setFollowDialogOpen}
+        />
+      )}
     </div>
   );
 };
