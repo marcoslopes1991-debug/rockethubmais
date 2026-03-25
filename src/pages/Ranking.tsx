@@ -82,14 +82,19 @@ const Ranking = () => {
                     <div
                       key={p.user_id}
                       className={cn(
-                        "flex items-center gap-3 p-3 rounded-lg transition-colors",
+                        "flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg transition-colors",
                         isSelf
                           ? "bg-primary/10 border border-primary/20"
                           : "hover:bg-muted/50"
                       )}
                     >
-                      {getRankIcon(i)}
-                      <button onClick={() => navigate(isSelf ? "/profile" : `/user/${p.user_id}`)}>
+                      {/* Position */}
+                      <div className="shrink-0 w-6 flex justify-center">
+                        {getRankIcon(i)}
+                      </div>
+
+                      {/* Avatar */}
+                      <button className="shrink-0" onClick={() => navigate(isSelf ? "/profile" : `/user/${p.user_id}`)}>
                         <UserAvatar
                           avatarUrl={p.avatar_url}
                           gender={p.gender}
@@ -97,54 +102,53 @@ const Ranking = () => {
                           size="sm"
                         />
                       </button>
+
+                      {/* Name + Level/XP */}
                       <button
                         className="flex-1 min-w-0 text-left"
                         onClick={() => navigate(isSelf ? "/profile" : `/user/${p.user_id}`)}
                       >
-                        <p className="font-medium truncate">
+                        <p className="font-medium truncate text-sm sm:text-base">
                           {p.display_name}
                           {isSelf && (
-                            <span className="text-xs text-primary ml-2">(você)</span>
+                            <span className="text-xs text-primary ml-1">(você)</span>
                           )}
                         </p>
-                        <p className="text-xs text-muted-foreground">{levelInfo.name}</p>
-                      </button>
-                      <div className="flex items-center gap-2">
-                        {p.streak_count > 0 && (
-                          <span className="flex items-center gap-0.5 text-xs text-accent">
-                            <Flame className="h-3 w-3" /> {p.streak_count}
+                        <p className="text-xs text-muted-foreground truncate">
+                          {levelInfo.name}
+                          <span className="mx-1">•</span>
+                          <span className="inline-flex items-center gap-0.5 text-xp font-semibold">
+                            <Zap className="h-3 w-3 inline" />
+                            {p.xp} XP
                           </span>
-                        )}
-                        <div className="flex items-center gap-1 text-sm font-bold text-xp">
-                          <Zap className="h-4 w-4" />
-                          {p.xp}
-                        </div>
-                        {!isSelf && user && (
-                          <Button
-                            variant={following ? "secondary" : "default"}
-                            size="sm"
-                            className="h-7 px-2 text-xs"
-                            disabled={followLoading}
-                            onClick={() => toggleFollow(p.user_id)}
-                          >
-                            {following ? (
-                              <><UserCheck className="h-3 w-3 mr-1" /> Seguindo</>
-                            ) : (
-                              <><UserPlus className="h-3 w-3 mr-1" /> Seguir</>
-                            )}
-                          </Button>
-                        )}
-                      </div>
+                          {p.streak_count > 0 && (
+                            <>
+                              <span className="mx-1">•</span>
+                              <span className="inline-flex items-center gap-0.5 text-accent">
+                                <Flame className="h-3 w-3 inline" /> {p.streak_count}
+                              </span>
+                            </>
+                          )}
+                        </p>
+                      </button>
+
+                      {/* Follow button */}
+                      {!isSelf && user && (
+                        <Button
+                          variant={following ? "secondary" : "default"}
+                          size="sm"
+                          className="shrink-0 h-7 px-2 text-xs"
+                          disabled={followLoading}
+                          onClick={() => toggleFollow(p.user_id)}
+                        >
+                          {following ? (
+                            <><UserCheck className="h-3 w-3 mr-1" /> Seguindo</>
+                          ) : (
+                            <><UserPlus className="h-3 w-3 mr-1" /> Seguir</>
+                          )}
+                        </Button>
+                      )}
                     </div>
                   );
                 })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </main>
-    </div>
-  );
-};
-
 export default Ranking;
