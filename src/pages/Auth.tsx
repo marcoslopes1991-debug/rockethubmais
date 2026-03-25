@@ -240,6 +240,7 @@ const Auth = () => {
                 gender={gender} setGender={setGender}
                 selectedModules={selectedModules} setSelectedModules={setSelectedModules}
                 onNext={handleStep1Next} loading={loading}
+                accountCreated={isOnboarding}
               />
             )}
 
