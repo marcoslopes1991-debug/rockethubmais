@@ -30,6 +30,7 @@ const Auth = () => {
 
   // Onboarding state
   const [step, setStep] = useState(1);
+  const [isOnboarding, setIsOnboarding] = useState(false);
   const [selectedModules, setSelectedModules] = useState<string[]>([]);
   const [trabalhaSap, setTrabalhaSap] = useState<boolean | null>(null);
   const [perfilSap, setPerfilSap] = useState("");
@@ -37,8 +38,8 @@ const Auth = () => {
   const [cursosRockethub, setCursosRockethub] = useState<string[]>([]);
 
   useEffect(() => {
-    if (user) navigate("/");
-  }, [user, navigate]);
+    if (user && !isOnboarding) navigate("/");
+  }, [user, navigate, isOnboarding]);
 
   useEffect(() => {
     supabase
