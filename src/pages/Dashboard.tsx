@@ -151,6 +151,9 @@ const Dashboard = () => {
                   <SheetTitle className="font-display">Menu</SheetTitle>
                 </SheetHeader>
                 <nav className="flex flex-col gap-2 mt-6">
+                  <Button variant="ghost" className="justify-start h-12 text-base sm:hidden" onClick={() => navigate("/ranking")}>
+                    <Trophy className="h-5 w-5 mr-3" /> Ranking
+                  </Button>
                   <Button variant="ghost" className="justify-start h-12 text-base" onClick={() => navigate("/journey")}>
                     <Star className="h-5 w-5 mr-3" /> Jornada
                   </Button>
