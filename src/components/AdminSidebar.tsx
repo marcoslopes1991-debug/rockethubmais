@@ -1,4 +1,4 @@
-import { LayoutDashboard, HelpCircle, Package, Users, ArrowLeft, Shield, Upload, TrendingUp, Award, Bot, Settings } from "lucide-react";
+import { LayoutDashboard, HelpCircle, Package, Users, ArrowLeft, Shield, Upload, TrendingUp, Award, Bot, Settings, ShieldBan } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import {
@@ -23,6 +23,7 @@ const items = [
   { title: "Conquistas", url: "/admin/achievements", icon: Award },
   { title: "Config. IA", url: "/admin/ai-config", icon: Bot },
   { title: "Config. Gerais", url: "/admin/settings", icon: Settings },
+  { title: "Usernames", url: "/admin/reserved-usernames", icon: ShieldBan },
 ];
 
 export function AdminSidebar() {
