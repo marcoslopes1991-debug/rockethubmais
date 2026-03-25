@@ -151,4 +151,13 @@ const Ranking = () => {
                     </div>
                   );
                 })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </main>
+    </div>
+  );
+};
+
 export default Ranking;
