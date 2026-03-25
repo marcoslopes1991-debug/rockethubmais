@@ -245,9 +245,9 @@ const Dashboard = () => {
                     Adicione uma bio...
                   </button>
                 )}
-                {profile?.modulos_interesse && profile.modulos_interesse.length > 0 && (
+                {profile?.modulos_interesse && profile.modulos_interesse.filter(mod => mod && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(mod)).length > 0 && (
                   <div className="flex flex-wrap gap-1.5">
-                    {profile.modulos_interesse.map((mod) => (
+                    {profile.modulos_interesse.filter(mod => mod && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(mod)).map((mod) => (
                       <span
                         key={mod}
                         className="text-[11px] px-2.5 py-0.5 rounded-full bg-secondary text-secondary-foreground font-bold tracking-wide"
