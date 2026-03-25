@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles } from "lucide-react";
+import { PartyPopper, Rocket } from "lucide-react";
 
 interface OnboardingStep3Props {
   displayName: string;
@@ -25,22 +25,26 @@ export default function OnboardingStep3({ displayName, onFinish }: OnboardingSte
   }, []);
 
   return (
-    <div className="flex flex-col items-center text-center space-y-6 py-4">
-      <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-        <Sparkles className="h-10 w-10 text-primary" />
+    <div className="flex flex-col items-center text-center space-y-8 py-6">
+      <div className="relative">
+        <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center animate-xp-pop">
+          <PartyPopper className="h-12 w-12 text-primary" />
+        </div>
+        <span className="absolute -top-1 -right-1 text-2xl animate-bounce">🎉</span>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         <h2 className="text-2xl font-display font-bold">
-          Bem-vindo{displayName ? `, ${displayName.split(" ")[0]}` : ""}! 🎉
+          Seja bem-vindo{displayName ? `, ${displayName.split(" ")[0]}` : ""}!
         </h2>
         <p className="text-muted-foreground text-sm leading-relaxed max-w-sm mx-auto whitespace-pre-line">
           {message}
         </p>
       </div>
 
-      <Button size="lg" className="w-full" onClick={onFinish}>
-        Começar a jornada
+      <Button size="lg" className="w-full gap-2" onClick={onFinish}>
+        <Rocket className="h-4 w-4" />
+        Começar jornada
       </Button>
     </div>
   );

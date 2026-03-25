@@ -139,23 +139,7 @@ const Auth = () => {
   };
 
   const handleFinish = () => {
-    // Sign out so user confirms email first, then logs in
-    supabase.auth.signOut().then(() => {
-      toast({ title: "Conta criada!", description: "Verifique seu e-mail para confirmar o cadastro." });
-      setIsLogin(true);
-      setStep(1);
-      // Reset fields
-      setDisplayName("");
-      setUsername("");
-      setEmail("");
-      setPassword("");
-      setGender("");
-      setSelectedModules([]);
-      setTrabalhaSap(null);
-      setPerfilSap("");
-      setTempoSap("");
-      setCursosRockethub([]);
-    });
+    navigate("/");
   };
 
   // Forgot password screen
