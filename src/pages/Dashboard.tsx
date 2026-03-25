@@ -19,6 +19,7 @@ import NotificationBell from "@/components/NotificationBell";
 import UserSearchDialog from "@/components/social/UserSearchDialog";
 import SuggestedUsers from "@/components/social/SuggestedUsers";
 import ActionCard from "@/components/dashboard/ActionCard";
+import { useAppBranding } from "@/hooks/useAppBranding";
 import {
   Sheet,
   SheetContent,
@@ -56,6 +57,7 @@ const Dashboard = () => {
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [equippedItems, setEquippedItems] = useState<{ icon_emoji: string; name: string }[]>([]);
   const [searchOpen, setSearchOpen] = useState(false);
+  const { appName, logoUrl: brandLogoUrl } = useAppBranding();
 
   useEffect(() => {
     if (!user) return;
@@ -108,10 +110,14 @@ const Dashboard = () => {
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-              <Zap className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="font-display font-bold text-lg">QuizLearn</span>
+            {brandLogoUrl ? (
+              <img src={brandLogoUrl} alt={appName} className="h-9 w-9 rounded-xl object-contain" />
+            ) : (
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
+                <Zap className="h-5 w-5 text-primary-foreground" />
+              </div>
+            )}
+            <span className="font-display font-bold text-lg">{appName}</span>
           </motion.div>
           <div className="flex items-center gap-1 sm:gap-2">
             <StreakBadge streak={profile?.streak_count ?? 0} />

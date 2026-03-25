@@ -9,6 +9,7 @@ import { toast } from "@/hooks/use-toast";
 
 const AdminGeneralSettings = () => {
   const [configId, setConfigId] = useState<string | null>(null);
+  const [appName, setAppName] = useState("QuizLearn");
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -24,13 +25,14 @@ const AdminGeneralSettings = () => {
   useEffect(() => {
     supabase
       .from("ai_config" as any)
-      .select("id, logo_url")
+      .select("id, logo_url, app_name")
       .limit(1)
       .single()
       .then(({ data }: any) => {
         if (data) {
           setConfigId(data.id);
           setLogoUrl(data.logo_url);
+          setAppName(data.app_name || "QuizLearn");
         }
       });
 
@@ -83,7 +85,7 @@ const AdminGeneralSettings = () => {
     setSaving(true);
     const { error } = await supabase
       .from("ai_config" as any)
-      .update({ logo_url: logoUrl, updated_at: new Date().toISOString() } as any)
+      .update({ logo_url: logoUrl, app_name: appName, updated_at: new Date().toISOString() } as any)
       .eq("id", configId);
 
     if (error) {
@@ -103,9 +105,19 @@ const AdminGeneralSettings = () => {
 
       <Card className="glass-card">
         <CardHeader>
-          <CardTitle className="text-base">Logo da Aplicação</CardTitle>
+          <CardTitle className="text-base">Branding da Aplicação</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <Label>Nome do Aplicativo</Label>
+            <Input
+              value={appName}
+              onChange={(e) => setAppName(e.target.value)}
+              placeholder="Ex: QuizLearn"
+              maxLength={40}
+            />
+            <p className="text-xs text-muted-foreground">Será exibido no header, login e demais telas.</p>
+          </div>
           <div className="space-y-3">
             <Label>Logo atual</Label>
             <div className="flex items-center gap-6">
@@ -158,6 +170,7 @@ const AdminGeneralSettings = () => {
                   <span className="text-2xl text-primary-foreground font-bold">⚡</span>
                 </div>
               )}
+              <span className="font-display font-bold text-lg">{appName || "QuizLearn"}</span>
               <p className="text-sm text-muted-foreground">Bem-vindo de volta!</p>
             </div>
           </div>

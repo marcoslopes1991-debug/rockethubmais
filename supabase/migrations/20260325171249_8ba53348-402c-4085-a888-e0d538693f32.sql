@@ -1,0 +1,1 @@
+ALTER TABLE public.ai_config ADD COLUMN app_name text NOT NULL DEFAULT 'QuizLearn';

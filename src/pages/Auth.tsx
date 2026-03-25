@@ -33,14 +33,17 @@ const Auth = () => {
     if (user) navigate("/");
   }, [user, navigate]);
 
+  const [appName, setAppName] = useState("QuizLearn");
+
   useEffect(() => {
     supabase
       .from("ai_config" as any)
-      .select("logo_url")
+      .select("logo_url, app_name")
       .limit(1)
       .single()
       .then(({ data }: any) => {
         if (data?.logo_url) setLogoUrl(data.logo_url);
+        if (data?.app_name) setAppName(data.app_name);
       });
   }, []);
 
