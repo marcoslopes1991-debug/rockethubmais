@@ -53,6 +53,7 @@ export type Database = {
       ai_config: {
         Row: {
           ai_name: string
+          app_name: string
           button_image_url: string | null
           id: string
           logo_url: string | null
@@ -60,6 +61,7 @@ export type Database = {
         }
         Insert: {
           ai_name?: string
+          app_name?: string
           button_image_url?: string | null
           id?: string
           logo_url?: string | null
@@ -67,6 +69,7 @@ export type Database = {
         }
         Update: {
           ai_name?: string
+          app_name?: string
           button_image_url?: string | null
           id?: string
           logo_url?: string | null
