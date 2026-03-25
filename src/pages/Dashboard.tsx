@@ -74,7 +74,7 @@ const Dashboard = () => {
       const [profileRes, answersRes, questionsRes, itemsRes] = await Promise.all([
         supabase
           .from("profiles")
-          .select("display_name, xp, streak_count, last_activity_date")
+          .select("display_name, username, bio, xp, streak_count, last_activity_date, modulos_interesse")
           .eq("user_id", user.id)
           .single(),
         supabase.from("answers").select("id").eq("user_id", user.id),
