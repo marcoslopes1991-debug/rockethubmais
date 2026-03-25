@@ -247,6 +247,8 @@ const Dashboard = () => {
                   <span className="text-xs text-muted-foreground">posts</span>
                 </div>
               </div>
+
+              <div className="mt-5">
                 <LevelProgressBar xp={xp} />
                 {nextLevel && (
                   <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
