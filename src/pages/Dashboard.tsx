@@ -113,31 +113,31 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container flex items-center justify-between h-16 px-4">
+        <div className="container flex items-center justify-between h-14 sm:h-16 px-3 sm:px-4">
           <motion.div 
-            className="flex items-center gap-2"
+            className="flex items-center gap-1.5 sm:gap-2 min-w-0 shrink-0"
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
           >
             {brandLogoUrl ? (
-              <img src={brandLogoUrl} alt={appName} className="h-9 w-9 rounded-xl object-contain" />
+              <img src={brandLogoUrl} alt={appName} className="h-7 w-7 sm:h-9 sm:w-9 rounded-lg sm:rounded-xl object-contain" />
             ) : (
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-                <Zap className="h-5 w-5 text-primary-foreground" />
+              <div className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-primary">
+                <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" />
               </div>
             )}
-            <span className="font-display font-bold text-lg">{appName}</span>
+            <span className="font-display font-bold text-sm sm:text-lg truncate max-w-[100px] sm:max-w-none">{appName}</span>
           </motion.div>
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-0.5 sm:gap-2">
             <StreakBadge streak={profile?.streak_count ?? 0} />
-            <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)} title="Buscar">
-              <Search className="h-5 w-5" />
+            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10" onClick={() => setSearchOpen(true)} title="Buscar">
+              <Search className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => navigate("/evolution-map")} title="Mapa">
-              <MapIcon className="h-5 w-5" />
+            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10" onClick={() => navigate("/evolution-map")} title="Mapa">
+              <MapIcon className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => navigate("/ranking")} title="Ranking">
-              <Trophy className="h-5 w-5" />
+            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10 hidden sm:inline-flex" onClick={() => navigate("/ranking")} title="Ranking">
+              <Trophy className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
             <NotificationBell />
             <Sheet>
@@ -151,6 +151,9 @@ const Dashboard = () => {
                   <SheetTitle className="font-display">Menu</SheetTitle>
                 </SheetHeader>
                 <nav className="flex flex-col gap-2 mt-6">
+                  <Button variant="ghost" className="justify-start h-12 text-base sm:hidden" onClick={() => navigate("/ranking")}>
+                    <Trophy className="h-5 w-5 mr-3" /> Ranking
+                  </Button>
                   <Button variant="ghost" className="justify-start h-12 text-base" onClick={() => navigate("/journey")}>
                     <Star className="h-5 w-5 mr-3" /> Jornada
                   </Button>
@@ -186,11 +189,6 @@ const Dashboard = () => {
         initial="hidden"
         animate="show"
       >
-        {/* Action card */}
-        <motion.div variants={item}>
-          <ActionCard hasStarted={answeredCount > 0} hasUnanswered={hasUnanswered} />
-        </motion.div>
-
         {/* Hero card with avatar */}
         <motion.div variants={item}>
           <Card className="glass-card overflow-hidden">
