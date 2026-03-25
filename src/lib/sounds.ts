@@ -110,3 +110,20 @@ export function playNotificationSound() {
     { freq: 988, duration: 0.15, delay: 0.06, type: "sine", gain: 0.7 },
   ]);
 }
+
+/** Bright pop — follow someone */
+export function playFollowSound() {
+  playTone([
+    { freq: 660, duration: 0.08, delay: 0, type: "sine", gain: 0.5 },
+    { freq: 880, duration: 0.12, delay: 0.06, type: "sine", gain: 0.7 },
+    { freq: 1100, duration: 0.1, delay: 0.14, type: "sine", gain: 0.5 },
+  ]);
+}
+
+/** Soft neutral tone — unfollow */
+export function playUnfollowSound() {
+  playTone([
+    { freq: 440, duration: 0.12, delay: 0, type: "triangle", gain: 0.4 },
+    { freq: 380, duration: 0.15, delay: 0.08, type: "triangle", gain: 0.3 },
+  ]);
+}

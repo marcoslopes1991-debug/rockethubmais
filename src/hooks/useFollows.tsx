@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { playFollowSound, playUnfollowSound } from "@/lib/sounds";
 
 export const useFollows = () => {
   const { user } = useAuth();
@@ -8,6 +9,7 @@ export const useFollows = () => {
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [newFollowersCount, setNewFollowersCount] = useState(0);
 
   const fetchMyFollowing = useCallback(async () => {
     if (!user) return;
@@ -27,13 +29,50 @@ export const useFollows = () => {
     setFollowingCount(following ?? 0);
   }, []);
 
+  // Realtime subscription for follower changes
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('follows-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'follows',
+          filter: `following_id=eq.${user.id}`,
+        },
+        () => {
+          setFollowerCount((prev) => prev + 1);
+          setNewFollowersCount((prev) => prev + 1);
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'follows',
+          filter: `following_id=eq.${user.id}`,
+        },
+        () => {
+          setFollowerCount((prev) => Math.max(0, prev - 1));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
   useEffect(() => {
     fetchMyFollowing();
   }, [fetchMyFollowing]);
 
   const sendFollowNotification = async (targetUserId: string) => {
     if (!user) return;
-    // Get current user's display name
     const { data: profile } = await supabase
       .from("profiles")
       .select("display_name")
@@ -55,9 +94,9 @@ export const useFollows = () => {
   const toggleFollow = async (targetUserId: string) => {
     if (!user || loading) return;
     setLoading(true);
-    const isFollowing = followingIds.has(targetUserId);
+    const isFollowingTarget = followingIds.has(targetUserId);
 
-    if (isFollowing) {
+    if (isFollowingTarget) {
       await supabase
         .from("follows")
         .delete()
@@ -68,18 +107,24 @@ export const useFollows = () => {
         next.delete(targetUserId);
         return next;
       });
+      playUnfollowSound();
     } else {
       await supabase
         .from("follows")
         .insert({ follower_id: user.id, following_id: targetUserId });
       setFollowingIds((prev) => new Set(prev).add(targetUserId));
-      // Send notification to the followed user
       sendFollowNotification(targetUserId);
+      playFollowSound();
     }
     setLoading(false);
   };
 
   const isFollowing = (userId: string) => followingIds.has(userId);
+  const clearNewFollowers = () => setNewFollowersCount(0);
 
-  return { isFollowing, toggleFollow, followingIds, followerCount, followingCount, fetchCounts, loading };
+  return {
+    isFollowing, toggleFollow, followingIds,
+    followerCount, followingCount, fetchCounts, loading,
+    newFollowersCount, clearNewFollowers,
+  };
 };
