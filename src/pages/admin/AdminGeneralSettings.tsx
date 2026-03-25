@@ -11,9 +11,12 @@ const AdminGeneralSettings = () => {
   const [configId, setConfigId] = useState<string | null>(null);
   const [appName, setAppName] = useState("QuizLearn");
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [faviconUrl, setFaviconUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadingFavicon, setUploadingFavicon] = useState(false);
   const [saving, setSaving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const faviconRef = useRef<HTMLInputElement>(null);
 
   // Mission config state
   const [missionConfigId, setMissionConfigId] = useState<string | null>(null);
@@ -25,13 +28,14 @@ const AdminGeneralSettings = () => {
   useEffect(() => {
     supabase
       .from("ai_config" as any)
-      .select("id, logo_url, app_name")
+      .select("id, logo_url, app_name, favicon_url")
       .limit(1)
       .single()
       .then(({ data }: any) => {
         if (data) {
           setConfigId(data.id);
           setLogoUrl(data.logo_url);
+          setFaviconUrl(data.favicon_url);
           setAppName(data.app_name || "QuizLearn");
         }
       });
