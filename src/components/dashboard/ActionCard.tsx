@@ -1,8 +1,5 @@
-import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Target, ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { Target } from "lucide-react";
 
 interface ActionCardProps {
   hasStarted: boolean;
@@ -10,8 +7,6 @@ interface ActionCardProps {
 }
 
 const ActionCard = ({ hasStarted, hasUnanswered }: ActionCardProps) => {
-  const navigate = useNavigate();
-
   if (!hasUnanswered) return null;
 
   const title = hasStarted ? "Continuar jornada" : "Começar missão";
@@ -28,13 +23,6 @@ const ActionCard = ({ hasStarted, hasUnanswered }: ActionCardProps) => {
             <p className="text-sm text-muted-foreground">Continue evoluindo e suba de nível</p>
           </div>
         </div>
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="mt-4">
-          <Button onClick={() => navigate("/quiz")} size="lg" className="w-full text-base h-12 font-display">
-            <Target className="h-5 w-5 mr-2" />
-            Começar missão
-            <ArrowRight className="h-4 w-4 ml-2" />
-          </Button>
-        </motion.div>
       </CardContent>
     </Card>
   );
