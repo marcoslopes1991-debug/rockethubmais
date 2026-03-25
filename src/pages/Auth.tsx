@@ -108,13 +108,32 @@ const Auth = () => {
     setLoading(false);
   };
 
-  // Step 1 → create account, then go to step 2
+  // Step 1 → create account (or update if already created), then go to step 2
   const handleStep1Next = async () => {
     if (!gender) {
       toast({ title: "Campo obrigatório", description: "Selecione seu sexo para continuar.", variant: "destructive" });
       return;
     }
     setLoading(true);
+
+    // If already onboarding (came back from step 2), just update profile
+    if (isOnboarding) {
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (currentUser) {
+        await supabase
+          .from("profiles")
+          .update({
+            gender,
+            username,
+            modulos_interesse: selectedModules,
+          } as any)
+          .eq("user_id", currentUser.id);
+      }
+      setLoading(false);
+      setStep(2);
+      return;
+    }
+
     setIsOnboarding(true);
     const { data, error } = await supabase.auth.signUp({
       email,
