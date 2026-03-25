@@ -115,6 +115,7 @@ const Auth = () => {
       return;
     }
     setLoading(true);
+    setIsOnboarding(true);
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -122,6 +123,7 @@ const Auth = () => {
     });
     if (error) {
       toast({ title: "Erro ao cadastrar", description: error.message, variant: "destructive" });
+      setIsOnboarding(false);
       setLoading(false);
       return;
     }
