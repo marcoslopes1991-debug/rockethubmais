@@ -1,21 +1,67 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserPlus } from "lucide-react";
-import { useFollows } from "@/hooks/useFollows";
-import FollowListDialog from "@/components/social/FollowListDialog";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import FollowListDialog from "@/components/social/FollowListDialog";
+
+const LAST_SEEN_FOLLOWERS_KEY = "last_seen_followers_at";
 
 export default function NewFollowersBubble() {
   const { user } = useAuth();
-  const { newFollowersCount, clearNewFollowers } = useFollows();
+  const [count, setCount] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  if (!user || newFollowersCount === 0) return null;
+  // Load unseen followers on mount
+  useEffect(() => {
+    if (!user) return;
 
-  const label = newFollowersCount === 1
+    const loadUnseen = async () => {
+      const lastSeen = localStorage.getItem(LAST_SEEN_FOLLOWERS_KEY) || new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const { count: newCount } = await supabase
+        .from("follows")
+        .select("*", { count: "exact", head: true })
+        .eq("following_id", user.id)
+        .gte("created_at", lastSeen);
+
+      if (newCount && newCount > 0) {
+        setCount(newCount);
+      }
+    };
+
+    loadUnseen();
+
+    // Realtime: increment on new follower
+    const channel = supabase
+      .channel('new-followers-bubble')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'follows',
+          filter: `following_id=eq.${user.id}`,
+        },
+        () => setCount((prev) => prev + 1)
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
+  if (!user || count === 0) return null;
+
+  const label = count === 1
     ? "+1 novo seguidor"
-    : `+${newFollowersCount} novos seguidores`;
+    : `+${count} novos seguidores`;
+
+  const handleClick = () => {
+    setDialogOpen(true);
+    setCount(0);
+    localStorage.setItem(LAST_SEEN_FOLLOWERS_KEY, new Date().toISOString());
+  };
 
   return (
     <>
@@ -27,10 +73,7 @@ export default function NewFollowersBubble() {
             exit={{ opacity: 0, scale: 0.5, y: 20 }}
             whileHover={{ scale: 1.08 }}
             transition={{ type: "spring", stiffness: 400, damping: 20 }}
-            onClick={() => {
-              setDialogOpen(true);
-              clearNewFollowers();
-            }}
+            onClick={handleClick}
             className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-primary-foreground shadow-xl text-sm font-bold"
           >
             <motion.div
@@ -44,14 +87,12 @@ export default function NewFollowersBubble() {
         </AnimatePresence>
       </div>
 
-      {user && (
-        <FollowListDialog
-          userId={user.id}
-          type="followers"
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
-        />
-      )}
+      <FollowListDialog
+        userId={user.id}
+        type="followers"
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+      />
     </>
   );
 }
