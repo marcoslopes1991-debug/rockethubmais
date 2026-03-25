@@ -19,6 +19,7 @@ interface PublicProfile {
   streak_count: number;
   avatar_url: string | null;
   gender: string | null;
+  username: string | null;
 }
 
 interface UserAchievementDisplay {
@@ -53,7 +54,7 @@ const UserProfile = () => {
     if (!userId) return;
     const { data } = await supabase
       .from("profiles")
-      .select("user_id, display_name, xp, streak_count, avatar_url, gender")
+      .select("user_id, display_name, xp, streak_count, avatar_url, gender, username")
       .eq("user_id", userId)
       .single();
     if (data) setProfile(data as any);
@@ -189,6 +190,9 @@ const UserProfile = () => {
               />
               <div>
                 <h1 className="text-xl font-display font-bold">{profile.display_name}</h1>
+                {profile.username && (
+                  <p className="text-sm text-muted-foreground">@{profile.username}</p>
+                )}
                 <div className="flex items-center justify-center gap-1.5 mt-1">
                   <Star className="h-4 w-4 text-accent" />
                   <span className="text-sm text-muted-foreground">{level.name}</span>

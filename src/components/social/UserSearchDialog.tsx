@@ -21,6 +21,7 @@ interface SearchResult {
   xp: number;
   avatar_url: string | null;
   gender: string | null;
+  username: string | null;
 }
 
 const UserSearchDialog = ({ open, onOpenChange }: UserSearchDialogProps) => {
@@ -45,16 +46,26 @@ const UserSearchDialog = ({ open, onOpenChange }: UserSearchDialogProps) => {
       return;
     }
 
-    const timeout = setTimeout(async () => {
-      setSearching(true);
-      const { data } = await supabase
-        .from("profiles")
-        .select("user_id, display_name, xp, avatar_url, gender")
-        .ilike("display_name", `%${query.trim()}%`)
-        .limit(20);
-      setResults((data as any) ?? []);
-      setSearching(false);
-    }, 300);
+      const timeout = setTimeout(async () => {
+        setSearching(true);
+        const trimmed = query.trim();
+        const isUsernameSearch = trimmed.startsWith("@");
+        const searchTerm = isUsernameSearch ? trimmed.slice(1) : trimmed;
+
+        let queryBuilder = supabase
+          .from("profiles")
+          .select("user_id, display_name, xp, avatar_url, gender, username");
+
+        if (isUsernameSearch) {
+          queryBuilder = queryBuilder.ilike("username", `%${searchTerm}%`);
+        } else {
+          queryBuilder = queryBuilder.or(`display_name.ilike.%${searchTerm}%,username.ilike.%${searchTerm}%`);
+        }
+
+        const { data } = await queryBuilder.limit(20);
+        setResults((data as any) ?? []);
+        setSearching(false);
+      }, 300);
 
     return () => clearTimeout(timeout);
   }, [query]);
@@ -68,7 +79,7 @@ const UserSearchDialog = ({ open, onOpenChange }: UserSearchDialogProps) => {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar por nome..."
+            placeholder="Buscar por nome ou @usuario..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="pl-9"
@@ -104,6 +115,9 @@ const UserSearchDialog = ({ open, onOpenChange }: UserSearchDialogProps) => {
                       {u.display_name}
                       {isSelf && <span className="text-xs text-primary ml-1">(você)</span>}
                     </p>
+                    {u.username && (
+                      <p className="text-xs text-muted-foreground">@{u.username}</p>
+                    )}
                     <p className="text-xs text-muted-foreground">{levelInfo.name}</p>
                   </button>
                   {!isSelf && user && (
