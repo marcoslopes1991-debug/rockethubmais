@@ -189,7 +189,48 @@ const AdminGeneralSettings = () => {
             </div>
           </div>
 
-          {/* Preview */}
+          {/* Favicon */}
+          <div className="space-y-3">
+            <Label>Favicon (ícone da aba do navegador)</Label>
+            <div className="flex items-center gap-6">
+              <div className="w-16 h-16 rounded-xl border-2 border-border bg-muted flex items-center justify-center overflow-hidden">
+                {faviconUrl ? (
+                  <img src={faviconUrl} alt="Favicon" className="w-full h-full object-contain p-1" />
+                ) : (
+                  <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                    <ImageIcon className="h-6 w-6" />
+                    <span className="text-[9px]">Padrão</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col gap-2">
+                <input
+                  ref={faviconRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/jpg,image/x-icon,image/svg+xml"
+                  className="hidden"
+                  onChange={handleFaviconUpload}
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => faviconRef.current?.click()}
+                  disabled={uploadingFavicon}
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  {uploadingFavicon ? "Enviando..." : "Enviar favicon"}
+                </Button>
+                {faviconUrl && (
+                  <Button variant="ghost" size="sm" className="text-destructive" onClick={removeFavicon}>
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Remover favicon
+                  </Button>
+                )}
+                <p className="text-xs text-muted-foreground">PNG, JPG, SVG ou ICO. Recomendado: 32×32 ou 64×64 px.</p>
+              </div>
+            </div>
+          </div>
+
           <div className="border border-border rounded-xl p-6 bg-muted/30">
             <p className="text-xs text-muted-foreground mb-3">Pré-visualização na tela de login:</p>
             <div className="flex flex-col items-center gap-2">
