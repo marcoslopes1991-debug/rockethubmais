@@ -6,10 +6,13 @@ import { useFollows } from "@/hooks/useFollows";
 import { useLevels, getLevelFromList } from "@/hooks/useLevels";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Star, Zap, Flame, Users, UserPlus, UserCheck, Trophy, TrendingUp } from "lucide-react";
+import { ArrowLeft, Star, Zap, Flame, UserPlus, UserCheck, Trophy, TrendingUp, FileText } from "lucide-react";
 import UserAvatar from "@/components/UserAvatar";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import FollowListDialog from "@/components/social/FollowListDialog";
+import MutualFollowers from "@/components/social/MutualFollowers";
+import ProfileBio from "@/components/profile/ProfileBio";
+import ModuleBadges from "@/components/profile/ModuleBadges";
 import { motion } from "framer-motion";
 
 interface PublicProfile {
@@ -20,6 +23,8 @@ interface PublicProfile {
   avatar_url: string | null;
   gender: string | null;
   username: string | null;
+  bio: string;
+  modulos_interesse: string[] | null;
 }
 
 interface UserAchievementDisplay {
@@ -49,12 +54,13 @@ const UserProfile = () => {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [totalAnswered, setTotalAnswered] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [postsCount] = useState(0); // Prepared for future posts
 
   const fetchProfile = useCallback(async () => {
     if (!userId) return;
     const { data } = await supabase
       .from("profiles")
-      .select("user_id, display_name, xp, streak_count, avatar_url, gender, username")
+      .select("user_id, display_name, xp, streak_count, avatar_url, gender, username, bio, modulos_interesse")
       .eq("user_id", userId)
       .single();
     if (data) setProfile(data as any);
@@ -118,7 +124,6 @@ const UserProfile = () => {
     fetchStats();
   }, [fetchProfile, fetchCounts, fetchAchievements, fetchStats]);
 
-  // Build activity items from profile data
   useEffect(() => {
     if (!profile || levels.length === 0) return;
     const items: ActivityItem[] = [];
@@ -132,7 +137,6 @@ const UserProfile = () => {
     setActivities(items);
   }, [profile, levels]);
 
-  // If viewing own profile, redirect
   useEffect(() => {
     if (user && userId === user.id) {
       navigate("/profile", { replace: true });
@@ -169,101 +173,124 @@ const UserProfile = () => {
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <span className="font-display font-bold text-lg truncate">{profile.display_name}</span>
+          <span className="font-display font-bold text-lg truncate">
+            {profile.username ? `@${profile.username}` : profile.display_name}
+          </span>
         </div>
       </header>
 
       <motion.main
-        className="container px-4 py-8 max-w-lg mx-auto space-y-6"
+        className="container px-4 py-6 max-w-lg mx-auto space-y-5"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        {/* Main profile card */}
+        {/* Social profile header */}
         <Card className="glass-card overflow-hidden">
-          <CardContent className="pt-6">
-            <div className="flex flex-col items-center text-center gap-3">
-              <UserAvatar
-                avatarUrl={profile.avatar_url}
-                gender={profile.gender}
-                displayName={profile.display_name}
-                size="lg"
-              />
-              <div>
-                <h1 className="text-xl font-display font-bold">{profile.display_name}</h1>
-                {profile.username && (
-                  <p className="text-sm text-muted-foreground">@{profile.username}</p>
-                )}
-                <div className="flex items-center justify-center gap-1.5 mt-1">
-                  <Star className="h-4 w-4 text-accent" />
-                  <span className="text-sm text-muted-foreground">{level.name}</span>
-                </div>
+          <CardContent className="pt-6 pb-5">
+            {/* Top row: avatar + counters */}
+            <div className="flex items-center gap-5">
+              <div className="shrink-0">
+                <UserAvatar
+                  avatarUrl={profile.avatar_url}
+                  gender={profile.gender}
+                  displayName={profile.display_name}
+                  size="lg"
+                />
               </div>
 
-              {/* Stats row */}
-              <div className="flex items-center gap-4 flex-wrap justify-center">
-                <div className="flex items-center gap-1.5">
-                  <Zap className="h-4 w-4 text-xp" />
-                  <span className="text-sm font-bold">{xp} XP</span>
+              <div className="flex-1 flex items-center justify-around">
+                <div className="flex flex-col items-center">
+                  <span className="text-lg font-bold">{postsCount}</span>
+                  <span className="text-xs text-muted-foreground">
+                    <FileText className="h-3 w-3 inline mr-0.5" />Posts
+                  </span>
                 </div>
-                {profile.streak_count > 0 && (
-                  <div className="flex items-center gap-1.5">
-                    <Flame className="h-4 w-4 text-accent" />
-                    <span className="text-sm font-bold">{profile.streak_count} dias</span>
-                  </div>
-                )}
-                {totalAnswered > 0 && (
-                  <div className="flex items-center gap-1.5">
-                    <TrendingUp className="h-4 w-4 text-primary" />
-                    <span className="text-sm font-bold">{accuracy}% acerto</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Followers / Following */}
-              <div className="flex items-center gap-6 mt-2">
                 <button
                   onClick={() => setListType("followers")}
                   className="flex flex-col items-center hover:opacity-80 transition-opacity"
                 >
                   <span className="text-lg font-bold">{followerCount}</span>
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Users className="h-3 w-3" /> Seguidores
-                  </span>
+                  <span className="text-xs text-muted-foreground">Seguidores</span>
                 </button>
-                <div className="h-8 w-px bg-border" />
                 <button
                   onClick={() => setListType("following")}
                   className="flex flex-col items-center hover:opacity-80 transition-opacity"
                 >
                   <span className="text-lg font-bold">{followingCount}</span>
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Users className="h-3 w-3" /> Seguindo
-                  </span>
+                  <span className="text-xs text-muted-foreground">Seguindo</span>
                 </button>
               </div>
+            </div>
 
-              {/* Follow button */}
-              {!isSelf && user && (
-                <Button
-                  variant={following ? "secondary" : "default"}
-                  className="mt-2 w-full max-w-xs"
-                  disabled={followLoading}
-                  onClick={async () => {
-                    await toggleFollow(userId!);
-                    fetchCounts();
-                  }}
-                >
-                  {following ? (
-                    <><UserCheck className="h-4 w-4 mr-2" /> Seguindo</>
-                  ) : (
-                    <><UserPlus className="h-4 w-4 mr-2" /> Seguir</>
-                  )}
-                </Button>
+            {/* Name + username + level + stats */}
+            <div className="mt-4 space-y-1">
+              <h1 className="text-base font-display font-bold">{profile.display_name}</h1>
+              {profile.username && (
+                <p className="text-sm text-muted-foreground">@{profile.username}</p>
               )}
-
-              <div className="w-full mt-2">
-                <LevelProgressBar xp={xp} />
+              <div className="flex items-center gap-3 text-sm flex-wrap">
+                <span className="flex items-center gap-1 text-muted-foreground">
+                  <Star className="h-3.5 w-3.5 text-accent" /> {level.name}
+                </span>
+                <span className="flex items-center gap-1 font-bold">
+                  <Zap className="h-3.5 w-3.5 text-xp" /> {xp} XP
+                </span>
+                {profile.streak_count > 0 && (
+                  <span className="flex items-center gap-1 text-accent">
+                    <Flame className="h-3.5 w-3.5" /> {profile.streak_count} dias
+                  </span>
+                )}
+                {totalAnswered > 0 && (
+                  <span className="flex items-center gap-1 text-primary">
+                    <TrendingUp className="h-3.5 w-3.5" /> {accuracy}%
+                  </span>
+                )}
               </div>
+            </div>
+
+            {/* Bio */}
+            {profile.bio && (
+              <div className="mt-3">
+                <ProfileBio bio={profile.bio} />
+              </div>
+            )}
+
+            {/* Module badges */}
+            {profile.modulos_interesse && profile.modulos_interesse.length > 0 && (
+              <div className="mt-3">
+                <ModuleBadges modules={profile.modulos_interesse} />
+              </div>
+            )}
+
+            {/* Mutual followers */}
+            {userId && (
+              <div className="mt-2">
+                <MutualFollowers targetUserId={userId} />
+              </div>
+            )}
+
+            {/* Follow button */}
+            {!isSelf && user && (
+              <Button
+                variant={following ? "secondary" : "default"}
+                className="mt-4 w-full"
+                disabled={followLoading}
+                onClick={async () => {
+                  await toggleFollow(userId!);
+                  fetchCounts();
+                }}
+              >
+                {following ? (
+                  <><UserCheck className="h-4 w-4 mr-2" /> Seguindo</>
+                ) : (
+                  <><UserPlus className="h-4 w-4 mr-2" /> Seguir</>
+                )}
+              </Button>
+            )}
+
+            {/* Level progress */}
+            <div className="mt-4">
+              <LevelProgressBar xp={xp} />
             </div>
           </CardContent>
         </Card>
