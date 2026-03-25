@@ -58,6 +58,7 @@ export type Database = {
           id: string
           logo_url: string | null
           updated_at: string
+          welcome_message: string
         }
         Insert: {
           ai_name?: string
@@ -66,6 +67,7 @@ export type Database = {
           id?: string
           logo_url?: string | null
           updated_at?: string
+          welcome_message?: string
         }
         Update: {
           ai_name?: string
@@ -74,6 +76,7 @@ export type Database = {
           id?: string
           logo_url?: string | null
           updated_at?: string
+          welcome_message?: string
         }
         Relationships: []
       }
@@ -259,19 +262,66 @@ export type Database = {
         }
         Relationships: []
       }
+      onboarding_courses: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      onboarding_modules: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           blocked: boolean
           created_at: string
+          cursos_rockethub: string[] | null
           display_name: string
           gender: string | null
           hide_followers: boolean
           id: string
           is_public: boolean
           last_activity_date: string | null
+          modulos_interesse: string[] | null
           notifications_enabled: boolean
+          perfil_sap: string | null
           streak_count: number
+          tempo_experiencia_sap: string | null
+          trabalha_com_sap: boolean | null
           updated_at: string
           user_id: string
           username: string | null
@@ -281,14 +331,19 @@ export type Database = {
           avatar_url?: string | null
           blocked?: boolean
           created_at?: string
+          cursos_rockethub?: string[] | null
           display_name?: string
           gender?: string | null
           hide_followers?: boolean
           id?: string
           is_public?: boolean
           last_activity_date?: string | null
+          modulos_interesse?: string[] | null
           notifications_enabled?: boolean
+          perfil_sap?: string | null
           streak_count?: number
+          tempo_experiencia_sap?: string | null
+          trabalha_com_sap?: boolean | null
           updated_at?: string
           user_id: string
           username?: string | null
@@ -298,14 +353,19 @@ export type Database = {
           avatar_url?: string | null
           blocked?: boolean
           created_at?: string
+          cursos_rockethub?: string[] | null
           display_name?: string
           gender?: string | null
           hide_followers?: boolean
           id?: string
           is_public?: boolean
           last_activity_date?: string | null
+          modulos_interesse?: string[] | null
           notifications_enabled?: boolean
+          perfil_sap?: string | null
           streak_count?: number
+          tempo_experiencia_sap?: string | null
+          trabalha_com_sap?: boolean | null
           updated_at?: string
           user_id?: string
           username?: string | null
