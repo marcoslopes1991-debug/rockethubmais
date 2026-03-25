@@ -1,159 +1,26 @@
 import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, FileJson, ClipboardPaste, CheckCircle2, XCircle } from "lucide-react";
+import { Upload, FileJson, ClipboardPaste, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-interface RawQuestion {
-  pergunta?: string;
-  alternativa_a?: string;
-  alternativa_b?: string;
-  alternativa_c?: string;
-  alternativa_d?: string;
-  resposta_correta?: string;
-  explicacao?: string;
-  nivel?: string;
-  categoria?: string;
-  dificuldade?: string;
-  xp?: number | string;
-}
-
-interface ValidatedQuestion {
-  raw: RawQuestion;
-  valid: boolean;
-  errors: string[];
-  mapped: {
-    question: string;
-    option_a: string;
-    option_b: string;
-    option_c: string;
-    option_d: string;
-    correct_option: string;
-    explanation: string;
-    nivel: string;
-    category: string;
-    difficulty: string;
-    xp_reward: number;
-  } | null;
-}
-
-const VALID_CORRECT = ["a", "b", "c", "d"];
-const VALID_DIFFICULTY = ["facil", "medio", "dificil", "easy", "medium", "hard"];
-const VALID_NIVEL = ["usuario", "key user", "junior", "pleno", "senior"];
-
-const mapDifficulty = (d: string) => {
-  const m: Record<string, string> = { facil: "easy", medio: "medium", dificil: "hard", easy: "easy", medium: "medium", hard: "hard" };
-  return m[d.toLowerCase()] ?? "medium";
-};
-
-const validate = (q: RawQuestion, idx: number): ValidatedQuestion => {
-  const errors: string[] = [];
-  if (!q.pergunta?.trim()) errors.push("pergunta vazia");
-  if (!q.alternativa_a?.trim()) errors.push("alternativa_a vazia");
-  if (!q.alternativa_b?.trim()) errors.push("alternativa_b vazia");
-  if (!q.alternativa_c?.trim()) errors.push("alternativa_c vazia");
-  if (!q.alternativa_d?.trim()) errors.push("alternativa_d vazia");
-
-  const correct = String(q.resposta_correta ?? "").toLowerCase().trim();
-  if (!VALID_CORRECT.includes(correct)) errors.push(`resposta_correta inválida: "${q.resposta_correta}"`);
-
-  const diff = String(q.dificuldade ?? "").toLowerCase().trim();
-  if (diff && !VALID_DIFFICULTY.includes(diff)) errors.push(`dificuldade inválida: "${q.dificuldade}"`);
-
-  const nivel = String(q.nivel ?? "usuario").toLowerCase().trim();
-  if (!VALID_NIVEL.includes(nivel)) errors.push(`nivel inválido: "${q.nivel}"`);
-
-  const xp = Number(q.xp);
-  if (q.xp !== undefined && q.xp !== "" && (isNaN(xp) || xp < 0)) errors.push(`xp inválido: "${q.xp}"`);
-
-  const valid = errors.length === 0;
-  return {
-    raw: q,
-    valid,
-    errors,
-    mapped: valid
-      ? {
-          question: q.pergunta!.trim(),
-          option_a: q.alternativa_a!.trim(),
-          option_b: q.alternativa_b!.trim(),
-          option_c: q.alternativa_c!.trim(),
-          option_d: q.alternativa_d!.trim(),
-          correct_option: correct,
-          explanation: (q.explicacao ?? "").trim(),
-          nivel,
-          category: (q.categoria ?? "geral").trim(),
-          difficulty: mapDifficulty(diff || "medium"),
-          xp_reward: isNaN(xp) || q.xp === undefined || q.xp === "" ? 10 : xp,
-        }
-      : null,
-  };
-};
-
-const parseCSV = (text: string): RawQuestion[] => {
-  const lines = text.split("\n").filter((l) => l.trim());
-  if (lines.length < 2) return [];
-  const headers = lines[0].split(",").map((h) => h.trim().toLowerCase().replace(/"/g, ""));
-  return lines.slice(1).map((line) => {
-    const values: string[] = [];
-    let current = "";
-    let inQuotes = false;
-    for (const char of line) {
-      if (char === '"') { inQuotes = !inQuotes; continue; }
-      if (char === "," && !inQuotes) { values.push(current.trim()); current = ""; continue; }
-      current += char;
-    }
-    values.push(current.trim());
-    const obj: Record<string, string> = {};
-    headers.forEach((h, i) => { obj[h] = values[i] ?? ""; });
-    return obj as unknown as RawQuestion;
-  });
-};
-
-const parseBulkText = (text: string): RawQuestion[] => {
-  const blocks = text.split(/\n{2,}/).filter((b) => b.trim());
-  const questions: RawQuestion[] = [];
-
-  for (const block of blocks) {
-    const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
-    const q: Record<string, string> = {};
-
-    for (const line of lines) {
-      const match = line.match(/^(.+?):\s*(.+)$/);
-      if (!match) {
-        if (!q.pergunta) q.pergunta = line;
-        continue;
-      }
-      const [, key, value] = match;
-      const k = key.toLowerCase().trim();
-      const map: Record<string, string> = {
-        pergunta: "pergunta", questão: "pergunta", questao: "pergunta", question: "pergunta",
-        alternativa_a: "alternativa_a", "alternativa a": "alternativa_a", a: "alternativa_a", "opção a": "alternativa_a", "opcao a": "alternativa_a",
-        alternativa_b: "alternativa_b", "alternativa b": "alternativa_b", b: "alternativa_b", "opção b": "alternativa_b", "opcao b": "alternativa_b",
-        alternativa_c: "alternativa_c", "alternativa c": "alternativa_c", c: "alternativa_c", "opção c": "alternativa_c", "opcao c": "alternativa_c",
-        alternativa_d: "alternativa_d", "alternativa d": "alternativa_d", d: "alternativa_d", "opção d": "alternativa_d", "opcao d": "alternativa_d",
-        resposta_correta: "resposta_correta", resposta: "resposta_correta", correta: "resposta_correta", correct: "resposta_correta",
-        explicacao: "explicacao", explicação: "explicacao", explanation: "explicacao",
-        nivel: "nivel", nível: "nivel", level: "nivel",
-        categoria: "categoria", category: "categoria",
-        dificuldade: "dificuldade", difficulty: "dificuldade",
-        xp: "xp", pontos: "xp",
-      };
-      const mapped = map[k];
-      if (mapped) q[mapped] = value.trim();
-    }
-
-    if (q.pergunta) questions.push(q as unknown as RawQuestion);
-  }
-  return questions;
-};
+import { useLevels } from "@/hooks/useLevels";
+import LevelReferencePanel from "@/components/admin/LevelReferencePanel";
+import {
+  type RawQuestion,
+  type ValidatedQuestion,
+  validate,
+  parseCSV,
+  parseBulkText,
+} from "@/lib/importQuestionUtils";
 
 const AdminImportQuestions = () => {
   const { toast } = useToast();
+  const { levels, loading: levelsLoading } = useLevels();
   const fileRef = useRef<HTMLInputElement>(null);
   const [items, setItems] = useState<ValidatedQuestion[]>([]);
   const [fileName, setFileName] = useState("");
@@ -170,7 +37,7 @@ const AdminImportQuestions = () => {
       toast({ title: "Nenhuma pergunta encontrada no texto", variant: "destructive" });
       return;
     }
-    setItems(raw.map((q, i) => validate(q, i)));
+    setItems(raw.map((q) => validate(q, levels)));
   };
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -198,7 +65,7 @@ const AdminImportQuestions = () => {
       return;
     }
 
-    setItems(raw.map((q, i) => validate(q, i)));
+    setItems(raw.map((q) => validate(q, levels)));
   };
 
   const handleImport = async () => {
@@ -224,10 +91,13 @@ const AdminImportQuestions = () => {
 
   const validCount = items.filter((i) => i.valid).length;
   const invalidCount = items.length - validCount;
+  const warningCount = items.filter((i) => i.valid && i.warnings.length > 0).length;
 
   return (
     <div className="space-y-6 max-w-5xl">
       <h1 className="text-2xl font-display font-bold">Importar Perguntas</h1>
+
+      <LevelReferencePanel levels={levels} loading={levelsLoading} />
 
       <Tabs defaultValue="file" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
@@ -241,7 +111,7 @@ const AdminImportQuestions = () => {
               <p className="text-sm text-muted-foreground">
                 Aceita arquivos <strong>.json</strong> ou <strong>.csv</strong> com os campos:
                 pergunta, alternativa_a, alternativa_b, alternativa_c, alternativa_d,
-                resposta_correta (a/b/c/d), explicacao, nivel, categoria, dificuldade, xp
+                resposta_correta (a/b/c/d), explicacao, <strong>nivel_id</strong> (inteiro) ou nivel (nome), categoria, dificuldade, xp
               </p>
               <div className="flex gap-3 items-center">
                 <Button variant="outline" onClick={() => fileRef.current?.click()}>
@@ -258,7 +128,7 @@ const AdminImportQuestions = () => {
           <Card className="glass-card">
             <CardContent className="space-y-4 pt-6">
               <p className="text-sm text-muted-foreground">
-                Cole múltiplas perguntas separadas por <strong>linha em branco</strong>. Formato por pergunta:
+                Cole múltiplas perguntas separadas por <strong>linha em branco</strong>. Use <code className="text-xs bg-muted px-1 rounded">nivel_id</code> (inteiro) ou <code className="text-xs bg-muted px-1 rounded">nivel</code> (nome).
               </p>
               <pre className="text-xs bg-muted/50 p-3 rounded-md text-muted-foreground whitespace-pre-wrap">
 {`Pergunta: Qual é a transação para criar ordem de venda?
@@ -270,7 +140,7 @@ Resposta: a
 Explicação: VA01 é a transação padrão...
 Categoria: vendas
 Dificuldade: facil
-Nível: usuario
+Nivel_id: 1
 XP: 10`}
               </pre>
               <Textarea
@@ -304,6 +174,11 @@ XP: 10`}
           <div className="flex items-center justify-between">
             <div className="flex gap-3">
               <Badge variant="default">{validCount} válidas</Badge>
+              {warningCount > 0 && (
+                <Badge variant="secondary" className="gap-1">
+                  <AlertTriangle className="h-3 w-3" /> {warningCount} com avisos
+                </Badge>
+              )}
               {invalidCount > 0 && <Badge variant="destructive">{invalidCount} com erros</Badge>}
             </div>
             <div className="flex gap-2">
@@ -332,11 +207,16 @@ XP: 10`}
                 </TableHeader>
                 <TableBody>
                   {items.map((item, idx) => (
-                    <TableRow key={idx} className={!item.valid ? "bg-destructive/5" : ""}>
+                    <TableRow key={idx} className={!item.valid ? "bg-destructive/5" : item.warnings.length > 0 ? "bg-accent/10" : ""}>
                       <TableCell className="text-muted-foreground">{idx + 1}</TableCell>
                       <TableCell>
-                        {item.valid ? (
+                        {item.valid && item.warnings.length === 0 ? (
                           <CheckCircle2 className="h-4 w-4 text-primary" />
+                        ) : item.valid && item.warnings.length > 0 ? (
+                          <div className="flex items-center gap-1">
+                            <AlertTriangle className="h-4 w-4 text-amber-500" />
+                            <span className="text-xs text-amber-600">{item.warnings.join(", ")}</span>
+                          </div>
                         ) : (
                           <div className="flex items-center gap-1">
                             <XCircle className="h-4 w-4 text-destructive" />
@@ -345,7 +225,13 @@ XP: 10`}
                         )}
                       </TableCell>
                       <TableCell className="max-w-xs truncate">{item.raw.pergunta ?? "—"}</TableCell>
-                      <TableCell>{item.raw.nivel ?? "—"}</TableCell>
+                      <TableCell>
+                        {item.raw.nivel_id ? (
+                          <span className="font-mono text-xs">ID: {item.raw.nivel_id}</span>
+                        ) : (
+                          item.raw.nivel ?? "—"
+                        )}
+                      </TableCell>
                       <TableCell>{item.raw.categoria ?? "—"}</TableCell>
                       <TableCell>{item.raw.dificuldade ?? "—"}</TableCell>
                       <TableCell>{item.raw.xp ?? "—"}</TableCell>
