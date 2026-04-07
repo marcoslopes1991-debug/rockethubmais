@@ -172,6 +172,17 @@ const AdminAds = () => {
         </div>
       )}
 
+      {/* Metrics */}
+      {ads.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-primary" />
+            <h3 className="text-lg font-bold">Métricas</h3>
+          </div>
+          <AdMetricsPanel />
+        </div>
+      )}
+
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-md">
