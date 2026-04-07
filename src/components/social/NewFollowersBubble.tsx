@@ -47,19 +47,19 @@ export default function NewFollowersBubble() {
     loadUnseen();
 
     // Realtime: increment on new follower
-    const channel = supabase
-      .channel(`new-followers-bubble-${user.id}-${Date.now()}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'follows',
-          filter: `following_id=eq.${user.id}`,
-        },
-        () => setCount((prev) => prev + 1)
-      )
-      .subscribe();
+    const channelName = `new-followers-bubble-${user.id}-${Math.random().toString(36).slice(2)}`;
+    const channel = supabase.channel(channelName);
+    channel.on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'follows',
+        filter: `following_id=eq.${user.id}`,
+      },
+      () => setCount((prev) => prev + 1)
+    );
+    channel.subscribe();
 
     return () => {
       supabase.removeChannel(channel);
