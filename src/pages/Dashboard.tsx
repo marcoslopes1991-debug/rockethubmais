@@ -139,6 +139,9 @@ const Dashboard = () => {
             <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10" onClick={() => navigate("/evolution-map")} title="Mapa">
               <MapIcon className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
+            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10" onClick={() => navigate("/feed")} title="Feed">
+              <Rss className="h-4 w-4 sm:h-5 sm:w-5" />
+            </Button>
             <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10 hidden sm:inline-flex" onClick={() => navigate("/ranking")} title="Ranking">
               <Trophy className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
