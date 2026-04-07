@@ -80,6 +80,7 @@ const AdminAds = () => {
       title: form.title,
       description: form.description,
       image_url: form.image_url || null,
+      video_url: form.video_url || null,
       link_url: form.link_url || null,
       start_date: form.start_date ? new Date(form.start_date).toISOString() : new Date().toISOString(),
       end_date: form.end_date ? new Date(form.end_date).toISOString() : null,
