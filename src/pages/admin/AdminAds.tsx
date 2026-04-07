@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Plus, Trash2, Pencil, Megaphone } from "lucide-react";
+import { Loader2, Plus, Trash2, Pencil, Megaphone, BarChart3 } from "lucide-react";
+import AdMetricsPanel from "@/components/admin/AdMetricsPanel";
 import { toast } from "sonner";
 import {
   Dialog,
