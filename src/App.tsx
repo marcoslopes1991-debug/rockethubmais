@@ -30,6 +30,7 @@ import Achievements from "./pages/Achievements";
 import Profile from "./pages/Profile";
 import UserProfile from "./pages/UserProfile";
 import Chat from "./pages/Chat";
+import Feed from "./pages/Feed";
 import RockZAssistant from "./components/RockZAssistant";
 import NewFollowersBubble from "./components/social/NewFollowersBubble";
 import WelcomeBackBanner from "./components/social/WelcomeBackBanner";
