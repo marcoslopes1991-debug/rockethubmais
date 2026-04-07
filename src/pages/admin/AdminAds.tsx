@@ -60,6 +60,7 @@ const AdminAds = () => {
       title: ad.title,
       description: ad.description,
       image_url: ad.image_url ?? "",
+      video_url: (ad as any).video_url ?? "",
       link_url: ad.link_url ?? "",
       start_date: ad.start_date ? new Date(ad.start_date).toISOString().slice(0, 16) : "",
       end_date: ad.end_date ? new Date(ad.end_date).toISOString().slice(0, 16) : "",
