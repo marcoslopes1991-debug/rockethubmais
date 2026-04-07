@@ -61,6 +61,7 @@ const Dashboard = () => {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [answeredCount, setAnsweredCount] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
+  const [postsCount, setPostsCount] = useState(0);
   const [equippedItems, setEquippedItems] = useState<{ icon_emoji: string; name: string }[]>([]);
   const [searchOpen, setSearchOpen] = useState(false);
   const [followDialogType, setFollowDialogType] = useState<"followers" | "following">("followers");
