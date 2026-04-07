@@ -91,6 +91,7 @@ const Dashboard = () => {
       if (profileRes.data) setProfile(profileRes.data);
       setAnsweredCount(answersRes.data?.length ?? 0);
       setTotalQuestions(questionsRes.data?.length ?? 0);
+      setPostsCount(postsRes.count ?? 0);
       
       if (itemsRes.data) {
         const equipped = itemsRes.data
