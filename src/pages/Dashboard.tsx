@@ -160,8 +160,11 @@ const Dashboard = () => {
                   <Button variant="ghost" className="justify-start h-12 text-base sm:hidden" onClick={() => navigate("/ranking")}>
                     <Trophy className="h-5 w-5 mr-3" /> Ranking
                   </Button>
-                  <Button variant="ghost" className="justify-start h-12 text-base" onClick={() => navigate("/journey")}>
+                   <Button variant="ghost" className="justify-start h-12 text-base" onClick={() => navigate("/journey")}>
                     <Star className="h-5 w-5 mr-3" /> Jornada
+                  </Button>
+                  <Button variant="ghost" className="justify-start h-12 text-base" onClick={() => navigate("/feed")}>
+                    <Rss className="h-5 w-5 mr-3" /> Feed
                   </Button>
                   <Button variant="ghost" className="justify-start h-12 text-base" onClick={() => navigate("/items")}>
                     <Backpack className="h-5 w-5 mr-3" /> Itens
