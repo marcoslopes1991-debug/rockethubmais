@@ -32,6 +32,7 @@ const emptyForm = {
   title: "",
   description: "",
   image_url: "",
+  video_url: "",
   link_url: "",
   start_date: new Date().toISOString().slice(0, 16),
   end_date: "",
@@ -59,6 +60,7 @@ const AdminAds = () => {
       title: ad.title,
       description: ad.description,
       image_url: ad.image_url ?? "",
+      video_url: (ad as any).video_url ?? "",
       link_url: ad.link_url ?? "",
       start_date: ad.start_date ? new Date(ad.start_date).toISOString().slice(0, 16) : "",
       end_date: ad.end_date ? new Date(ad.end_date).toISOString().slice(0, 16) : "",
@@ -78,6 +80,7 @@ const AdminAds = () => {
       title: form.title,
       description: form.description,
       image_url: form.image_url || null,
+      video_url: form.video_url || null,
       link_url: form.link_url || null,
       start_date: form.start_date ? new Date(form.start_date).toISOString() : new Date().toISOString(),
       end_date: form.end_date ? new Date(form.end_date).toISOString() : null,
@@ -201,6 +204,11 @@ const AdminAds = () => {
             <div>
               <Label>URL da Imagem</Label>
               <Input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." />
+            </div>
+            <div>
+              <Label>URL do Vídeo</Label>
+              <Input value={form.video_url} onChange={(e) => setForm({ ...form, video_url: e.target.value })} placeholder="https://... (MP4, WebM)" />
+              <p className="text-[11px] text-muted-foreground mt-1">Se preenchido, o vídeo será exibido no lugar da imagem</p>
             </div>
             <div>
               <Label>Link (CTA)</Label>
