@@ -8,7 +8,7 @@ import { useAchievements } from "@/hooks/useAchievements";
 import { useFollows } from "@/hooks/useFollows";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon, Award, Menu, Search, Users } from "lucide-react";
+import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon, Award, Menu, Search, Users, Rss } from "lucide-react";
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import StreakBadge from "@/components/StreakBadge";
