@@ -1,0 +1,1 @@
+UPDATE ads SET start_date = '2026-04-01 00:00:00+00' WHERE title = 'Curso SAP Completo - 50% OFF';
