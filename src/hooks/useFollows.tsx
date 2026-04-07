@@ -34,7 +34,7 @@ export const useFollows = () => {
     if (!user) return;
 
     const channel = supabase
-      .channel(`follows-realtime-${user.id}`)
+      .channel(`follows-counts-${user.id}-${Date.now()}`)
       .on(
         'postgres_changes',
         {

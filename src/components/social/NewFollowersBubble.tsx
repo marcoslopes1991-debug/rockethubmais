@@ -48,7 +48,7 @@ export default function NewFollowersBubble() {
 
     // Realtime: increment on new follower
     const channel = supabase
-      .channel('new-followers-bubble')
+      .channel(`new-followers-bubble-${user.id}-${Date.now()}`)
       .on(
         'postgres_changes',
         {
