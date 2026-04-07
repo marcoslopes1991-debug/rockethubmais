@@ -72,7 +72,7 @@ const Dashboard = () => {
     if (!user) return;
 
     const fetchData = async () => {
-      const [profileRes, answersRes, questionsRes, itemsRes] = await Promise.all([
+      const [profileRes, answersRes, questionsRes, itemsRes, postsRes] = await Promise.all([
         supabase
           .from("profiles")
           .select("display_name, username, bio, xp, streak_count, last_activity_date, modulos_interesse")
@@ -85,6 +85,7 @@ const Dashboard = () => {
           .select("item_id, items(icon_emoji, name)")
           .eq("user_id", user.id)
           .eq("equipped", true),
+        supabase.from("posts").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       ]);
 
       if (profileRes.data) setProfile(profileRes.data);
