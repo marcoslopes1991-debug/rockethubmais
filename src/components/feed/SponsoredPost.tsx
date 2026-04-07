@@ -1,13 +1,28 @@
+import { useEffect, useRef } from "react";
 import { ExternalLink, Megaphone } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import type { Ad } from "@/hooks/useAds";
+import { trackAdImpression, trackAdClick } from "@/hooks/useAds";
 
 interface SponsoredPostProps {
   ad: Ad;
 }
 
 const SponsoredPost = ({ ad }: SponsoredPostProps) => {
+  const tracked = useRef(false);
+
+  useEffect(() => {
+    if (!tracked.current) {
+      tracked.current = true;
+      trackAdImpression(ad.id);
+    }
+  }, [ad.id]);
+
+  const handleClick = () => {
+    trackAdClick(ad.id);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -46,6 +61,7 @@ const SponsoredPost = ({ ad }: SponsoredPostProps) => {
           href={ad.link_url}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={handleClick}
           className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
         >
           Saiba mais <ExternalLink className="h-3 w-3" />

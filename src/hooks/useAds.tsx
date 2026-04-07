@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Ad {
@@ -13,6 +13,14 @@ export interface Ad {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface AdMetrics {
+  ad_id: string;
+  title: string;
+  impressions: number;
+  clicks: number;
+  ctr: number;
 }
 
 export const useAds = () => {
@@ -42,6 +50,30 @@ export const useAds = () => {
   }, [fetchAds]);
 
   return { ads, loading, refresh: fetchAds };
+};
+
+// Track ad impression (deduplicated per session)
+const trackedImpressions = new Set<string>();
+
+export const trackAdImpression = async (adId: string) => {
+  if (trackedImpressions.has(adId)) return;
+  trackedImpressions.add(adId);
+
+  const { data: { user } } = await supabase.auth.getUser();
+  await supabase.from("ad_events").insert({
+    ad_id: adId,
+    user_id: user?.id ?? null,
+    event_type: "impression",
+  });
+};
+
+export const trackAdClick = async (adId: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  await supabase.from("ad_events").insert({
+    ad_id: adId,
+    user_id: user?.id ?? null,
+    event_type: "click",
+  });
 };
 
 export const useAdminAds = () => {
@@ -81,4 +113,61 @@ export const useAdminAds = () => {
   };
 
   return { ads, loading, createAd, updateAd, deleteAd, refresh: fetchAds };
+};
+
+export const useAdMetrics = () => {
+  const [metrics, setMetrics] = useState<AdMetrics[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchMetrics = useCallback(async () => {
+    setLoading(true);
+
+    // Fetch ads
+    const { data: ads } = await supabase
+      .from("ads")
+      .select("id, title")
+      .order("created_at", { ascending: false });
+
+    // Fetch events
+    const { data: events } = await supabase
+      .from("ad_events")
+      .select("ad_id, event_type");
+
+    if (ads && events) {
+      const metricsMap = new Map<string, { impressions: number; clicks: number }>();
+      
+      for (const ad of ads) {
+        metricsMap.set(ad.id, { impressions: 0, clicks: 0 });
+      }
+
+      for (const event of events) {
+        const current = metricsMap.get(event.ad_id);
+        if (current) {
+          if (event.event_type === "impression") current.impressions++;
+          else if (event.event_type === "click") current.clicks++;
+        }
+      }
+
+      const result: AdMetrics[] = (ads ?? []).map((ad) => {
+        const m = metricsMap.get(ad.id) ?? { impressions: 0, clicks: 0 };
+        return {
+          ad_id: ad.id,
+          title: ad.title,
+          impressions: m.impressions,
+          clicks: m.clicks,
+          ctr: m.impressions > 0 ? (m.clicks / m.impressions) * 100 : 0,
+        };
+      });
+
+      setMetrics(result);
+    }
+
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchMetrics();
+  }, [fetchMetrics]);
+
+  return { metrics, loading, refresh: fetchMetrics };
 };
