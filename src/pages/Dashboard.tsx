@@ -285,10 +285,10 @@ const Dashboard = () => {
                 </button>
                 <div className="w-px h-8 bg-border/60" />
                 <button
-                  onClick={() => navigate("/profile")}
+                  onClick={() => navigate("/feed")}
                   className="flex flex-col items-center gap-0.5 hover:opacity-70 transition-opacity"
                 >
-                  <span className="text-lg font-display font-bold">0</span>
+                  <span className="text-lg font-display font-bold">{postsCount}</span>
                   <span className="text-[11px] text-muted-foreground font-medium">posts</span>
                 </button>
               </div>
