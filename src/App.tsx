@@ -24,6 +24,7 @@ import AdminAiConfig from "./pages/admin/AdminAiConfig";
 import AdminGeneralSettings from "./pages/admin/AdminGeneralSettings";
 import AdminReservedUsernames from "./pages/admin/AdminReservedUsernames";
 import AdminOnboarding from "./pages/admin/AdminOnboarding";
+import AdminAds from "./pages/admin/AdminAds";
 import Journey from "./pages/Journey";
 import EvolutionMap from "./pages/EvolutionMap";
 import Achievements from "./pages/Achievements";
