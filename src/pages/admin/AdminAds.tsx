@@ -206,6 +206,11 @@ const AdminAds = () => {
               <Input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." />
             </div>
             <div>
+              <Label>URL do Vídeo</Label>
+              <Input value={form.video_url} onChange={(e) => setForm({ ...form, video_url: e.target.value })} placeholder="https://... (MP4, WebM)" />
+              <p className="text-[11px] text-muted-foreground mt-1">Se preenchido, o vídeo será exibido no lugar da imagem</p>
+            </div>
+            <div>
               <Label>Link (CTA)</Label>
               <Input value={form.link_url} onChange={(e) => setForm({ ...form, link_url: e.target.value })} placeholder="https://..." />
             </div>
