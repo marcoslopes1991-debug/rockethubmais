@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Plus, Trash2, Pencil, Megaphone } from "lucide-react";
+import { Loader2, Plus, Trash2, Pencil, Megaphone, BarChart3 } from "lucide-react";
+import AdMetricsPanel from "@/components/admin/AdMetricsPanel";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -168,6 +169,17 @@ const AdminAds = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+      )}
+
+      {/* Metrics */}
+      {ads.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-primary" />
+            <h3 className="text-lg font-bold">Métricas</h3>
+          </div>
+          <AdMetricsPanel />
         </div>
       )}
 
