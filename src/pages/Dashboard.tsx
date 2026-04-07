@@ -8,7 +8,7 @@ import { useAchievements } from "@/hooks/useAchievements";
 import { useFollows } from "@/hooks/useFollows";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon, Award, Menu, Search, Users } from "lucide-react";
+import { Zap, Trophy, Target, LogOut, Backpack, Flame, Shield, Star, MapIcon, Award, Menu, Search, Users, Rss } from "lucide-react";
 import AvatarDisplay from "@/components/AvatarDisplay";
 import LevelProgressBar from "@/components/LevelProgressBar";
 import StreakBadge from "@/components/StreakBadge";
@@ -61,6 +61,7 @@ const Dashboard = () => {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [answeredCount, setAnsweredCount] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
+  const [postsCount, setPostsCount] = useState(0);
   const [equippedItems, setEquippedItems] = useState<{ icon_emoji: string; name: string }[]>([]);
   const [searchOpen, setSearchOpen] = useState(false);
   const [followDialogType, setFollowDialogType] = useState<"followers" | "following">("followers");
@@ -71,7 +72,7 @@ const Dashboard = () => {
     if (!user) return;
 
     const fetchData = async () => {
-      const [profileRes, answersRes, questionsRes, itemsRes] = await Promise.all([
+      const [profileRes, answersRes, questionsRes, itemsRes, postsRes] = await Promise.all([
         supabase
           .from("profiles")
           .select("display_name, username, bio, xp, streak_count, last_activity_date, modulos_interesse")
@@ -84,11 +85,13 @@ const Dashboard = () => {
           .select("item_id, items(icon_emoji, name)")
           .eq("user_id", user.id)
           .eq("equipped", true),
+        supabase.from("posts").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       ]);
 
       if (profileRes.data) setProfile(profileRes.data);
       setAnsweredCount(answersRes.data?.length ?? 0);
       setTotalQuestions(questionsRes.data?.length ?? 0);
+      setPostsCount(postsRes.count ?? 0);
       
       if (itemsRes.data) {
         const equipped = itemsRes.data
@@ -136,6 +139,9 @@ const Dashboard = () => {
             <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10" onClick={() => navigate("/evolution-map")} title="Mapa">
               <MapIcon className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
+            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10" onClick={() => navigate("/feed")} title="Feed">
+              <Rss className="h-4 w-4 sm:h-5 sm:w-5" />
+            </Button>
             <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10 hidden sm:inline-flex" onClick={() => navigate("/ranking")} title="Ranking">
               <Trophy className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
@@ -154,8 +160,11 @@ const Dashboard = () => {
                   <Button variant="ghost" className="justify-start h-12 text-base sm:hidden" onClick={() => navigate("/ranking")}>
                     <Trophy className="h-5 w-5 mr-3" /> Ranking
                   </Button>
-                  <Button variant="ghost" className="justify-start h-12 text-base" onClick={() => navigate("/journey")}>
+                   <Button variant="ghost" className="justify-start h-12 text-base" onClick={() => navigate("/journey")}>
                     <Star className="h-5 w-5 mr-3" /> Jornada
+                  </Button>
+                  <Button variant="ghost" className="justify-start h-12 text-base" onClick={() => navigate("/feed")}>
+                    <Rss className="h-5 w-5 mr-3" /> Feed
                   </Button>
                   <Button variant="ghost" className="justify-start h-12 text-base" onClick={() => navigate("/items")}>
                     <Backpack className="h-5 w-5 mr-3" /> Itens
@@ -276,10 +285,10 @@ const Dashboard = () => {
                 </button>
                 <div className="w-px h-8 bg-border/60" />
                 <button
-                  onClick={() => navigate("/profile")}
+                  onClick={() => navigate("/feed")}
                   className="flex flex-col items-center gap-0.5 hover:opacity-70 transition-opacity"
                 >
-                  <span className="text-lg font-display font-bold">0</span>
+                  <span className="text-lg font-display font-bold">{postsCount}</span>
                   <span className="text-[11px] text-muted-foreground font-medium">posts</span>
                 </button>
               </div>

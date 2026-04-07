@@ -30,6 +30,7 @@ import Achievements from "./pages/Achievements";
 import Profile from "./pages/Profile";
 import UserProfile from "./pages/UserProfile";
 import Chat from "./pages/Chat";
+import Feed from "./pages/Feed";
 import RockZAssistant from "./components/RockZAssistant";
 import NewFollowersBubble from "./components/social/NewFollowersBubble";
 import WelcomeBackBanner from "./components/social/WelcomeBackBanner";
@@ -57,6 +58,7 @@ const AppContent = () => {
               <Route path="/profile" element={<Profile />} />
               <Route path="/user/:userId" element={<UserProfile />} />
               <Route path="/chat" element={<Chat />} />
+              <Route path="/feed" element={<Feed />} />
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="questions" element={<AdminQuestions />} />
