@@ -50,6 +50,48 @@ export type Database = {
         }
         Relationships: []
       }
+      ads: {
+        Row: {
+          created_at: string
+          description: string
+          end_date: string | null
+          frequency: number
+          id: string
+          image_url: string | null
+          is_active: boolean
+          link_url: string | null
+          start_date: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          end_date?: string | null
+          frequency?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link_url?: string | null
+          start_date?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          end_date?: string | null
+          frequency?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link_url?: string | null
+          start_date?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ai_config: {
         Row: {
           ai_name: string
@@ -415,6 +457,7 @@ export type Database = {
           gender: string | null
           hide_followers: boolean
           id: string
+          is_premium: boolean
           is_public: boolean
           last_activity_date: string | null
           modulos_interesse: string[] | null
@@ -439,6 +482,7 @@ export type Database = {
           gender?: string | null
           hide_followers?: boolean
           id?: string
+          is_premium?: boolean
           is_public?: boolean
           last_activity_date?: string | null
           modulos_interesse?: string[] | null
@@ -463,6 +507,7 @@ export type Database = {
           gender?: string | null
           hide_followers?: boolean
           id?: string
+          is_premium?: boolean
           is_public?: boolean
           last_activity_date?: string | null
           modulos_interesse?: string[] | null
