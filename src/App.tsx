@@ -72,6 +72,7 @@ const AppContent = () => {
                 <Route path="settings" element={<AdminGeneralSettings />} />
                 <Route path="reserved-usernames" element={<AdminReservedUsernames />} />
                 <Route path="onboarding" element={<AdminOnboarding />} />
+                <Route path="ads" element={<AdminAds />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
