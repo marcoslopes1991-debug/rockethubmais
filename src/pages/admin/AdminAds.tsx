@@ -32,6 +32,7 @@ const emptyForm = {
   title: "",
   description: "",
   image_url: "",
+  video_url: "",
   link_url: "",
   start_date: new Date().toISOString().slice(0, 16),
   end_date: "",

@@ -45,8 +45,19 @@ const SponsoredPost = ({ ad }: SponsoredPostProps) => {
         <p className="text-sm text-muted-foreground leading-relaxed">{ad.description}</p>
       )}
 
-      {/* Image */}
-      {ad.image_url && (
+      {/* Video */}
+      {ad.video_url && (
+        <video
+          src={ad.video_url}
+          controls
+          preload="metadata"
+          className="rounded-lg w-full max-h-80 object-contain bg-black/5"
+          playsInline
+        />
+      )}
+
+      {/* Image (only if no video) */}
+      {!ad.video_url && ad.image_url && (
         <img
           src={ad.image_url}
           alt={ad.title}

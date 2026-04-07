@@ -6,6 +6,7 @@ export interface Ad {
   title: string;
   description: string;
   image_url: string | null;
+  video_url: string | null;
   link_url: string | null;
   start_date: string;
   end_date: string | null;
