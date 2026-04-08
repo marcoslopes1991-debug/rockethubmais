@@ -1,4 +1,5 @@
 import { Home, Trophy, MapIcon, Backpack, Award, Rss, Bell, User, Shield, LogOut, Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAdmin } from "@/hooks/useAdmin";
