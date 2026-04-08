@@ -12,6 +12,7 @@ import CreatePostForm from "@/components/feed/CreatePostForm";
 import PostCard from "@/components/feed/PostCard";
 import SponsoredPost from "@/components/feed/SponsoredPost";
 import { getNextAd } from "@/lib/adRotation";
+import { invalidateTotalImpressionsCache } from "@/lib/adRotation";
 
 const Feed = () => {
   const { user, loading: authLoading } = useAuth();
@@ -20,6 +21,7 @@ const Feed = () => {
   const { posts, loading, createPost, deletePost, toggleLike, refresh } = usePosts(mode);
   const { ads } = useAds();
   const [isPremium, setIsPremium] = useState(false);
+  const [totalImpressions, setTotalImpressions] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
@@ -38,6 +40,23 @@ const Feed = () => {
       });
   }, [user]);
 
+  // Fetch total impressions for global limit checking
+  useEffect(() => {
+    if (isPremium || ads.length === 0) return;
+    invalidateTotalImpressionsCache();
+    supabase
+      .from("ad_events")
+      .select("ad_id")
+      .eq("event_type", "impression")
+      .then(({ data }) => {
+        const counts: Record<string, number> = {};
+        (data ?? []).forEach((e: any) => {
+          counts[e.ad_id] = (counts[e.ad_id] ?? 0) + 1;
+        });
+        setTotalImpressions(counts);
+      });
+  }, [ads, isPremium]);
+
   // Build feed items interleaving ads with smart rotation
   const buildFeedItems = () => {
     if (isPremium || ads.length === 0) {
@@ -50,7 +69,7 @@ const Feed = () => {
     posts.forEach((post, i) => {
       items.push({ type: "post", data: post });
       if ((i + 1) % frequency === 0 && ads.length > 0) {
-        const nextAd = getNextAd(ads);
+        const nextAd = getNextAd(ads, totalImpressions);
         if (nextAd) {
           items.push({ type: "ad", data: nextAd });
         }

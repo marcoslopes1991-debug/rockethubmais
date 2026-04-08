@@ -92,6 +92,9 @@ export type Database = {
           image_url: string | null
           is_active: boolean
           link_url: string | null
+          max_impressions_per_user: number | null
+          max_impressions_total: number | null
+          priority: string
           start_date: string
           title: string
           updated_at: string
@@ -106,6 +109,9 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean
           link_url?: string | null
+          max_impressions_per_user?: number | null
+          max_impressions_total?: number | null
+          priority?: string
           start_date?: string
           title: string
           updated_at?: string
@@ -120,6 +126,9 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean
           link_url?: string | null
+          max_impressions_per_user?: number | null
+          max_impressions_total?: number | null
+          priority?: string
           start_date?: string
           title?: string
           updated_at?: string

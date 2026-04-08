@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Plus, Trash2, Pencil, Megaphone, BarChart3 } from "lucide-react";
 import AdMetricsPanel from "@/components/admin/AdMetricsPanel";
 import { toast } from "sonner";
@@ -38,6 +39,9 @@ const emptyForm = {
   end_date: "",
   frequency: 5,
   is_active: true,
+  priority: "normal",
+  max_impressions_per_user: "",
+  max_impressions_total: "",
 };
 
 const AdminAds = () => {
@@ -66,6 +70,9 @@ const AdminAds = () => {
       end_date: ad.end_date ? new Date(ad.end_date).toISOString().slice(0, 16) : "",
       frequency: ad.frequency,
       is_active: ad.is_active,
+      priority: ad.priority ?? "normal",
+      max_impressions_per_user: ad.max_impressions_per_user != null ? String(ad.max_impressions_per_user) : "",
+      max_impressions_total: ad.max_impressions_total != null ? String(ad.max_impressions_total) : "",
     });
     setDialogOpen(true);
   };
@@ -86,6 +93,9 @@ const AdminAds = () => {
       end_date: form.end_date ? new Date(form.end_date).toISOString() : null,
       frequency: form.frequency,
       is_active: form.is_active,
+      priority: form.priority,
+      max_impressions_per_user: form.max_impressions_per_user ? parseInt(form.max_impressions_per_user) : null,
+      max_impressions_total: form.max_impressions_total ? parseInt(form.max_impressions_total) : null,
     };
 
     const error = editingId
@@ -152,8 +162,11 @@ const AdminAds = () => {
                     {ad.description && (
                       <p className="text-xs text-muted-foreground line-clamp-2">{ad.description}</p>
                     )}
-                    <div className="flex gap-3 text-[11px] text-muted-foreground">
+                    <div className="flex flex-wrap gap-3 text-[11px] text-muted-foreground">
                       <span>Frequência: a cada {ad.frequency} posts</span>
+                      <span>Prioridade: {ad.priority === "alta" ? "🔴 Alta" : ad.priority === "baixa" ? "🔵 Baixa" : "🟡 Normal"}</span>
+                      {ad.max_impressions_per_user != null && <span>Limite/usuário: {ad.max_impressions_per_user}</span>}
+                      {ad.max_impressions_total != null && <span>Limite total: {ad.max_impressions_total}</span>}
                       {ad.end_date && (
                         <span>Até: {new Date(ad.end_date).toLocaleDateString("pt-BR")}</span>
                       )}
@@ -227,6 +240,29 @@ const AdminAds = () => {
             <div>
               <Label>Frequência (a cada N posts)</Label>
               <Input type="number" min={1} value={form.frequency} onChange={(e) => setForm({ ...form, frequency: parseInt(e.target.value) || 5 })} />
+            </div>
+            <div>
+              <Label>Prioridade</Label>
+              <Select value={form.priority} onValueChange={(v) => setForm({ ...form, priority: v })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="baixa">🔵 Baixa</SelectItem>
+                  <SelectItem value="normal">🟡 Normal</SelectItem>
+                  <SelectItem value="alta">🔴 Alta</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>Limite impressões/usuário</Label>
+                <Input type="number" min={1} placeholder="Ilimitado" value={form.max_impressions_per_user} onChange={(e) => setForm({ ...form, max_impressions_per_user: e.target.value })} />
+              </div>
+              <div>
+                <Label>Limite impressões total</Label>
+                <Input type="number" min={1} placeholder="Ilimitado" value={form.max_impressions_total} onChange={(e) => setForm({ ...form, max_impressions_total: e.target.value })} />
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <Switch checked={form.is_active} onCheckedChange={(v) => setForm({ ...form, is_active: v })} />
