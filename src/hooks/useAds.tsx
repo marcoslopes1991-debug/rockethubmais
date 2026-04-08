@@ -12,6 +12,9 @@ export interface Ad {
   end_date: string | null;
   frequency: number;
   is_active: boolean;
+  priority: string;
+  max_impressions_per_user: number | null;
+  max_impressions_total: number | null;
   created_at: string;
   updated_at: string;
 }
