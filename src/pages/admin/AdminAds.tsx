@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Plus, Trash2, Pencil, Megaphone, BarChart3 } from "lucide-react";
 import AdMetricsPanel from "@/components/admin/AdMetricsPanel";
 import { toast } from "sonner";
