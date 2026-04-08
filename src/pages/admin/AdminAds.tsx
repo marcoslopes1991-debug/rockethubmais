@@ -241,6 +241,29 @@ const AdminAds = () => {
               <Label>Frequência (a cada N posts)</Label>
               <Input type="number" min={1} value={form.frequency} onChange={(e) => setForm({ ...form, frequency: parseInt(e.target.value) || 5 })} />
             </div>
+            <div>
+              <Label>Prioridade</Label>
+              <Select value={form.priority} onValueChange={(v) => setForm({ ...form, priority: v })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="baixa">🔵 Baixa</SelectItem>
+                  <SelectItem value="normal">🟡 Normal</SelectItem>
+                  <SelectItem value="alta">🔴 Alta</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>Limite impressões/usuário</Label>
+                <Input type="number" min={1} placeholder="Ilimitado" value={form.max_impressions_per_user} onChange={(e) => setForm({ ...form, max_impressions_per_user: e.target.value })} />
+              </div>
+              <div>
+                <Label>Limite impressões total</Label>
+                <Input type="number" min={1} placeholder="Ilimitado" value={form.max_impressions_total} onChange={(e) => setForm({ ...form, max_impressions_total: e.target.value })} />
+              </div>
+            </div>
             <div className="flex items-center gap-2">
               <Switch checked={form.is_active} onCheckedChange={(v) => setForm({ ...form, is_active: v })} />
               <Label>Ativo</Label>
