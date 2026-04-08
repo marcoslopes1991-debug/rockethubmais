@@ -91,6 +91,7 @@ export type Database = {
           frequency: number
           id: string
           image_url: string | null
+          image_url_mobile: string | null
           is_active: boolean
           link_url: string | null
           max_impressions_per_user: number | null
@@ -100,6 +101,7 @@ export type Database = {
           title: string
           updated_at: string
           video_url: string | null
+          video_url_mobile: string | null
         }
         Insert: {
           created_at?: string
@@ -109,6 +111,7 @@ export type Database = {
           frequency?: number
           id?: string
           image_url?: string | null
+          image_url_mobile?: string | null
           is_active?: boolean
           link_url?: string | null
           max_impressions_per_user?: number | null
@@ -118,6 +121,7 @@ export type Database = {
           title: string
           updated_at?: string
           video_url?: string | null
+          video_url_mobile?: string | null
         }
         Update: {
           created_at?: string
@@ -127,6 +131,7 @@ export type Database = {
           frequency?: number
           id?: string
           image_url?: string | null
+          image_url_mobile?: string | null
           is_active?: boolean
           link_url?: string | null
           max_impressions_per_user?: number | null
@@ -136,6 +141,7 @@ export type Database = {
           title?: string
           updated_at?: string
           video_url?: string | null
+          video_url_mobile?: string | null
         }
         Relationships: []
       }
