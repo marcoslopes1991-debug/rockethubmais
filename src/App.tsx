@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { useAppBranding } from "@/hooks/useAppBranding";
+import AppLayout from "@/components/AppLayout";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
@@ -47,19 +48,11 @@ const AppContent = () => {
         <AuthProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Index />} />
+              {/* Public routes */}
               <Route path="/auth" element={<Auth />} />
               <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/quiz" element={<Quiz />} />
-              <Route path="/journey" element={<Journey />} />
-              <Route path="/evolution-map" element={<EvolutionMap />} />
-              <Route path="/ranking" element={<Ranking />} />
-              <Route path="/items" element={<Items />} />
-              <Route path="/achievements" element={<Achievements />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/user/:userId" element={<UserProfile />} />
-              <Route path="/chat" element={<Chat />} />
-              <Route path="/feed" element={<Feed />} />
+
+              {/* Admin routes (has its own sidebar) */}
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="questions" element={<AdminQuestions />} />
@@ -74,6 +67,22 @@ const AppContent = () => {
                 <Route path="onboarding" element={<AdminOnboarding />} />
                 <Route path="ads" element={<AdminAds />} />
               </Route>
+
+              {/* Authenticated routes with sidebar */}
+              <Route element={<AppLayout />}>
+                <Route path="/" element={<Index />} />
+                <Route path="/quiz" element={<Quiz />} />
+                <Route path="/journey" element={<Journey />} />
+                <Route path="/evolution-map" element={<EvolutionMap />} />
+                <Route path="/ranking" element={<Ranking />} />
+                <Route path="/items" element={<Items />} />
+                <Route path="/achievements" element={<Achievements />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/user/:userId" element={<UserProfile />} />
+                <Route path="/chat" element={<Chat />} />
+                <Route path="/feed" element={<Feed />} />
+              </Route>
+
               <Route path="*" element={<NotFound />} />
             </Routes>
             <RockZAssistant />
