@@ -38,6 +38,9 @@ const emptyForm = {
   end_date: "",
   frequency: 5,
   is_active: true,
+  priority: "normal",
+  max_impressions_per_user: "",
+  max_impressions_total: "",
 };
 
 const AdminAds = () => {
