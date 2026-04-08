@@ -49,10 +49,13 @@ const SponsoredPost = ({ ad }: SponsoredPostProps) => {
       {ad.video_url && (
         <video
           src={ad.video_url}
-          controls
-          preload="metadata"
-          className="rounded-lg w-full max-h-80 object-contain bg-black/5"
+          autoPlay
+          muted
+          loop
           playsInline
+          controls
+          preload="auto"
+          className="rounded-lg w-full max-h-80 object-contain bg-black/5"
         />
       )}
 
