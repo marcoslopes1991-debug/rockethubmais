@@ -33,7 +33,9 @@ const emptyForm = {
   title: "",
   description: "",
   image_url: "",
+  image_url_mobile: "",
   video_url: "",
+  video_url_mobile: "",
   link_url: "",
   cta_text: "",
   start_date: new Date().toISOString().slice(0, 16),
@@ -65,7 +67,9 @@ const AdminAds = () => {
       title: ad.title,
       description: ad.description,
       image_url: ad.image_url ?? "",
+      image_url_mobile: (ad as any).image_url_mobile ?? "",
       video_url: (ad as any).video_url ?? "",
+      video_url_mobile: (ad as any).video_url_mobile ?? "",
       link_url: ad.link_url ?? "",
       cta_text: (ad as any).cta_text ?? "",
       start_date: ad.start_date ? new Date(ad.start_date).toISOString().slice(0, 16) : "",
@@ -89,7 +93,9 @@ const AdminAds = () => {
       title: form.title,
       description: form.description,
       image_url: form.image_url || null,
+      image_url_mobile: form.image_url_mobile || null,
       video_url: form.video_url || null,
+      video_url_mobile: form.video_url_mobile || null,
       link_url: form.link_url || null,
       cta_text: form.cta_text || null,
       start_date: form.start_date ? new Date(form.start_date).toISOString() : new Date().toISOString(),
@@ -218,13 +224,21 @@ const AdminAds = () => {
               <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} />
             </div>
             <div>
-              <Label>URL da Imagem</Label>
+              <Label>URL da Imagem (Desktop)</Label>
               <Input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." />
             </div>
             <div>
-              <Label>URL do Vídeo</Label>
+              <Label>URL da Imagem (Mobile) <span className="text-muted-foreground text-[10px]">opcional</span></Label>
+              <Input value={form.image_url_mobile} onChange={(e) => setForm({ ...form, image_url_mobile: e.target.value })} placeholder="https://... (formato vertical recomendado)" />
+            </div>
+            <div>
+              <Label>URL do Vídeo (Desktop)</Label>
               <Input value={form.video_url} onChange={(e) => setForm({ ...form, video_url: e.target.value })} placeholder="https://... (MP4, WebM)" />
-              <p className="text-[11px] text-muted-foreground mt-1">Se preenchido, o vídeo será exibido no lugar da imagem</p>
+            </div>
+            <div>
+              <Label>URL do Vídeo (Mobile) <span className="text-muted-foreground text-[10px]">opcional</span></Label>
+              <Input value={form.video_url_mobile} onChange={(e) => setForm({ ...form, video_url_mobile: e.target.value })} placeholder="https://... (formato vertical recomendado)" />
+              <p className="text-[11px] text-muted-foreground mt-1">Se preenchido, o vídeo será exibido no lugar da imagem. Mídia mobile é usada em telas pequenas.</p>
             </div>
             <div>
               <Label>Link (CTA)</Label>
