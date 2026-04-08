@@ -85,6 +85,7 @@ export type Database = {
       ads: {
         Row: {
           created_at: string
+          cta_text: string | null
           description: string
           end_date: string | null
           frequency: number
@@ -102,6 +103,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          cta_text?: string | null
           description?: string
           end_date?: string | null
           frequency?: number
@@ -119,6 +121,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          cta_text?: string | null
           description?: string
           end_date?: string | null
           frequency?: number

@@ -35,6 +35,7 @@ const emptyForm = {
   image_url: "",
   video_url: "",
   link_url: "",
+  cta_text: "",
   start_date: new Date().toISOString().slice(0, 16),
   end_date: "",
   frequency: 5,
@@ -66,6 +67,7 @@ const AdminAds = () => {
       image_url: ad.image_url ?? "",
       video_url: (ad as any).video_url ?? "",
       link_url: ad.link_url ?? "",
+      cta_text: (ad as any).cta_text ?? "",
       start_date: ad.start_date ? new Date(ad.start_date).toISOString().slice(0, 16) : "",
       end_date: ad.end_date ? new Date(ad.end_date).toISOString().slice(0, 16) : "",
       frequency: ad.frequency,
@@ -89,6 +91,7 @@ const AdminAds = () => {
       image_url: form.image_url || null,
       video_url: form.video_url || null,
       link_url: form.link_url || null,
+      cta_text: form.cta_text || null,
       start_date: form.start_date ? new Date(form.start_date).toISOString() : new Date().toISOString(),
       end_date: form.end_date ? new Date(form.end_date).toISOString() : null,
       frequency: form.frequency,
@@ -226,6 +229,10 @@ const AdminAds = () => {
             <div>
               <Label>Link (CTA)</Label>
               <Input value={form.link_url} onChange={(e) => setForm({ ...form, link_url: e.target.value })} placeholder="https://..." />
+            </div>
+            <div>
+              <Label>Texto do botão CTA</Label>
+              <Input value={form.cta_text} onChange={(e) => setForm({ ...form, cta_text: e.target.value })} placeholder="Ex: Quero saber mais (deixe vazio para padrão)" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>

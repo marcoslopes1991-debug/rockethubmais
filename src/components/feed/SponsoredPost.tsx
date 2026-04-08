@@ -10,7 +10,7 @@ interface SponsoredPostProps {
   ad: Ad;
 }
 
-const CTA_LABELS = [
+const DEFAULT_CTA_LABELS = [
   "Quero saber mais",
   "Ver como funciona",
   "Começar agora",
@@ -21,8 +21,8 @@ const SponsoredPost = ({ ad }: SponsoredPostProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoEnded, setVideoEnded] = useState(false);
 
-  // Pick a deterministic CTA label based on ad id
-  const ctaLabel = CTA_LABELS[ad.id.charCodeAt(0) % CTA_LABELS.length];
+  // Use custom CTA text from admin, or fallback to deterministic default
+  const ctaLabel = (ad as any).cta_text || DEFAULT_CTA_LABELS[ad.id.charCodeAt(0) % DEFAULT_CTA_LABELS.length];
 
   useEffect(() => {
     if (!tracked.current) {
