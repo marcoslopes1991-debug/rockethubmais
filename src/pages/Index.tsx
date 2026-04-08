@@ -1,6 +1,8 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 import Dashboard from "./Dashboard";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -15,7 +17,16 @@ const Index = () => {
 
   if (!user) return <Navigate to="/auth" replace />;
 
-  return <Dashboard />;
+  return (
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Dashboard />
+        </div>
+      </div>
+    </SidebarProvider>
+  );
 };
 
 export default Index;
