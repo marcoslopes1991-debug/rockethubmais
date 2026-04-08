@@ -54,9 +54,14 @@ export function AppSidebar() {
               <Zap className="h-4 w-4 text-primary-foreground" />
             </div>
           )}
-          {!collapsed && (
-            <span className="font-display font-bold text-base truncate">{appName}</span>
-          )}
+          <span
+            className={cn(
+              "font-display font-bold text-base truncate transition-opacity duration-200",
+              collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+            )}
+          >
+            {appName}
+          </span>
         </div>
 
         <SidebarGroup>
