@@ -38,7 +38,7 @@ const Feed = () => {
       });
   }, [user]);
 
-  // Build feed items interleaving ads
+  // Build feed items interleaving ads with smart rotation
   const buildFeedItems = () => {
     if (isPremium || ads.length === 0) {
       return posts.map((p) => ({ type: "post" as const, data: p }));
@@ -46,13 +46,14 @@ const Feed = () => {
 
     const items: Array<{ type: "post"; data: typeof posts[0] } | { type: "ad"; data: typeof ads[0] }> = [];
     const frequency = ads[0]?.frequency ?? 5;
-    let adIndex = 0;
 
     posts.forEach((post, i) => {
       items.push({ type: "post", data: post });
       if ((i + 1) % frequency === 0 && ads.length > 0) {
-        items.push({ type: "ad", data: ads[adIndex % ads.length] });
-        adIndex++;
+        const nextAd = getNextAd(ads);
+        if (nextAd) {
+          items.push({ type: "ad", data: nextAd });
+        }
       }
     });
 
