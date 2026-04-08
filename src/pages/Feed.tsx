@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import CreatePostForm from "@/components/feed/CreatePostForm";
 import PostCard from "@/components/feed/PostCard";
 import SponsoredPost from "@/components/feed/SponsoredPost";
+import { getNextAd } from "@/lib/adRotation";
 
 const Feed = () => {
   const { user, loading: authLoading } = useAuth();
