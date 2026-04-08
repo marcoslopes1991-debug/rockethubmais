@@ -1,0 +1,1 @@
+ALTER TABLE public.ads ADD COLUMN cta_text text DEFAULT NULL;
