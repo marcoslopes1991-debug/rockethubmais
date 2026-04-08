@@ -230,6 +230,10 @@ const AdminAds = () => {
               <Label>Link (CTA)</Label>
               <Input value={form.link_url} onChange={(e) => setForm({ ...form, link_url: e.target.value })} placeholder="https://..." />
             </div>
+            <div>
+              <Label>Texto do botão CTA</Label>
+              <Input value={form.cta_text} onChange={(e) => setForm({ ...form, cta_text: e.target.value })} placeholder="Ex: Quero saber mais (deixe vazio para padrão)" />
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label>Data Início</Label>

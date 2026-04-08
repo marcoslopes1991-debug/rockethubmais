@@ -8,6 +8,7 @@ export interface Ad {
   image_url: string | null;
   video_url: string | null;
   link_url: string | null;
+  cta_text: string | null;
   start_date: string;
   end_date: string | null;
   frequency: number;
