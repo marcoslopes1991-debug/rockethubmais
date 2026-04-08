@@ -130,13 +130,19 @@ export function AppSidebar() {
       <SidebarFooter className="p-3">
         <div className="flex items-center gap-2 px-2">
           <SoundToggle />
-          {!collapsed && <span className="text-xs text-muted-foreground">Som</span>}
+          <span className={cn(
+            "text-xs text-muted-foreground transition-opacity duration-200 whitespace-nowrap",
+            collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+          )}>Som</span>
         </div>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton onClick={signOut} className="text-destructive hover:bg-destructive/10">
-              <LogOut className="mr-2 h-4 w-4" />
-              {!collapsed && <span>Sair</span>}
+              <LogOut className="mr-2 h-4 w-4 shrink-0" />
+              <span className={cn(
+                "transition-opacity duration-200 whitespace-nowrap",
+                collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+              )}>Sair</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
