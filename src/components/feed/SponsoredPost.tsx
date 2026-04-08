@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { ExternalLink, Megaphone } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
@@ -11,6 +11,7 @@ interface SponsoredPostProps {
 
 const SponsoredPost = ({ ad }: SponsoredPostProps) => {
   const tracked = useRef(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     if (!tracked.current) {
@@ -18,6 +19,41 @@ const SponsoredPost = ({ ad }: SponsoredPostProps) => {
       trackAdImpression(ad.id);
     }
   }, [ad.id]);
+
+  // Force autoplay with IntersectionObserver + play() promise
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !ad.video_url) return;
+
+    const tryPlay = () => {
+      video.muted = true;
+      video.play().catch((err) => {
+        console.warn("Autoplay blocked, retrying on interaction:", err);
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            tryPlay();
+          } else {
+            video.pause();
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(video);
+
+    // Also try immediately
+    tryPlay();
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [ad.video_url]);
 
   const handleClick = () => {
     trackAdClick(ad.id);
@@ -48,6 +84,7 @@ const SponsoredPost = ({ ad }: SponsoredPostProps) => {
       {/* Video */}
       {ad.video_url && (
         <video
+          ref={videoRef}
           src={ad.video_url}
           autoPlay
           muted
