@@ -136,19 +136,19 @@ const Dashboard = () => {
             <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10" onClick={() => setSearchOpen(true)} title="Buscar">
               <Search className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10" onClick={() => navigate("/evolution-map")} title="Mapa">
+            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10 lg:hidden" onClick={() => navigate("/evolution-map")} title="Mapa">
               <MapIcon className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10" onClick={() => navigate("/feed")} title="Feed">
+            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10 lg:hidden" onClick={() => navigate("/feed")} title="Feed">
               <Rss className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10 hidden sm:inline-flex" onClick={() => navigate("/ranking")} title="Ranking">
+            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10 hidden sm:inline-flex lg:hidden" onClick={() => navigate("/ranking")} title="Ranking">
               <Trophy className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
             <NotificationBell />
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" title="Menu">
+                <Button variant="ghost" size="icon" title="Menu" className="lg:hidden">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
