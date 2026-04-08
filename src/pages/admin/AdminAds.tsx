@@ -69,6 +69,9 @@ const AdminAds = () => {
       end_date: ad.end_date ? new Date(ad.end_date).toISOString().slice(0, 16) : "",
       frequency: ad.frequency,
       is_active: ad.is_active,
+      priority: ad.priority ?? "normal",
+      max_impressions_per_user: ad.max_impressions_per_user != null ? String(ad.max_impressions_per_user) : "",
+      max_impressions_total: ad.max_impressions_total != null ? String(ad.max_impressions_total) : "",
     });
     setDialogOpen(true);
   };
