@@ -92,6 +92,9 @@ const AdminAds = () => {
       end_date: form.end_date ? new Date(form.end_date).toISOString() : null,
       frequency: form.frequency,
       is_active: form.is_active,
+      priority: form.priority,
+      max_impressions_per_user: form.max_impressions_per_user ? parseInt(form.max_impressions_per_user) : null,
+      max_impressions_total: form.max_impressions_total ? parseInt(form.max_impressions_total) : null,
     };
 
     const error = editingId
