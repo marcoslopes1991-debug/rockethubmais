@@ -224,13 +224,21 @@ const AdminAds = () => {
               <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} />
             </div>
             <div>
-              <Label>URL da Imagem</Label>
+              <Label>URL da Imagem (Desktop)</Label>
               <Input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." />
             </div>
             <div>
-              <Label>URL do Vídeo</Label>
+              <Label>URL da Imagem (Mobile) <span className="text-muted-foreground text-[10px]">opcional</span></Label>
+              <Input value={form.image_url_mobile} onChange={(e) => setForm({ ...form, image_url_mobile: e.target.value })} placeholder="https://... (formato vertical recomendado)" />
+            </div>
+            <div>
+              <Label>URL do Vídeo (Desktop)</Label>
               <Input value={form.video_url} onChange={(e) => setForm({ ...form, video_url: e.target.value })} placeholder="https://... (MP4, WebM)" />
-              <p className="text-[11px] text-muted-foreground mt-1">Se preenchido, o vídeo será exibido no lugar da imagem</p>
+            </div>
+            <div>
+              <Label>URL do Vídeo (Mobile) <span className="text-muted-foreground text-[10px]">opcional</span></Label>
+              <Input value={form.video_url_mobile} onChange={(e) => setForm({ ...form, video_url_mobile: e.target.value })} placeholder="https://... (formato vertical recomendado)" />
+              <p className="text-[11px] text-muted-foreground mt-1">Se preenchido, o vídeo será exibido no lugar da imagem. Mídia mobile é usada em telas pequenas.</p>
             </div>
             <div>
               <Label>Link (CTA)</Label>
