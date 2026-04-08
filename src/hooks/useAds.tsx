@@ -6,7 +6,9 @@ export interface Ad {
   title: string;
   description: string;
   image_url: string | null;
+  image_url_mobile: string | null;
   video_url: string | null;
+  video_url_mobile: string | null;
   link_url: string | null;
   cta_text: string | null;
   start_date: string;
