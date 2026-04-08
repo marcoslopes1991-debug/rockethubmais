@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useAuth } from "@/hooks/useAuth";
 import SoundToggle from "@/components/SoundToggle";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Sidebar,
   SidebarContent,
