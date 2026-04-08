@@ -210,7 +210,7 @@ const AdminAds = () => {
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingId ? "Editar Anúncio" : "Novo Anúncio"}</DialogTitle>
           </DialogHeader>
