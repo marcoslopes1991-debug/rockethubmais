@@ -1,7 +1,8 @@
-import { useEffect, useRef, useCallback } from "react";
-import { ExternalLink, Megaphone } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowRight, Megaphone } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 import type { Ad } from "@/hooks/useAds";
 import { trackAdImpression, trackAdClick } from "@/hooks/useAds";
 
@@ -9,9 +10,19 @@ interface SponsoredPostProps {
   ad: Ad;
 }
 
+const CTA_LABELS = [
+  "Quero saber mais",
+  "Ver como funciona",
+  "Começar agora",
+];
+
 const SponsoredPost = ({ ad }: SponsoredPostProps) => {
   const tracked = useRef(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoEnded, setVideoEnded] = useState(false);
+
+  // Pick a deterministic CTA label based on ad id
+  const ctaLabel = CTA_LABELS[ad.id.charCodeAt(0) % CTA_LABELS.length];
 
   useEffect(() => {
     if (!tracked.current) {
@@ -20,7 +31,7 @@ const SponsoredPost = ({ ad }: SponsoredPostProps) => {
     }
   }, [ad.id]);
 
-  // Force autoplay with IntersectionObserver + play() promise
+  // Force autoplay with IntersectionObserver
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !ad.video_url) return;
@@ -28,7 +39,7 @@ const SponsoredPost = ({ ad }: SponsoredPostProps) => {
     const tryPlay = () => {
       video.muted = true;
       video.play().catch((err) => {
-        console.warn("Autoplay blocked, retrying on interaction:", err);
+        console.warn("Autoplay blocked:", err);
       });
     };
 
@@ -46,17 +57,32 @@ const SponsoredPost = ({ ad }: SponsoredPostProps) => {
     );
 
     observer.observe(video);
-
-    // Also try immediately
     tryPlay();
 
-    return () => {
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
+  }, [ad.video_url]);
+
+  // Listen for video end (don't loop — show CTA overlay instead)
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !ad.video_url) return;
+
+    const onEnded = () => setVideoEnded(true);
+    video.addEventListener("ended", onEnded);
+    return () => video.removeEventListener("ended", onEnded);
   }, [ad.video_url]);
 
   const handleClick = () => {
     trackAdClick(ad.id);
+  };
+
+  const handleReplay = () => {
+    const video = videoRef.current;
+    if (video) {
+      setVideoEnded(false);
+      video.currentTime = 0;
+      video.play().catch(() => {});
+    }
   };
 
   return (
@@ -81,19 +107,55 @@ const SponsoredPost = ({ ad }: SponsoredPostProps) => {
         <p className="text-sm text-muted-foreground leading-relaxed">{ad.description}</p>
       )}
 
-      {/* Video */}
+      {/* Video with end-of-video CTA overlay */}
       {ad.video_url && (
-        <video
-          ref={videoRef}
-          src={ad.video_url}
-          autoPlay
-          muted
-          loop
-          playsInline
-          controls
-          preload="auto"
-          className="rounded-lg w-full max-h-80 object-contain bg-black/5"
-        />
+        <div className="relative rounded-lg overflow-hidden">
+          <video
+            ref={videoRef}
+            src={ad.video_url}
+            autoPlay
+            muted
+            playsInline
+            controls
+            preload="auto"
+            className="w-full max-h-80 object-contain bg-black/5"
+          />
+
+          {/* Overlay CTA when video ends */}
+          <AnimatePresence>
+            {videoEnded && ad.link_url && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-3 z-10"
+              >
+                <motion.div
+                  initial={{ scale: 0.85, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.15, type: "spring", stiffness: 300 }}
+                >
+                  <a
+                    href={ad.link_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={handleClick}
+                  >
+                    <Button size="lg" className="text-base px-8 py-3 gap-2 shadow-lg">
+                      {ctaLabel} <ArrowRight className="h-5 w-5" />
+                    </Button>
+                  </a>
+                </motion.div>
+                <button
+                  onClick={handleReplay}
+                  className="text-xs text-white/70 hover:text-white transition-colors underline"
+                >
+                  Assistir novamente
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       )}
 
       {/* Image (only if no video) */}
@@ -106,16 +168,18 @@ const SponsoredPost = ({ ad }: SponsoredPostProps) => {
         />
       )}
 
-      {/* CTA link */}
+      {/* CTA button — always visible below media */}
       {ad.link_url && (
         <a
           href={ad.link_url}
           target="_blank"
           rel="noopener noreferrer"
           onClick={handleClick}
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+          className="block"
         >
-          Saiba mais <ExternalLink className="h-3 w-3" />
+          <Button className="w-full gap-2 text-sm font-semibold py-3 h-auto">
+            {ctaLabel} <ArrowRight className="h-4 w-4" />
+          </Button>
         </a>
       )}
     </motion.div>
