@@ -162,8 +162,11 @@ const AdminAds = () => {
                     {ad.description && (
                       <p className="text-xs text-muted-foreground line-clamp-2">{ad.description}</p>
                     )}
-                    <div className="flex gap-3 text-[11px] text-muted-foreground">
+                    <div className="flex flex-wrap gap-3 text-[11px] text-muted-foreground">
                       <span>Frequência: a cada {ad.frequency} posts</span>
+                      <span>Prioridade: {ad.priority === "alta" ? "🔴 Alta" : ad.priority === "baixa" ? "🔵 Baixa" : "🟡 Normal"}</span>
+                      {ad.max_impressions_per_user != null && <span>Limite/usuário: {ad.max_impressions_per_user}</span>}
+                      {ad.max_impressions_total != null && <span>Limite total: {ad.max_impressions_total}</span>}
                       {ad.end_date && (
                         <span>Até: {new Date(ad.end_date).toLocaleDateString("pt-BR")}</span>
                       )}
