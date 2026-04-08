@@ -1,9 +1,11 @@
 import { Home, Trophy, MapIcon, Backpack, Award, Rss, Bell, User, Shield, LogOut, Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useAuth } from "@/hooks/useAuth";
 import SoundToggle from "@/components/SoundToggle";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Sidebar,
   SidebarContent,
@@ -54,9 +56,14 @@ export function AppSidebar() {
               <Zap className="h-4 w-4 text-primary-foreground" />
             </div>
           )}
-          {!collapsed && (
-            <span className="font-display font-bold text-base truncate">{appName}</span>
-          )}
+          <span
+            className={cn(
+              "font-display font-bold text-base truncate transition-opacity duration-200",
+              collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+            )}
+          >
+            {appName}
+          </span>
         </div>
 
         <SidebarGroup>
@@ -65,31 +72,55 @@ export function AppSidebar() {
             <SidebarMenu>
               {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink
-                      to={item.url}
-                      end={item.url === "/"}
-                      className="hover:bg-muted/50"
-                      activeClassName="bg-muted text-primary font-medium"
-                    >
-                      <item.icon className="mr-2 h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <SidebarMenuButton asChild>
+                        <NavLink
+                          to={item.url}
+                          end={item.url === "/"}
+                          className="hover:bg-muted/50"
+                          activeClassName="bg-muted text-primary font-medium"
+                        >
+                          <item.icon className="mr-2 h-4 w-4 shrink-0" />
+                          <span className={cn(
+                            "transition-opacity duration-200 whitespace-nowrap",
+                            collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+                          )}>{item.title}</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </TooltipTrigger>
+                    {collapsed && (
+                      <TooltipContent side="right" className="font-medium">
+                        {item.title}
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
                 </SidebarMenuItem>
               ))}
               {isAdmin && (
                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <NavLink
-                      to="/admin"
-                      className="hover:bg-muted/50"
-                      activeClassName="bg-muted text-primary font-medium"
-                    >
-                      <Shield className="mr-2 h-4 w-4" />
-                      {!collapsed && <span>Admin</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <SidebarMenuButton asChild>
+                        <NavLink
+                          to="/admin"
+                          className="hover:bg-muted/50"
+                          activeClassName="bg-muted text-primary font-medium"
+                        >
+                          <Shield className="mr-2 h-4 w-4 shrink-0" />
+                          <span className={cn(
+                            "transition-opacity duration-200 whitespace-nowrap",
+                            collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+                          )}>Admin</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </TooltipTrigger>
+                    {collapsed && (
+                      <TooltipContent side="right" className="font-medium">
+                        Admin
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
                 </SidebarMenuItem>
               )}
             </SidebarMenu>
@@ -100,13 +131,19 @@ export function AppSidebar() {
       <SidebarFooter className="p-3">
         <div className="flex items-center gap-2 px-2">
           <SoundToggle />
-          {!collapsed && <span className="text-xs text-muted-foreground">Som</span>}
+          <span className={cn(
+            "text-xs text-muted-foreground transition-opacity duration-200 whitespace-nowrap",
+            collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+          )}>Som</span>
         </div>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton onClick={signOut} className="text-destructive hover:bg-destructive/10">
-              <LogOut className="mr-2 h-4 w-4" />
-              {!collapsed && <span>Sair</span>}
+              <LogOut className="mr-2 h-4 w-4 shrink-0" />
+              <span className={cn(
+                "transition-opacity duration-200 whitespace-nowrap",
+                collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+              )}>Sair</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
