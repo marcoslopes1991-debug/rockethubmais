@@ -120,6 +120,20 @@ const CreatePostForm = ({ onSubmit }: CreatePostFormProps) => {
         )}
       </AnimatePresence>
 
+      <AnimatePresence>
+        {hasLink && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            className="flex items-center gap-2 p-2 rounded-md bg-destructive/10 text-destructive text-xs"
+            role="alert"
+          >
+            <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+            <span>{LINK_NOT_ALLOWED_MESSAGE}</span>
+          </motion.div>
+        )}
+
       <div className="flex items-center justify-between pt-1 border-t border-border/50">
         <div className="flex gap-1">
           <input
@@ -156,7 +170,7 @@ const CreatePostForm = ({ onSubmit }: CreatePostFormProps) => {
           <Button
             size="sm"
             onClick={handleSubmit}
-            disabled={submitting || (!content.trim() && !imageFile && !docFile)}
+            disabled={submitting || hasLink || (!content.trim() && !imageFile && !docFile)}
             className="h-8"
           >
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4 mr-1" />}
