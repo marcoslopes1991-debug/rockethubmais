@@ -151,7 +151,7 @@ export const usePosts = (mode: "following" | "explore" = "explore") => {
       }
     }
 
-    await supabase.from("posts").insert({
+    const { error: insertError } = await supabase.from("posts").insert({
       user_id: user.id,
       content,
       image_url,
@@ -159,6 +159,14 @@ export const usePosts = (mode: "following" | "explore" = "explore") => {
       file_name,
       type,
     });
+
+    if (insertError) {
+      // Backend valida links – propaga mensagem amigável
+      if (insertError.message?.toLowerCase().includes("link")) {
+        throw new Error("Links não são permitidos nas publicações.");
+      }
+      throw insertError;
+    }
 
     await fetchPosts();
   };
