@@ -760,6 +760,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      post_contains_link: { Args: { _content: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "user"
