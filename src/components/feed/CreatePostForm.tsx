@@ -133,6 +133,7 @@ const CreatePostForm = ({ onSubmit }: CreatePostFormProps) => {
             <span>{LINK_NOT_ALLOWED_MESSAGE}</span>
           </motion.div>
         )}
+      </AnimatePresence>
 
       <div className="flex items-center justify-between pt-1 border-t border-border/50">
         <div className="flex gap-1">
