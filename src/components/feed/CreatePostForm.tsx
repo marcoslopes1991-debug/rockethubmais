@@ -1,9 +1,11 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ImagePlus, FileText, X, Send, Loader2 } from "lucide-react";
+import { ImagePlus, FileText, X, Send, Loader2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { useAdmin } from "@/hooks/useAdmin";
+import { containsLink, LINK_NOT_ALLOWED_MESSAGE } from "@/lib/linkDetection";
 
 interface CreatePostFormProps {
   onSubmit: (content: string, imageFile?: File, docFile?: File) => Promise<void>;
@@ -18,6 +20,9 @@ const CreatePostForm = ({ onSubmit }: CreatePostFormProps) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { isAdmin } = useAdmin();
+
+  const hasLink = useMemo(() => !isAdmin && containsLink(content), [content, isAdmin]);
 
   const handleImageSelect = (file: File) => {
     if (file.size > 5 * 1024 * 1024) {
@@ -48,6 +53,10 @@ const CreatePostForm = ({ onSubmit }: CreatePostFormProps) => {
     if (!trimmed && !imageFile && !docFile) return;
     if (trimmed.length > 1000) {
       toast.error("Texto muito longo (máx 1000 caracteres)");
+      return;
+    }
+    if (!isAdmin && containsLink(trimmed)) {
+      toast.error(LINK_NOT_ALLOWED_MESSAGE);
       return;
     }
     setSubmitting(true);
